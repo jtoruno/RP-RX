@@ -1,17 +1,21 @@
 package com.zimplifica.redipuntos
 
 import android.arch.lifecycle.ViewModel
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Button
 import android.widget.EditText
 import com.zimplifica.redipuntos.extensions.onChange
+import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
+import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.SignInViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 
-class SignInActivity : AppCompatActivity() {
-    lateinit var  vm : SignInViewModel.ViewModel
+@RequiresActivityViewModel(SignInViewModel.ViewModel::class)
+class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
+    //lateinit var  vm : SignInViewModel.ViewModel
     lateinit var signInBtn : Button
     lateinit var userEditText: EditText
     lateinit var passEditText: EditText
@@ -23,10 +27,16 @@ class SignInActivity : AppCompatActivity() {
         signInBtn = findViewById(R.id.sign_in_btn_screen)
         userEditText = findViewById(R.id.user_edit_text_sign_in)
         passEditText = findViewById(R.id.pass_edit_text_sign_in)
-        vm = SignInViewModel.ViewModel()
-        userEditText.onChange { vm.inputs.username(it) }
-        passEditText.onChange { vm.inputs.password(it) }
-        vm.outputs.signInButtonIsEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe{setBtnEnabled(it)}
+        //vm = SignInViewModel.ViewModel()
+        userEditText.onChange { this.viewModel.inputs.username(it) }
+        passEditText.onChange { this.viewModel.inputs.password(it) }
+        //vm.outputs.signInButtonIsEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe{setBtnEnabled(it)}
+        this.viewModel.outputs.signInButtonIsEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe { setBtnEnabled(it) }
+
+        signInBtn.setOnClickListener {
+            val intent = Intent(this, PasswordActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 

@@ -22,6 +22,8 @@ android {
     }
 }
 
+final auto_parcel_version = "0.3.1"
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -40,4 +42,9 @@ dependencies {
     //RX Binding
     implementation 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
     implementation 'com.android.support:design:28.0.0'
+
+    //
+    implementation "com.github.frankiesardo:auto-parcel:$auto_parcel_version"
+    kapt "com.github.frankiesardo:auto-parcel-processor:$auto_parcel_version"
+    implementation 'com.google.code.gson:gson:2.8.2'
 }

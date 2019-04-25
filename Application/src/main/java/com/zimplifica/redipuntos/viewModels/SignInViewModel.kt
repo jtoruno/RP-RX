@@ -1,5 +1,8 @@
 package com.zimplifica.redipuntos.viewModels
 
+import android.content.Context
+import android.support.annotation.NonNull
+import com.zimplifica.redipuntos.libs.ActivityViewModel
 import io.reactivex.Observable
 import io.reactivex.Observable.combineLatest
 import io.reactivex.functions.BiFunction
@@ -16,7 +19,7 @@ interface SignInViewModel {
         fun signInButtonIsEnabled() : Observable<Boolean>
     }
 
-    class ViewModel() : Inputs, Outputs{
+    class ViewModel(@NonNull val context: Context) : ActivityViewModel<SignInViewModel>(context), Inputs, Outputs{
         //Inputs
         private val usernameEditTextChanged =  PublishSubject.create<String>()
         private val passwordEditTextChanged =  PublishSubject.create<String>()
