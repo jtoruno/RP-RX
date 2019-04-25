@@ -1,9 +1,10 @@
-package com.zimplifica.redipuntos
+package com.zimplifica.redipuntos.ui.activities
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import com.zimplifica.redipuntos.R
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         singInBtn = findViewById(R.id.sign_in_btn)
         singInBtn.setOnClickListener {
-            val intent = Intent(this,SignInActivity::class.java)
+            val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
         }
         signUpBtn = findViewById(R.id.sign_up_btn)

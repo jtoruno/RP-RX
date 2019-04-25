@@ -1,12 +1,11 @@
-package com.zimplifica.redipuntos
+package com.zimplifica.redipuntos.ui.activities
 
-import android.arch.lifecycle.ViewModel
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Button
 import android.widget.EditText
+import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel

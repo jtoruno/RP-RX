@@ -10,22 +10,22 @@
             android:supportsRtl="true"
             android:name=".RPApplication"
             android:theme="@style/AppTheme">
-        <activity android:name=".TakePhoneActivity"
-                  android:parentActivityName=".MainActivity"
+        <activity android:name=".ui.activities.TakePhoneActivity"
+                  android:parentActivityName=".ui.activities.MainActivity"
                   android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".PasswordActivity"
-                android:parentActivityName=".TakePhoneActivity"
+                android:name=".ui.activities.PasswordActivity"
+                android:parentActivityName=".ui.activities.TakePhoneActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".SignInActivity"
-                android:parentActivityName=".MainActivity"
+                android:name=".ui.activities.SignInActivity"
+                android:parentActivityName=".ui.activities.MainActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity
-                android:name=".MainActivity"
+                android:name=".ui.activities.MainActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppThemeNoActionBar">
             <intent-filter>

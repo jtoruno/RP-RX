@@ -1,7 +1,5 @@
-package com.zimplifica.redipuntos
+package com.zimplifica.redipuntos.ui.activities
 
-import android.app.ActivityOptions
-import android.content.Intent
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +11,7 @@ import android.text.style.ClickableSpan
 import android.view.Menu
 import android.view.View
 import android.widget.TextView
+import com.zimplifica.redipuntos.R
 
 class PasswordActivity : AppCompatActivity() {
 

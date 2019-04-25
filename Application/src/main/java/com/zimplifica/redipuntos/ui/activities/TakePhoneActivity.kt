@@ -1,10 +1,11 @@
-package com.zimplifica.redipuntos
+package com.zimplifica.redipuntos.ui.activities
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.widget.Button
+import com.zimplifica.redipuntos.R
 
 class TakePhoneActivity : AppCompatActivity() {
     lateinit var nextBtn : Button
