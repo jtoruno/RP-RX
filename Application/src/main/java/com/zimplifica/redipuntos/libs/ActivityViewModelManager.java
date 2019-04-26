@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.zimplifica.redipuntos.libs.utils.BundleUtils;
+import com.zimplifica.redipuntos.RPApplication;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -59,12 +59,14 @@ public class ActivityViewModelManager {
     private <T extends ActivityViewModel> ActivityViewModel create(final @NonNull Context context, final @NonNull Class<T> viewModelClass,
                                                                    final @Nullable Bundle savedInstanceState, final @NonNull String id) {
 
+        final RPApplication app = (RPApplication) context.getApplicationContext();
+        final Environment env = app.component().environment();
 
         final ActivityViewModel activityViewModel;
 
         try {
-            final Constructor constructor = viewModelClass.getConstructor(Context.class);
-            activityViewModel = (ActivityViewModel) constructor.newInstance(context);
+            final Constructor constructor = viewModelClass.getConstructor(Environment.class);
+            activityViewModel = (ActivityViewModel) constructor.newInstance(env);
 
             // Need to catch these exceptions separately, otherwise the compiler turns them into `ReflectiveOperationException`.
             // That exception is only available in API19+

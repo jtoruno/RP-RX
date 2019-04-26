@@ -2,6 +2,7 @@ package com.zimplifica.redipuntos.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.widget.Button
 import android.widget.EditText
@@ -35,6 +36,9 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
         signInBtn.setOnClickListener {
             val intent = Intent(this, PasswordActivity::class.java)
             startActivity(intent)
+        }
+        this.viewModel.outputs.print().subscribe {
+            Log.e("PBA",it)
         }
 
     }

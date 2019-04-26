@@ -10,9 +10,5 @@ import dagger.Module
 
 @Module(includes = [ApplicationModule::class])
 class InternalApplicationModule {
-    @Provides
-    @Singleton
-    internal fun provideApiEndpoint(@NonNull baseUrl:String): String {
-        return baseUrl + "Internal"
-    }
+
 }

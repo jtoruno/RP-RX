@@ -3,6 +3,7 @@ package com.zimplifica.redipuntos.viewModels
 import android.content.Context
 import android.support.annotation.NonNull
 import com.zimplifica.redipuntos.libs.ActivityViewModel
+import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.Observable
 import io.reactivex.Observable.combineLatest
 import io.reactivex.functions.BiFunction
@@ -17,10 +18,13 @@ interface SignInViewModel {
     }
     interface Outputs {
         fun signInButtonIsEnabled() : Observable<Boolean>
+        fun print() : Observable<String>
     }
 
-    class ViewModel(@NonNull val context: Context) : ActivityViewModel<SignInViewModel>(context), Inputs, Outputs{
+    class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<SignInViewModel>(environment), Inputs, Outputs{
+
         //Inputs
+        val s : String = environment.webEndpoint()
         private val usernameEditTextChanged =  PublishSubject.create<String>()
         private val passwordEditTextChanged =  PublishSubject.create<String>()
 
@@ -47,6 +51,10 @@ interface SignInViewModel {
         override fun password(password: String) = this.passwordEditTextChanged.onNext(password)
 
         override fun signInButtonIsEnabled(): Observable<Boolean> = this.signInButtonIsEnabled
+
+        override fun print(): Observable<String> {
+            return Observable.just(s)
+        }
 
         private  fun isValid (username: String, password: String) = username.isNotEmpty() && password.isNotEmpty()
 

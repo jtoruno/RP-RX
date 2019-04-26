@@ -5,9 +5,9 @@ import android.support.annotation.CallSuper;
 import io.reactivex.annotations.NonNull;
 
 public class ActivityViewModel<ViewType> {
-    protected final Context context;
+    protected final Environment context;
 
-    public ActivityViewModel(final @NonNull Context context){
+    public ActivityViewModel(final @NonNull Environment context){
         this.context = context;
     }
 
