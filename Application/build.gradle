@@ -27,6 +27,9 @@ android {
 final auto_parcel_version = "0.3.1"
 final dagger_version = "2.11"
 
+//Test
+final robolectric_version = "3.8"
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -58,5 +61,12 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
 
     //Lottie
-    //implementation 'com.airbnb.android:lottie:3.0.1'
+    implementation 'com.airbnb.android:lottie:2.7.0'
+
+    //Percent
+    implementation 'com.android.support:percent:28.0.0'
+
+
+    //Test
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
 }

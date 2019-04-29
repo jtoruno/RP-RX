@@ -7,7 +7,7 @@ import com.zimplifica.redipuntos.external.DaggerApplicationComponent
 
 
 
-class RPApplication: Application() {
+open class RPApplication: Application() {
 
     lateinit var component: ApplicationComponent
 

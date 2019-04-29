@@ -1,14 +1,15 @@
 package com.zimplifica.redipuntos.viewModels
 
+import com.zimplifica.redipuntos.RPTestCase
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 
-class SignInViewModelTest {
+class SignInViewModelTest : RPTestCase(){
     lateinit var  vm : SignInViewModel.ViewModel
     val signInButtonIsEnabled = TestObserver<Boolean>()
 
     fun setup(){
-        vm = SignInViewModel.ViewModel()
+        vm = SignInViewModel.ViewModel(environment()!!)
         vm.outputs.signInButtonIsEnabled().subscribe(this.signInButtonIsEnabled)
         vm.outputs.signInButtonIsEnabled().subscribe {
             print("Response $it")

@@ -1,5 +1,7 @@
 package com.zimplifica.redipuntos.ui.activities
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.view.ViewPager
@@ -9,9 +11,15 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
+import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
+import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
 import com.zimplifica.redipuntos.ui.adapters.SliderAdapter
+import com.zimplifica.redipuntos.viewModels.WalkThroughViewModel
 
-class WalkThrough : AppCompatActivity() {
+
+@RequiresActivityViewModel(WalkThroughViewModel.ViewModel::class)
+class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
     lateinit var mDots: Array<TextView>
     lateinit var mSlideViewPager: ViewPager
     lateinit var mDotLayout: LinearLayout
@@ -22,9 +30,16 @@ class WalkThrough : AppCompatActivity() {
     lateinit var closeBtn : Button
     lateinit var sliderAdapter: SliderAdapter
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_walkthrough)
+        val flag = SharedPreferencesUtils().getBooleanInSp(this, "walkthrough")
+        if(flag){
+            val intent = Intent(this,MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         //Buttons
         mNextBtn = findViewById(R.id.nextBtn)
@@ -38,12 +53,33 @@ class WalkThrough : AppCompatActivity() {
         addDotsIndicator(0)
         mSlideViewPager.addOnPageChangeListener(viewListener)
 
+        /*
         mNextBtn.setOnClickListener {
             mSlideViewPager.currentItem = mcurrentPage +1
         }
         mBackBtn.setOnClickListener {
             mSlideViewPager.currentItem = mcurrentPage -1
-        }
+        }*/
+        closeBtn.setOnClickListener { this.viewModel.inputs.skipButtonClicked() }
+        mFinishBtn.setOnClickListener { this.viewModel.inputs.skipButtonClicked() }
+        mNextBtn.setOnClickListener { this.viewModel.inputs.nextButtonClicked() }
+        mBackBtn.setOnClickListener { this.viewModel.inputs.backButtonClicked() }
+
+        this.viewModel.outputs.startBackActivity()
+            .subscribe { mSlideViewPager.currentItem = mcurrentPage -1 }
+        this.viewModel.outputs.startNextActivity()
+            .subscribe { mSlideViewPager.currentItem = mcurrentPage +1 }
+
+        this.viewModel.outputs.startMainActivity()
+            .subscribe { navigate() }
+
+    }
+
+    private fun navigate(){
+        SharedPreferencesUtils().saveBooleanInSp(this,"walkthrough", true)
+        val intent = Intent(this,MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     fun addDotsIndicator(position: Int){
@@ -53,12 +89,15 @@ class WalkThrough : AppCompatActivity() {
         while (i<mDots.size){
             mDots[i].text = Html.fromHtml("&#8226;")
             mDots[i].textSize = 35F
-            mDots[i].setTextColor(resources.getColor(R.color.colorAccent))
+            mDots[i].setTextColor(resources.getColor(android.R.color.white))
+            val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+            params.setMargins(10, 0, 10, 0)
+            mDots[i].layoutParams = params
             mDotLayout.addView(mDots[i])
             i++
         }
         if (mDots.isNotEmpty()){
-            mDots[position].setTextColor(resources.getColor(android.R.color.white))
+            mDots[position].setTextColor(resources.getColor(R.color.colorAccent))
         }
     }
 
