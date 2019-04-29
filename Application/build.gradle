@@ -56,4 +56,7 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
     implementation 'androidx.multidex:multidex:2.0.1'
+
+    //Lottie
+    //implementation 'com.airbnb.android:lottie:3.0.1'
 }
