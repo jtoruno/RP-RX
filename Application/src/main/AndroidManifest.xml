@@ -40,7 +40,6 @@
         </activity>
         <activity
                 android:name=".ui.activities.PasswordActivity"
-                android:parentActivityName=".ui.activities.TakePhoneActivity"
                 android:screenOrientation="portrait">
         </activity>
         <activity

@@ -53,6 +53,7 @@
                   android:layout_height="wrap_content"/>
 
         <EditText android:layout_width="0dp"
+                  android:id="@+id/phone_edit_text"
                   android:paddingStart="10dp"
                   android:maxLength="8"
                   android:paddingTop="10dp"
@@ -67,6 +68,7 @@
 
     </LinearLayout>
     <Button
+            android:enabled="false"
             android:textAllCaps="false"
             android:background="@drawable/btn_state"
             android:text="Siguiente"

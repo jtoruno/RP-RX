@@ -2,8 +2,10 @@ package com.zimplifica.redipuntos.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import com.zimplifica.redipuntos.R
@@ -50,5 +52,21 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar_help_menu, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId == R.id.help_action){
+            this.showDialog("Ayuda","Ingrese su usuario (número de teléfono o correo electrónico) y contraseña")
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showDialog(title : String, message : String){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("Cerrar",null)
+        val dialog = builder.create()
+        dialog.show()
     }
 }
