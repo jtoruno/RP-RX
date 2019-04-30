@@ -66,7 +66,6 @@ dependencies {
     //Percent
     implementation 'com.android.support:percent:28.0.0'
 
-
     //Test
     testImplementation "org.robolectric:robolectric:$robolectric_version"
 }

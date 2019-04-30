@@ -4,8 +4,6 @@ import android.content.Context
 import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.annotations.NonNull
 import org.junit.runner.RunWith
-import org.junit.After
-import io.reactivex.subscribers.TestSubscriber
 import org.junit.Before
 import junit.framework.TestCase
 import org.robolectric.annotation.Config

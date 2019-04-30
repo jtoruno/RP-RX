@@ -1,27 +1,47 @@
 package com.zimplifica.redipuntos.ui.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
+import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
+import com.zimplifica.redipuntos.viewModels.MainViewModel
 
-class MainActivity : AppCompatActivity() {
+@RequiresActivityViewModel(MainViewModel.ViewModel::class)
+class MainActivity : BaseActivity<MainViewModel.ViewModel>() {
 
     lateinit var singInBtn : Button
     lateinit var signUpBtn : Button
+    lateinit var helpBtn : ImageButton
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         singInBtn = findViewById(R.id.sign_in_btn)
         singInBtn.setOnClickListener {
-            val intent = Intent(this, SignInActivity::class.java)
-            startActivity(intent)
+            this.viewModel.inputs.signInButtonClicked()
         }
         signUpBtn = findViewById(R.id.sign_up_btn)
         signUpBtn.setOnClickListener {
+            this.viewModel.inputs.signUpButtonClicked()
+        }
+        helpBtn = findViewById(R.id.imageButton)
+        helpBtn.setOnClickListener { this.viewModel.inputs.helpButtonClicked() }
+
+        this.viewModel.outputs.startSignUpActivity().subscribe {
             val intent = Intent(this, TakePhoneActivity::class.java)
+            startActivity(intent)
+        }
+        this.viewModel.outputs.startSignInActivity().subscribe {
+            val intent = Intent(this, SignInActivity::class.java)
+            startActivity(intent)
+        }
+        this.viewModel.outputs.startHelpActivity().subscribe{
+            val intent = Intent(this, HelpActivity::class.java)
             startActivity(intent)
         }
     }
