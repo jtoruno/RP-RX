@@ -1,11 +1,16 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.support.annotation.NonNull
+import com.zimplifica.domain.entities.Result
+import com.zimplifica.domain.entities.SignUpError
+import com.zimplifica.domain.entities.SignUpResult
+import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import java.util.*
 import java.util.regex.Pattern
 
 interface PasswordViewModel {
@@ -13,6 +18,7 @@ interface PasswordViewModel {
         fun password(password : String)
         fun termsAndConditionsButtonPressed()
         fun privacyPolicyButtonPressed()
+        fun signUpButtonPressed()
 
     }
     interface Outputs {
@@ -27,6 +33,8 @@ interface PasswordViewModel {
     }
 
     class ViewModel(@NonNull val environment: Environment):ActivityViewModel<PasswordViewModel>(environment),Inputs,Outputs{
+
+
         val inputs : Inputs = this
         val outputs : Outputs = this
 
@@ -36,6 +44,7 @@ interface PasswordViewModel {
         private val passwordEditTextChanged = PublishSubject.create<String>()
         private val termsButtonPressed = PublishSubject.create<Unit>()
         private val privacyButtonPressed = PublishSubject.create<Unit>()
+        private val signUpButtonPressed = PublishSubject.create<Unit>()
 
         //Outputs
         private val startTermsActivity : Observable<Unit>
@@ -69,10 +78,16 @@ interface PasswordViewModel {
                 .map { validatePasswordSpecialCharacters(it)}
                 .subscribe(this.validPasswordSpecialCharacters)
 
-            //val signUpEvent = passwordEditTextChanged
+            val signUpEvent =passwordEditTextChanged
+                .takeWhen(this.signUpButtonPressed)
+                .switchMap{it -> this.submit(UUID.randomUUID().toString(),"+50689626004",it.second)}
+
+
+
 
         }
 
+        override fun signUpButtonPressed() = this.signUpButtonPressed.onNext(Unit)
 
         override fun password(password: String) = this.passwordEditTextChanged.onNext(password)
 
@@ -95,6 +110,10 @@ interface PasswordViewModel {
         override fun validPasswordSpecialCharacters(): Observable<Boolean> = this.validPasswordSpecialCharacters
 
 
+        private fun submit(uuid: String,username : String, password: String) : Observable<Result<SignUpResult,SignUpError>> {
+            return this.authUseCase.signUp(uuid, username, password)
+
+        }
         private fun validatePasswordLenght(password : String) : Boolean{
             val minPasswordLenght = 8
             val maxPasswordLenght = 20
