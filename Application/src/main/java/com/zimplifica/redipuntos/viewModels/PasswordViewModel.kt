@@ -30,6 +30,8 @@ interface PasswordViewModel {
         val inputs : Inputs = this
         val outputs : Outputs = this
 
+        val authUseCase = environment.authenticationUseCase()
+
         //Inputs
         private val passwordEditTextChanged = PublishSubject.create<String>()
         private val termsButtonPressed = PublishSubject.create<Unit>()
@@ -66,6 +68,9 @@ interface PasswordViewModel {
             passwordEditTextChanged
                 .map { validatePasswordSpecialCharacters(it)}
                 .subscribe(this.validPasswordSpecialCharacters)
+
+            //val signUpEvent = passwordEditTextChanged
+
         }
 
 

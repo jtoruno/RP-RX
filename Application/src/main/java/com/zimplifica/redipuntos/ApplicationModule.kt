@@ -3,6 +3,11 @@ package com.zimplifica.redipuntos
 import android.app.Application
 import android.content.Context
 import android.support.annotation.NonNull
+
+import com.zimplifica.awsplatform.useCases.UseCaseProvider
+import com.zimplifica.domain.useCases.AuthenticationUseCase
+
+
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -16,11 +21,13 @@ class ApplicationModule(@NonNull application: Application) {
     @Provides
     @Singleton
     fun provideEnvironment(
-        webEndpoint: String
+        @NonNull webEndpoint: String,
+        @NonNull authenticationUseCase: AuthenticationUseCase
     ): Environment {
 
         return Environment.builder()
             .webEndpoint(webEndpoint)
+            .authenticationUseCase(authenticationUseCase)
             .build()
     }
 
@@ -30,6 +37,15 @@ class ApplicationModule(@NonNull application: Application) {
     fun provideWebEndPoint(): String {
         return "EndPointString"
     }
+
+    @Provides
+    @Singleton
+    fun provideAuthenticationUseCase() : AuthenticationUseCase {
+        val awsProvider =  UseCaseProvider(application.applicationContext)
+        return awsProvider.makeAuthenticationUseCase()
+    }
+
+
     /*
     @Provides
     @Singleton

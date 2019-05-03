@@ -23,6 +23,7 @@ import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.PasswordViewModel
+import java.util.*
 
 @RequiresActivityViewModel(PasswordViewModel.ViewModel::class)
 class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
@@ -110,6 +111,12 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         }
         this.viewModel.outputs.validPasswordLenght().subscribe {
             this.passOption(img4,it)
+        }
+
+        createAccountBtn.setOnClickListener {
+            val uudi = UUID.randomUUID().toString()
+            //UseCaseProvider(this).makeAuthenticationUseCase().signUp(uudi,"+50689626004","123Zimple_")
+
         }
 
     }

@@ -6,7 +6,7 @@ import android.os.Parcelable
 import auto.parcel.AutoParcel
 import io.reactivex.annotations.NonNull
 import io.reactivex.annotations.Nullable
-/*
+
 @AutoParcel
 abstract class ActivityResult : Parcelable {
 
@@ -23,9 +23,9 @@ abstract class ActivityResult : Parcelable {
 
     @AutoParcel.Builder
     abstract class Builder {
-        abstract fun requestCode(__: Int): Builder
-        abstract fun resultCode(__: Int): Builder
-        abstract fun intent(__: Intent): Builder
+        abstract fun requestCode(code: Int): Builder
+        abstract fun resultCode(code: Int): Builder
+        abstract fun intent(code: Intent): Builder
         abstract fun build(): ActivityResult
     }
 
@@ -50,4 +50,4 @@ abstract class ActivityResult : Parcelable {
             return AutoParcel_ActivityResult.Builder()
         }
     }
-}*/
+}

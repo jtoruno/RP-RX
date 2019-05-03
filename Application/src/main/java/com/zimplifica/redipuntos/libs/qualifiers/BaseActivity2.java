@@ -2,27 +2,38 @@ package com.zimplifica.redipuntos.libs.qualifiers;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.AnimRes;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import com.trello.rxlifecycle.ActivityEvent;
+import com.trello.rxlifecycle.RxLifecycle;
+import com.trello.rxlifecycle.components.ActivityLifecycleProvider;
 import com.zimplifica.redipuntos.libs.ActivityViewModel;
 import com.zimplifica.redipuntos.libs.ActivityViewModelManager;
 import com.zimplifica.redipuntos.libs.utils.BundleUtils;
+import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
+import rx.subscriptions.CompositeSubscription;
 
-public abstract class BaseActivity<ViewModelType extends ActivityViewModel> extends AppCompatActivity {
+
+public abstract class BaseActivity2<ViewModelType extends ActivityViewModel> extends AppCompatActivity implements ActivityLifecycleProvider {
     protected ViewModelType viewModel;
     private static final String VIEW_MODEL_KEY = "viewModel";
+    private final PublishSubject<Void> back = PublishSubject.create();
+    private final BehaviorSubject<ActivityEvent> lifecycle = BehaviorSubject.create();
+    private final CompositeSubscription subscriptions = new CompositeSubscription();
 
-    public ViewModelType viewModel() {
-        return this.viewModel;
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assignViewModel(savedInstanceState);
+
+        this.lifecycle.onNext(ActivityEvent.CREATE);
     }
 
     @Override
@@ -54,5 +65,3 @@ public abstract class BaseActivity<ViewModelType extends ActivityViewModel> exte
         }
     }
 }
-
-

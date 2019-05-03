@@ -22,10 +22,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 }
 
 final auto_parcel_version = "0.3.1"
 final dagger_version = "2.11"
+final rx_lifecycle_version = "0.3.0"
 
 //Test
 final robolectric_version = "3.8"
@@ -66,6 +71,10 @@ dependencies {
     //Percent
     implementation 'com.android.support:percent:28.0.0'
 
-    //Test
+    //Tes
     testImplementation "org.robolectric:robolectric:$robolectric_version"
+
+    //LifeCycle
+    implementation "com.trello:rxlifecycle:$rx_lifecycle_version"
+    implementation "com.trello:rxlifecycle-components:$rx_lifecycle_version"
 }
