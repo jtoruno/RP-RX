@@ -1,10 +1,67 @@
 package com.zimplifica.awsplatform.Utils
 
+import com.zimplifica.domain.entities.SignInError
 import com.zimplifica.domain.entities.SignUpError
 import java.lang.Exception
 
 class AWSErrorDecoder{
     companion object {
+
+        fun decodeSignInError(error: Exception?) : SignInError{
+            var signInError : SignInError = SignInError.unknown
+            (error as? AWSMobileClientError)?.let {
+                when(it){
+                    AWSMobileClientError.invalidPassword(it.message!!) -> signInError= SignInError.invalidCredentials
+                    AWSMobileClientError.userNotFound(it.message!!) -> signInError=SignInError.invalidCredentials
+                    AWSMobileClientError.userNotConfirmed(it.message!!) -> signInError=SignInError.userNotConfirmed
+                    AWSMobileClientError.tooManyFailedAttempts(it.message!!) -> signInError=SignInError.tooManyFailedAttempts
+
+                    AWSMobileClientError.aliasExists(it.message!!),
+                    AWSMobileClientError.codeDeliveryFailure(it.message!!),
+                    AWSMobileClientError.codeMismatch(it.message!!),
+                    AWSMobileClientError.expiredCode(it.message!!),
+                    AWSMobileClientError.groupExists(it.message!!),
+                    AWSMobileClientError.internalError(it.message!!),
+                    AWSMobileClientError.invalidLambdaResponse(it.message!!),
+                    AWSMobileClientError.invalidOAuthFlow(it.message!!),
+                    AWSMobileClientError.invalidParameter(it.message!!),
+                    AWSMobileClientError.invalidUserPoolConfiguration(it.message!!),
+                    AWSMobileClientError.limitExceeded(it.message!!),
+                    AWSMobileClientError.mfaMethodNotFound(it.message!!),
+                    AWSMobileClientError.notAuthorized(it.message!!),
+                    AWSMobileClientError.passwordResetRequired(it.message!!),
+                    AWSMobileClientError.resourceNotFound(it.message!!),
+                    AWSMobileClientError.scopeDoesNotExist(it.message!!),
+                    AWSMobileClientError.softwareTokenMFANotFound(it.message!!),
+                    AWSMobileClientError.tooManyRequests(it.message!!),
+                    AWSMobileClientError.unexpectedLambda(it.message!!),
+                    AWSMobileClientError.userLambdaValidation(it.message!!),
+                    AWSMobileClientError.usernameExists(it.message!!),
+                    AWSMobileClientError.unknown(it.message!!),
+                    AWSMobileClientError.notSignedIn(it.message!!),
+                    AWSMobileClientError.identityIdUnavailable(it.message!!),
+                    AWSMobileClientError.guestAccessNotAllowed(it.message!!),
+                    AWSMobileClientError.federationProviderExists(it.message!!),
+                    AWSMobileClientError.cognitoIdentityPoolNotConfigured(it.message!!),
+                    AWSMobileClientError.unableToSignIn(it.message!!),
+                    AWSMobileClientError.invalidState(it.message!!),
+                    AWSMobileClientError.userPoolNotConfigured(it.message!!),
+                    AWSMobileClientError.userCancelledSignIn(it.message!!),
+                    AWSMobileClientError.badRequest(it.message!!),
+                    AWSMobileClientError.expiredRefreshToken(it.message!!),
+                    AWSMobileClientError.errorLoadingPage(it.message!!),
+                    AWSMobileClientError.securityFailed(it.message!!),
+                    AWSMobileClientError.idTokenNotIssued(it.message!!),
+                    AWSMobileClientError.idTokenAndAcceessTokenNotIssued(it.message!!),
+                    AWSMobileClientError.invalidConfiguration(it.message!!),
+                    AWSMobileClientError.deviceNotRemembered(it.message!!) -> signInError = SignInError.internalError(it.message!!)
+
+                }
+            } ?: run {
+                signInError = SignInError.unknown
+            }
+            return signInError
+        }
 
         fun decodeSignUpError(error : Exception?) : SignUpError{
             var signUpError : SignUpError = SignUpError.unknown

@@ -1,7 +1,9 @@
 package com.zimplifica.domain.entities
 
+import java.lang.Exception
 
-sealed class SignUpError : Error() {
+
+sealed class SignUpError : Exception() {
     object aliasExists : SignUpError()
     object codeDeliveryFailure : SignUpError()
     object codeMismatch: SignUpError()

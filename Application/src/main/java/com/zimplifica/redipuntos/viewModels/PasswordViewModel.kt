@@ -1,7 +1,6 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.support.annotation.NonNull
-import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.SignUpError
 import com.zimplifica.domain.entities.SignUpResult
 import com.zimplifica.redipuntos.extensions.takeWhen
@@ -78,11 +77,12 @@ interface PasswordViewModel {
                 .map { validatePasswordSpecialCharacters(it)}
                 .subscribe(this.validPasswordSpecialCharacters)
 
+            /*
             val signUpEvent =passwordEditTextChanged
                 .takeWhen(this.signUpButtonPressed)
                 .switchMap{it -> this.submit(UUID.randomUUID().toString(),"+50689626004",it.second)}
 
-
+            */
 
 
         }
@@ -110,7 +110,7 @@ interface PasswordViewModel {
         override fun validPasswordSpecialCharacters(): Observable<Boolean> = this.validPasswordSpecialCharacters
 
 
-        private fun submit(uuid: String,username : String, password: String) : Observable<Result<SignUpResult,SignUpError>> {
+        private fun submit(uuid: String,username : String, password: String) : Observable<Result<SignUpResult>> {
             return this.authUseCase.signUp(uuid, username, password)
 
         }
