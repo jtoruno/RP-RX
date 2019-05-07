@@ -1,9 +1,11 @@
 package com.zimplifica.awsplatform.useCases
 
 import android.util.Log
+import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.zimplifica.awsplatform.Utils.AWSErrorDecoder
+import com.zimplifica.awsplatform.Utils.ErrorMappingHelper
 import com.zimplifica.domain.entities.*
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.useCases.AuthenticationUseCase
@@ -30,8 +32,15 @@ class AuthenticationUseCase : AuthenticationUseCase {
 
                     override fun onError(e: Exception?) {
                         Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase,SignIn Error:", e)
-                        val error = AWSErrorDecoder.decodeSignInError(e)
-                        single.onSuccess(Result.failure(error))
+                        //val error = AWSErrorDecoder.decodeSignInError(e)
+                        val castedError = (e as? AmazonServiceException)?.let {
+                            val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                            return@let AWSErrorDecoder.decodeSignInError(casted)
+                        } ?: kotlin.run {
+                            return@run AWSErrorDecoder.decodeSignInError(e)
+                        }
+
+                        single.onSuccess(Result.failure(castedError))
                     }
                 })
         }
@@ -59,10 +68,15 @@ class AuthenticationUseCase : AuthenticationUseCase {
                 }
 
                 override fun onError(e: Exception?) {
-                    //Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase,SignUp Error:", e)
-                    Log.e("Error", "Platform, AuthenticationUseCase,SignUp Error:", e)
-                    val error = AWSErrorDecoder.decodeSignUpError(e)
-                    single.onSuccess(Result.failure(error))
+                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase,SignUp Error:", e)
+                    //val error = AWSErrorDecoder.decodeSignUpError(e)
+                    val castedError = (e as? AmazonServiceException)?.let {
+                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                        return@let AWSErrorDecoder.decodeSignUpError(casted)
+                    } ?: kotlin.run {
+                        return@run AWSErrorDecoder.decodeSignUpError(e)
+                    }
+                    single.onSuccess(Result.failure(castedError))
                 }
 
             })

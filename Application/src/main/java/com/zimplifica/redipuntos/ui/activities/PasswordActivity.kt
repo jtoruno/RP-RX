@@ -11,18 +11,17 @@ import android.text.Spanned
 import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.PasswordViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import java.util.*
 
 @RequiresActivityViewModel(PasswordViewModel.ViewModel::class)
@@ -35,6 +34,9 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
     lateinit var img2 : ImageView
     lateinit var img3 : ImageView
     lateinit var img4 : ImageView
+    lateinit var progressBar: ProgressBar
+    private var phone = ""
+
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,8 +51,12 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         img2 = findViewById(R.id.imageView20)
         img3 = findViewById(R.id.imageView21)
         img4 = findViewById(R.id.imageView22)
+        progressBar = findViewById(R.id.progressBar2)
+        progressBar.visibility = View.GONE
+        phone = this.intent.getStringExtra("phone")?:""
 
-
+        Log.e("Phone",phone)
+        this.viewModel.inputs.username(phone)
         passwordEditText.onChange { this.viewModel.inputs.password(it) }
 
         /////////////////////////////
@@ -114,11 +120,30 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         }
 
         createAccountBtn.setOnClickListener {
-            val uudi = UUID.randomUUID().toString()
-            //UseCaseProvider(this).makeAuthenticationUseCase().signUp(uudi,"+50689626004","123Zimple_")
-
+            this.viewModel.inputs.signUpButtonPressed()
         }
+        this.viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (it){
+                    createAccountBtn.isEnabled = false
+                    progressBar.visibility = View.VISIBLE
+                }else{
+                    createAccountBtn.isEnabled = true
+                    progressBar.visibility = View.GONE
+                }
+            }
+        this.viewModel.outputs.showError()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                showDialog("Lo sentimos",it.friendlyMessage)
+            }
 
+        this.viewModel.outputs.signedUpAction()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(this,SignUpVerifyActivity::class.java)
+                startActivity(intent)
+            }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

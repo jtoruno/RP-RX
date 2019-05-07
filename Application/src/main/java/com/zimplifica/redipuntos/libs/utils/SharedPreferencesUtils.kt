@@ -3,7 +3,7 @@ package com.zimplifica.redipuntos.libs.utils
 import android.app.Activity
 import android.content.Context
 
-class SharedPreferencesUtils {
+object SharedPreferencesUtils {
     fun saveStringInSp(ctx: Context, key: String, value: String) {
         val editor = ctx.getSharedPreferences("SP", Activity.MODE_PRIVATE).edit()
         editor.putString(key, value)

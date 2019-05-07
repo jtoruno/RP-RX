@@ -34,7 +34,7 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_walkthrough)
-        val flag = SharedPreferencesUtils().getBooleanInSp(this, "walkthrough")
+        val flag = SharedPreferencesUtils.getBooleanInSp(this, "walkthrough")
         if(flag){
             val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
@@ -76,7 +76,7 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
     }
 
     private fun navigate(){
-        SharedPreferencesUtils().saveBooleanInSp(this,"walkthrough", true)
+        SharedPreferencesUtils.saveBooleanInSp(this,"walkthrough", true)
         val intent = Intent(this,MainActivity::class.java)
         startActivity(intent)
         finish()

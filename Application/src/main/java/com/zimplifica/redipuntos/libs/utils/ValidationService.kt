@@ -51,4 +51,12 @@ object ValidationService {
         }
         return isValid
     }
+
+    fun normalizePhoneNumber(phoneNumber : String) : String?{
+        if(isNumberWithExtension(phoneNumber)){
+            return phoneNumber
+        }else if (isNumberWithoutExtension(phoneNumber)){
+            return "+506$phoneNumber"
+        } else {return null}
+    }
 }

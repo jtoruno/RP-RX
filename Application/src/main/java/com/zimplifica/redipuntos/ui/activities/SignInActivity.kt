@@ -1,13 +1,17 @@
 package com.zimplifica.redipuntos.ui.activities
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
+import com.jakewharton.rxbinding2.view.visibility
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
@@ -21,7 +25,9 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
     lateinit var signInBtn : Button
     lateinit var userEditText: EditText
     lateinit var passEditText: EditText
+    lateinit var progressBar : ProgressBar
 
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
@@ -29,19 +35,35 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
         signInBtn = findViewById(R.id.sign_in_btn_screen)
         userEditText = findViewById(R.id.user_edit_text_sign_in)
         passEditText = findViewById(R.id.pass_edit_text_sign_in)
+        progressBar = findViewById(R.id.progressBar)
+        progressBar.visibility = View.GONE
         //vm = SignInViewModel.ViewModel()
         userEditText.onChange { this.viewModel.inputs.username(it) }
         passEditText.onChange { this.viewModel.inputs.password(it) }
         //vm.outputs.signInButtonIsEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe{setBtnEnabled(it)}
         this.viewModel.outputs.signInButtonIsEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe { setBtnEnabled(it) }
 
-        signInBtn.setOnClickListener {
-            val intent = Intent(this, PasswordActivity::class.java)
-            startActivity(intent)
-        }
+        signInBtn.setOnClickListener {this.viewModel.inputs.signInButtonPressed()}
         this.viewModel.outputs.print().subscribe {
             Log.e("PBA",it)
         }
+        this.viewModel.outputs.loadingEnabled()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+            if (it){
+                signInBtn.isEnabled = false
+                progressBar.visibility = View.VISIBLE
+            }else{
+                signInBtn.isEnabled = true
+                progressBar.visibility = View.GONE
+            }
+        }
+        this.viewModel.outputs.showError().subscribe {
+            Log.e("Error Message Activity"+it.friendlyMessage, it.friendlyMessage)
+            val intent = Intent(this, SignInFailureActivity::class.java)
+            startActivity(intent)
+        }
+
 
     }
 

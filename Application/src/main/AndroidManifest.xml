@@ -12,11 +12,19 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.PrivacyActivity"
+        <activity android:name=".ui.activities.SignUpVerifyActivity"
                   android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.TermsActivity"
+        <activity android:name=".ui.activities.SignInFailureActivity"
                   android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".ui.activities.PrivacyActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".ui.activities.TermsActivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.HelpActivity"

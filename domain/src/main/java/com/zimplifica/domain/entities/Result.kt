@@ -27,4 +27,9 @@ sealed class Result<out T : Any> {
         is success -> false
         is failure -> true
     }
+
+    fun successValue(): T? = when(this){
+        is success -> value
+        is failure -> null
+    }
 }

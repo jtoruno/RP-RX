@@ -1,5 +1,7 @@
 package com.zimplifica.awsplatform.Utils
 
+import android.util.Log
+import com.amazonaws.AmazonServiceException
 import com.zimplifica.domain.entities.SignInError
 import com.zimplifica.domain.entities.SignUpError
 import java.lang.Exception
@@ -8,6 +10,7 @@ class AWSErrorDecoder{
     companion object {
 
         fun decodeSignInError(error: Exception?) : SignInError{
+            Log.e("Error decoder", "SignIn",error)
             var signInError : SignInError = SignInError.unknown
             (error as? AWSMobileClientError)?.let {
                 when(it){

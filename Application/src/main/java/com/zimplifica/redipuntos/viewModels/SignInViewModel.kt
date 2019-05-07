@@ -50,7 +50,7 @@ interface SignInViewModel {
         //Outputs
         private val signInButtonIsEnabled = BehaviorSubject.create<Boolean>()
         private val loadingEnabled = BehaviorSubject.create<Boolean>()
-        private val showError = PublishSubject.create<ErrorWrapper>()
+        private val showError = BehaviorSubject.create<ErrorWrapper>()
         private val showConfirmationAlert = PublishSubject.create<Unit>()
         private val signedInAction = PublishSubject.create<Unit>()
 
@@ -75,43 +75,17 @@ interface SignInViewModel {
                 }
                 .share()
 
-
-//            signInEvent.subscribe(object: Observer<Result<SignInResult>>{
-//                override fun onComplete() {
-//
-//                }
-//
-//                override fun onSubscribe(d: Disposable) {
-//                }
-//
-//                override fun onNext(t: Result<SignInResult>) {
-//                    print("\n Is Failure"+t.isFailure)
-//                }
-//
-//                override fun onError(e: Throwable) {
-//
-//                }
-//
-//            })
-
             signInEvent
                 .filter { it.isFail() }
                 .map { it ->
                     when(it){
                         is Result.success -> return@map null
-                        is Result.failure -> return@map it.cause as SignInError?
+                        is Result.failure -> return@map it.cause as? SignInError
                     }
                 }
+                .filter { it!=null }
                 .map {ErrorHandler.handleError(it , AuthenticationErrorType.SIGN_IN_ERROR)}
                 .subscribe(this.showError)
-                    /*
-                //.filter {it.exceptionOrNull() != null}
-                .map {
-                    return@map it.exceptionOrNull()
-                }
-                .map {ErrorHandler.handleError(it as Exception, AuthenticationErrorType.SIGN_IN_ERROR)}
-                .subscribe(this.showError)
-                */
 
             showError
                 .filter { it ->
@@ -125,17 +99,22 @@ interface SignInViewModel {
                 .map{ it -> Unit}
                 .subscribe(this.showConfirmationAlert)
 
+
            signInEvent
                .filter { !it.isFail() }
+                   /*
                 .map { it ->
                     when(it){
-                        is Result.success -> return@map it.value
+                        is Result.success -> return@map it.value as SignInResult
                         is Result.failure -> return@map null
                     }
-                }
-               .filter { it!= null }
-                .map { it -> Unit }
-                .subscribe(this.signedInAction)
+                }*/
+               .map {it ->
+                   return@map it.successValue()
+               }
+               .filter { it!=null}
+               .map { it -> Unit }
+               .subscribe(this.signedInAction)
 
 
 

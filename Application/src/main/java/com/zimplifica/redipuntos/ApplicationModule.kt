@@ -2,6 +2,7 @@ package com.zimplifica.redipuntos
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.support.annotation.NonNull
 
 import com.zimplifica.awsplatform.useCases.UseCaseProvider
@@ -12,6 +13,9 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 import com.zimplifica.redipuntos.libs.Environment
+import android.preference.PreferenceManager
+
+
 
 
 @Module
@@ -22,12 +26,14 @@ class ApplicationModule(@NonNull application: Application) {
     @Singleton
     fun provideEnvironment(
         @NonNull webEndpoint: String,
-        @NonNull authenticationUseCase: AuthenticationUseCase
+        @NonNull authenticationUseCase: AuthenticationUseCase,
+        @NonNull sharedPreferences: SharedPreferences
     ): Environment {
 
         return Environment.builder()
             .webEndpoint(webEndpoint)
             .authenticationUseCase(authenticationUseCase)
+            .sharedPreferences(sharedPreferences)
             .build()
     }
 
@@ -45,6 +51,11 @@ class ApplicationModule(@NonNull application: Application) {
         return awsProvider.makeAuthenticationUseCase()
     }
 
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(this.application)
+    }
 
     /*
     @Provides
