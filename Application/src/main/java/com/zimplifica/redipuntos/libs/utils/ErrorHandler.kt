@@ -16,15 +16,17 @@ data class ErrorWrapper(var error : Exception, var friendlyMessage: String)
 
 object ErrorHandler {
     fun handleError(error: Exception, authenticationErrorType: AuthenticationErrorType) : ErrorWrapper {
+        print("In handle error")
+        Log.e("Error handler","",error)
         var errorMessage = "Ocurrió un error"
         when(authenticationErrorType){
             AuthenticationErrorType.SIGN_IN_ERROR ->{
-                val signInError = error as SignInError
+                val signInError = error as? SignInError
                 when(signInError){
                     SignInError.invalidCredentials -> errorMessage = "Las credenciales son inválidas"
                     SignInError.userNotConfirmed -> errorMessage = "El usuario no está confirmado"
                     SignInError.tooManyFailedAttempts -> errorMessage = "Has excedido el número de intentos, por favor intenta mas tarde"
-                    SignInError.internalError(signInError.message!!) -> {
+                    SignInError.internalError(signInError?.message!!) -> {
                         Log.e("🔴", "SignIn Error: ${signInError.message}")
                         errorMessage = "Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com"
                     }

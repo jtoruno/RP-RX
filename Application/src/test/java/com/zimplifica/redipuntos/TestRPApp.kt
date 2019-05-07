@@ -1,5 +1,5 @@
 package com.zimplifica.redipuntos
 
-//class TestRPApp : RPApplication(){}
+class TestRPApp : RPApplication()
 
 

@@ -11,6 +11,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.*
 import java.util.regex.Pattern
+import com.zimplifica.domain.entities.Result
 
 interface PasswordViewModel {
     interface Inputs {

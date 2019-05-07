@@ -2,6 +2,7 @@ package com.zimplifica.redipuntos
 
 import android.content.Context
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.mocks.AuthenticationUseCase
 import io.reactivex.annotations.NonNull
 import org.junit.runner.RunWith
 import org.junit.Before
@@ -12,9 +13,9 @@ import org.robolectric.RuntimeEnvironment
 
 
 @RunWith(RPGraddleTestRunner::class)
-@Config(manifest = Config.NONE, sdk = [RPGraddleTestRunner.DEFAULT_SDK],application = RPApplication::class)
+@Config(manifest = Config.NONE, sdk = [RPGraddleTestRunner.DEFAULT_SDK],application = TestRPApp::class)
 abstract class RPTestCase : TestCase(){
-    private var application : RPApplication? = null
+    private var application : TestRPApp? = null
     private var environment: Environment? = null
     @Before
     @Throws(Exception::class)
@@ -23,6 +24,7 @@ abstract class RPTestCase : TestCase(){
 
         this.environment = application()!!.component().environment().toBuilder()
             .webEndpoint("nnnnn")
+            .authenticationUseCase(AuthenticationUseCase())
             .build()
     }
 
@@ -32,7 +34,7 @@ abstract class RPTestCase : TestCase(){
             return this.application
         }
 
-        this.application = RuntimeEnvironment.application as RPApplication
+        this.application = RuntimeEnvironment.application as TestRPApp
         return this.application
     }
 

@@ -5,6 +5,7 @@ import com.zimplifica.domain.entities.SignUpConfirmationResult
 import com.zimplifica.domain.entities.SignUpResendConfirmationResult
 import com.zimplifica.domain.entities.SignUpResult
 import io.reactivex.Observable
+import com.zimplifica.domain.entities.Result
 
 interface AuthenticationUseCase {
     fun signIn(username: String,password: String) : Observable<Result<SignInResult>>

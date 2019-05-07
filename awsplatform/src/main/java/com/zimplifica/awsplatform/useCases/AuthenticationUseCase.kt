@@ -5,7 +5,7 @@ import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.zimplifica.awsplatform.Utils.AWSErrorDecoder
 import com.zimplifica.domain.entities.*
-//import com.zimplifica.domain.Entities.Result
+import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.useCases.AuthenticationUseCase
 import io.reactivex.Observable
 import io.reactivex.Single
