@@ -59,4 +59,9 @@ object ValidationService {
             return "+506$phoneNumber"
         } else {return null}
     }
+
+    fun validateVerificationCode(verificationCode: String) : Boolean{
+        val pattern = Pattern.compile("[0-9]{6}")
+        return pattern.matcher(verificationCode).matches()
+    }
 }

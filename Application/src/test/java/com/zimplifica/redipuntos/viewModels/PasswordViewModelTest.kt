@@ -24,6 +24,7 @@ class PasswordViewModelTest : RPTestCase() {
     val loadingEnabled = TestObserver<Boolean>()
 
     private fun setUpEnviroment(environment: Environment){
+
         this.vm = PasswordViewModel.ViewModel(environment)
         this.vm.outputs.signUpButtonEnabled().subscribe(this.signUpButtonEnabled)
         this.vm.outputs.startTermsActivity().subscribe(this.startTermsActivity)

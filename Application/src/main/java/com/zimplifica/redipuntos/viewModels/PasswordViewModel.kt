@@ -123,6 +123,7 @@ interface PasswordViewModel {
                     val normalizedPhoneNumber = ValidationService.normalizePhoneNumber(result.username)
                     environment.sharedPreferences().edit().putString("phoneNumber",normalizedPhoneNumber).apply()
                     environment.sharedPreferences().edit().putString("userId",uuid).apply()
+                    environment.sharedPreferences().edit().putString("password",result.password).apply()
                     return@map result
                 }
                 .filter { it!=null }

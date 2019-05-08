@@ -12,13 +12,14 @@ import com.zimplifica.redipuntos.R
 class SignUpVerifyActivity : AppCompatActivity() {
 
     private var userName = ""
-    private var userId = ""
+    private var password = ""
     lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up_verify)
         this.supportActionBar?.title = "Registrar"
+        password = this.intent.getStringExtra("password")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar = findViewById(R.id.progressBar3)

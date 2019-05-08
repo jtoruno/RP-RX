@@ -142,6 +142,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this,SignUpVerifyActivity::class.java)
+                intent.putExtra("password",it.password)
                 startActivity(intent)
             }
     }
