@@ -1,6 +1,8 @@
 package com.zimplifica.redipuntos
 
+import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.mocks.AuthenticationUseCase
 import io.reactivex.annotations.NonNull
@@ -24,6 +26,7 @@ abstract class RPTestCase : TestCase(){
 
         this.environment = application()!!.component().environment().toBuilder()
             .webEndpoint("nnnnn")
+            .sharedPreferences(sharedPref())
             .authenticationUseCase(AuthenticationUseCase())
             .build()
     }
@@ -36,6 +39,9 @@ abstract class RPTestCase : TestCase(){
 
         this.application = RuntimeEnvironment.application as TestRPApp
         return this.application
+    }
+    private fun sharedPref(): SharedPreferences{
+        return application!!.getSharedPreferences("SP",Activity.MODE_PRIVATE)
     }
 
     @NonNull

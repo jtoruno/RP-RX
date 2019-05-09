@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.support.annotation.NonNull
+import android.util.Log
 import com.zimplifica.domain.entities.SignUpError
 import com.zimplifica.domain.entities.SignUpResult
 import com.zimplifica.redipuntos.extensions.takeWhen
@@ -120,8 +121,9 @@ interface PasswordViewModel {
                         is Result.failure -> return@map null
                     }}
                 .map { result ->
-                    val normalizedPhoneNumber = ValidationService.normalizePhoneNumber(result.username)
-                    environment.sharedPreferences().edit().putString("phoneNumber",normalizedPhoneNumber).apply()
+                    //Log.e("Result", result.username + result.password)
+                    //val normalizedPhoneNumber = ValidationService.normalizePhoneNumber(result.username)
+                    environment.sharedPreferences().edit().putString("phoneNumber",result.username).apply()
                     environment.sharedPreferences().edit().putString("userId",uuid).apply()
                     environment.sharedPreferences().edit().putString("password",result.password).apply()
                     return@map result

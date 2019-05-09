@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
@@ -54,7 +55,8 @@ class ApplicationModule(@NonNull application: Application) {
     @Provides
     @Singleton
     fun provideSharedPreferences(): SharedPreferences {
-        return PreferenceManager.getDefaultSharedPreferences(this.application)
+        return application.getSharedPreferences("SP", Activity.MODE_PRIVATE)
+        //return PreferenceManager.getDefaultSharedPreferences(this.application)
     }
 
     /*

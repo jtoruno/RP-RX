@@ -33,9 +33,9 @@ interface SignUpVerifyViewModel {
         val inputs : Inputs = this
         val outputs : Outputs = this
 
-        private val username = environment.sharedPreferences().getString("phoneNumber","")
-        private val userId = environment.sharedPreferences().getString("userId", "")
-        private val password = environment.sharedPreferences().getString("userId", "")
+        var username : String = environment.sharedPreferences().getString("phoneNumber","")?:"default"
+        var userId : String = environment.sharedPreferences().getString("userId", "")?:"default"
+        var password : String = environment.sharedPreferences().getString("password", "")?:"default"
 
         //Inputs
 
@@ -53,9 +53,10 @@ interface SignUpVerifyViewModel {
 
 
         init {
-            verificationCodeTextChanged
+
+            val validCode = verificationCodeTextChanged
                 .map{ValidationService.validateVerificationCode(it)}
-                .subscribe(this.verificationButtonEnabled)
+            validCode.subscribe(this.verificationButtonEnabled)
 
             val verifyEvent = verificationCodeTextChanged
                 .takeWhen(this.verificationButtonPressed)
@@ -80,6 +81,7 @@ interface SignUpVerifyViewModel {
 
             Observable.merge(
                 verifyEvent
+                    .filter { it.isFail() }
                     .map { it ->
                         when(it){
                             is Result.success -> return@map null
@@ -88,6 +90,7 @@ interface SignUpVerifyViewModel {
                     .filter { it!= null }
                     .map { ErrorHandler.handleError(it , AuthenticationErrorType.SIGN_UP_ERROR) },
                 resendEvent
+                    .filter { it.isFail() }
                     .map { it ->
                         when(it){
                             is Result.success -> return@map null
@@ -146,7 +149,7 @@ interface SignUpVerifyViewModel {
             return this.username
         }
 
-        fun getUserId() : String {
+        fun getUserUUid() : String {
             return this.userId
         }
 

@@ -104,8 +104,14 @@ class AuthenticationUseCase : AuthenticationUseCase {
 
                 override fun onError(e: Exception?) {
                     Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase,ConfirmSignUp Error:", e)
-                    val error = AWSErrorDecoder.decodeSignUpError(e)
-                    single.onSuccess(Result.failure(error))
+                    //val error = AWSErrorDecoder.decodeSignUpError(e)
+                    val castedError = (e as? AmazonServiceException)?.let {
+                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                        return@let AWSErrorDecoder.decodeSignUpError(casted)
+                    } ?: kotlin.run {
+                        return@run AWSErrorDecoder.decodeSignUpError(e)
+                    }
+                    single.onSuccess(Result.failure(castedError))
                 }
             })
         }
@@ -132,8 +138,14 @@ class AuthenticationUseCase : AuthenticationUseCase {
 
                 override fun onError(e: Exception?) {
                     Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase,ResendVerificationCode Error:", e)
-                    val error = AWSErrorDecoder.decodeSignUpError(e)
-                    single.onSuccess(Result.failure(error))
+                    //val error = AWSErrorDecoder.decodeSignUpError(e)
+                    val castedError = (e as? AmazonServiceException)?.let {
+                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                        return@let AWSErrorDecoder.decodeSignUpError(casted)
+                    } ?: kotlin.run {
+                        return@run AWSErrorDecoder.decodeSignUpError(e)
+                    }
+                    single.onSuccess(Result.failure(castedError))
                 }
 
             })

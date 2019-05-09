@@ -21,7 +21,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
                 single.onNext(result)
                 single.onComplete()
             } else{
-                if(username == "+50688554433" && password == "123Zimplista_"){
+                if((username == "+50688554433" || username == "0a64b9c5-0f9e-4439-86af-4b7756e07ee7") && password == "123Zimplista_"){
                     val error = SignInError.userNotConfirmed
                     print(error)
                     single.onNext(Result.failure(error))
