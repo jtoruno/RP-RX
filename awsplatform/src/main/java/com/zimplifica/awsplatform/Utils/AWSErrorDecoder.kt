@@ -2,6 +2,7 @@ package com.zimplifica.awsplatform.Utils
 
 import android.util.Log
 import com.amazonaws.AmazonServiceException
+import com.zimplifica.domain.entities.ForgotPasswordError
 import com.zimplifica.domain.entities.SignInError
 import com.zimplifica.domain.entities.SignUpError
 import java.lang.Exception
@@ -119,6 +120,66 @@ class AWSErrorDecoder{
                 signUpError = SignUpError.unknown
             }
             return signUpError
+        }
+
+        fun decodeForgotPasswordError(error : Exception?) : ForgotPasswordError{
+            var forgotPasswordError: ForgotPasswordError = ForgotPasswordError.unknown
+            (error as? AWSMobileClientError)?.let {
+                when(it){
+                    AWSMobileClientError.userNotFound(it.message!!) -> forgotPasswordError = ForgotPasswordError.userNotFound
+                    AWSMobileClientError.limitExceeded(it.message!!) -> forgotPasswordError = ForgotPasswordError.limitExceeded
+
+                    AWSMobileClientError.invalidConfiguration(it.message!!),
+                    AWSMobileClientError.deviceNotRemembered(it.message!!) ,
+                    AWSMobileClientError.idTokenAndAcceessTokenNotIssued(it.message!!) ,
+                    AWSMobileClientError.idTokenNotIssued(it.message!!) ,
+                    AWSMobileClientError.securityFailed(it.message!!) ,
+                    AWSMobileClientError.errorLoadingPage(it.message!!) ,
+                    AWSMobileClientError.expiredRefreshToken(it.message!!) ,
+                    AWSMobileClientError.badRequest(it.message!!) ,
+                    AWSMobileClientError.unknown(it.message!!) ,
+                    AWSMobileClientError.notSignedIn(it.message!!) ,
+                    AWSMobileClientError.identityIdUnavailable(it.message!!) ,
+                    AWSMobileClientError.guestAccessNotAllowed(it.message!!) ,
+                    AWSMobileClientError.federationProviderExists(it.message!!) ,
+                    AWSMobileClientError.cognitoIdentityPoolNotConfigured(it.message!!) ,
+                    AWSMobileClientError.unableToSignIn(it.message!!) ,
+                    AWSMobileClientError.invalidState(it.message!!) ,
+                    AWSMobileClientError.userPoolNotConfigured(it.message!!),
+                    AWSMobileClientError.userCancelledSignIn(it.message!!) ,
+                    AWSMobileClientError.unexpectedLambda(it.message!!) ,
+                    AWSMobileClientError.userLambdaValidation(it.message!!) ,
+                    AWSMobileClientError.resourceNotFound(it.message!!) ,
+                    AWSMobileClientError.scopeDoesNotExist(it.message!!) ,
+                    AWSMobileClientError.softwareTokenMFANotFound(it.message!!) ,
+                    AWSMobileClientError.groupExists(it.message!!) ,
+                    AWSMobileClientError.internalError(it.message!!) ,
+                    AWSMobileClientError.invalidLambdaResponse(it.message!!) ,
+                    AWSMobileClientError.invalidOAuthFlow(it.message!!) ,
+                    AWSMobileClientError.invalidParameter(it.message!!) ,
+                    AWSMobileClientError.invalidPassword(it.message!!) ,
+                    AWSMobileClientError.invalidUserPoolConfiguration(it.message!!) ,
+                    AWSMobileClientError.aliasExists(it.message!!) ,
+                    AWSMobileClientError.mfaMethodNotFound(it.message!!) ,
+
+                    AWSMobileClientError.codeDeliveryFailure(it.message!!) ,
+                    AWSMobileClientError.codeMismatch(it.message!!),
+                    AWSMobileClientError.expiredCode(it.message!!) ,
+                    AWSMobileClientError.passwordResetRequired(it.message!!) ,
+                    AWSMobileClientError.tooManyFailedAttempts(it.message!!),
+                    AWSMobileClientError.tooManyRequests(it.message!!)  ,
+                    AWSMobileClientError.userNotConfirmed(it.message!!) ,
+                    AWSMobileClientError.usernameExists(it.message!!),
+
+                    AWSMobileClientError.notAuthorized(it.message!!) -> forgotPasswordError = ForgotPasswordError.internalError(it.message!!)
+
+
+                }
+
+            } ?: run {
+                forgotPasswordError = ForgotPasswordError.unknown
+            }
+            return forgotPasswordError
         }
     }
 }

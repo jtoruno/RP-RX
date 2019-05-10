@@ -64,4 +64,10 @@ object ValidationService {
         val pattern = Pattern.compile("[0-9]{6}")
         return pattern.matcher(verificationCode).matches()
     }
+
+    fun validateUsername(username: String) : Boolean{
+        if(username.isEmpty()){return false}
+        if(!isValidEmail(username) && !isNumberWithExtension(username) && !isNumberWithoutExtension(username)){return false}
+        return true
+    }
 }

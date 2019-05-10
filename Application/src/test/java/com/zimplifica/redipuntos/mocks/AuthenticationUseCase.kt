@@ -10,8 +10,10 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import java.lang.Exception
 import com.zimplifica.domain.entities.Result
+import kotlin.math.sin
 
 class AuthenticationUseCase : AuthenticationUseCase {
+
     override fun signIn(username: String, password: String): Observable<Result<SignInResult>> {
         print(username)
        return Observable.create { single ->
@@ -79,6 +81,39 @@ class AuthenticationUseCase : AuthenticationUseCase {
             }
             else{
                 val error = SignUpError.tooManyRequestsException
+                single.onSuccess(Result.failure(error))
+            }
+        }
+        return single.toObservable()
+    }
+
+
+    override fun forgotPassword(username: String): Observable<Result<ForgotPasswordResult>> {
+        val single = Single.create<Result<ForgotPasswordResult>> create@{ single ->
+            if(username == "+50688889999" || username == "zimple@zimplifica.com"){
+                val userCodeDeliveryDetails = UserCodeDeliveryDetails(UserCodeDeliveryMedium.sms,"+50688889999","phone_number")
+                val forgotPasswordResult = ForgotPasswordResult(ForgotPasswordState.confirmationCodeSent, userCodeDeliveryDetails)
+                single.onSuccess(Result.success(forgotPasswordResult))
+            }else{
+                val error = ForgotPasswordError.userNotFound
+                single.onSuccess(Result.failure(error))
+            }
+        }
+        return single.toObservable()
+    }
+
+    override fun confirmForgotPassword(
+        username: String,
+        confirmationCode: String,
+        newPassword: String
+    ): Observable<Result<ForgotPasswordResult>> {
+        val single = Single.create<Result<ForgotPasswordResult>> create@{ single ->
+            if(username == "+50688889999" && newPassword == "123Jose_"){
+                val userCodeDeliveryDetails = UserCodeDeliveryDetails(UserCodeDeliveryMedium.sms,"+50688889999","phone_number")
+                val forgotPasswordResult = ForgotPasswordResult(ForgotPasswordState.done, userCodeDeliveryDetails)
+                single.onSuccess(Result.success(forgotPasswordResult))
+            }else{
+                val error = ForgotPasswordError.userNotFound
                 single.onSuccess(Result.failure(error))
             }
         }

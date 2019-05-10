@@ -4,6 +4,7 @@ import android.util.Log
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
+import com.amazonaws.mobile.client.results.ForgotPasswordState
 import com.zimplifica.awsplatform.Utils.AWSErrorDecoder
 import com.zimplifica.awsplatform.Utils.ErrorMappingHelper
 import com.zimplifica.domain.entities.*
@@ -55,13 +56,13 @@ class AuthenticationUseCase : AuthenticationUseCase {
                     if (result!=null){
                         if(!result.confirmationState){
                             state = SignUpState.unconfirmed
-                            val result = SignUpResult(state,username,password)
-                            single.onSuccess(Result.success(result))
+                            val result1 = SignUpResult(state,username,password)
+                            single.onSuccess(Result.success(result1))
 
                         }else{
                             state = SignUpState.confirmed
-                            val result = SignUpResult(state,username,password)
-                            single.onSuccess(Result.success(result))
+                            val result1 = SignUpResult(state,username,password)
+                            single.onSuccess(Result.success(result1))
                         }
                     }
 
@@ -92,12 +93,12 @@ class AuthenticationUseCase : AuthenticationUseCase {
                     if (result!=null){
                         if (!result.confirmationState){
                             state = SignUpConfirmationState.unconfirmed
-                            val result = SignUpConfirmationResult(state)
-                            single.onSuccess(Result.success(result))
+                            val result1 = SignUpConfirmationResult(state)
+                            single.onSuccess(Result.success(result1))
                         }else{
                             state = SignUpConfirmationState.confirmed
-                            val result = SignUpConfirmationResult(state)
-                            single.onSuccess(Result.success(result))
+                            val result1 = SignUpConfirmationResult(state)
+                            single.onSuccess(Result.success(result1))
                         }
                     }
                 }
@@ -126,12 +127,12 @@ class AuthenticationUseCase : AuthenticationUseCase {
                     if(result!=null){
                         if(!result.confirmationState) {
                             state = SignUpResendConfirmationState.unconfirmed
-                            val result = SignUpResendConfirmationResult(state)
-                            single.onSuccess(Result.success(result))
+                            val result1 = SignUpResendConfirmationResult(state)
+                            single.onSuccess(Result.success(result1))
                         }else {
                             state = SignUpResendConfirmationState.confirmed
-                            val result = SignUpResendConfirmationResult(state)
-                            single.onSuccess(Result.success(result))
+                            val result1 = SignUpResendConfirmationResult(state)
+                            single.onSuccess(Result.success(result1))
                         }
                     }
                 }
@@ -144,6 +145,82 @@ class AuthenticationUseCase : AuthenticationUseCase {
                         return@let AWSErrorDecoder.decodeSignUpError(casted)
                     } ?: kotlin.run {
                         return@run AWSErrorDecoder.decodeSignUpError(e)
+                    }
+                    single.onSuccess(Result.failure(castedError))
+                }
+
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun forgotPassword(username: String): Observable<Result<ForgotPasswordResult>> {
+        val single = Single.create<Result<ForgotPasswordResult>> create@{single->
+            AWSMobileClient.getInstance().forgotPassword(username, object: Callback<com.amazonaws.mobile.client.results.ForgotPasswordResult>{
+                override fun onResult(result: com.amazonaws.mobile.client.results.ForgotPasswordResult?) {
+                    if(result!=null){
+                        var forgotState : com.zimplifica.domain.entities.ForgotPasswordState = com.zimplifica.domain.entities.ForgotPasswordState.confirmationCodeSent
+                        var deliveryMedium : UserCodeDeliveryMedium = UserCodeDeliveryMedium.unknown
+                        when(result.state){
+                            ForgotPasswordState.CONFIRMATION_CODE -> forgotState = com.zimplifica.domain.entities.ForgotPasswordState.confirmationCodeSent
+                            ForgotPasswordState.DONE -> forgotState = com.zimplifica.domain.entities.ForgotPasswordState.done
+                        }
+                        when(result.parameters.deliveryMedium){
+                            "some"-> deliveryMedium = UserCodeDeliveryMedium.sms
+                            "none"-> deliveryMedium = UserCodeDeliveryMedium.unknown
+                        }
+
+                        val userCodeDeliveryDetails = UserCodeDeliveryDetails(deliveryMedium,result.parameters.destination, result.parameters.attributeName)
+                        val forgotPasswordResult = ForgotPasswordResult(forgotState,userCodeDeliveryDetails)
+                        single.onSuccess(Result.success(forgotPasswordResult))
+                    }
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase,ForgotPassword Error:", e)
+                    val castedError = (e as? AmazonServiceException)?.let {
+                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                        return@let AWSErrorDecoder.decodeForgotPasswordError(casted)
+                    } ?: kotlin.run {
+                        return@run AWSErrorDecoder.decodeForgotPasswordError(e)
+                    }
+                    single.onSuccess(Result.failure(castedError))
+                }
+
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun confirmForgotPassword(username: String, confirmationCode: String, newPassword: String): Observable<Result<ForgotPasswordResult>> {
+        val single = Single.create<Result<ForgotPasswordResult>> create@{ single ->
+            AWSMobileClient.getInstance().confirmForgotPassword(newPassword,confirmationCode, object : Callback<com.amazonaws.mobile.client.results.ForgotPasswordResult>{
+                override fun onResult(result: com.amazonaws.mobile.client.results.ForgotPasswordResult?) {
+                    if(result!=null){
+                        var forgotState : com.zimplifica.domain.entities.ForgotPasswordState = com.zimplifica.domain.entities.ForgotPasswordState.confirmationCodeSent
+                        var deliveryMedium : UserCodeDeliveryMedium = UserCodeDeliveryMedium.unknown
+                        when(result.state){
+                            ForgotPasswordState.CONFIRMATION_CODE -> forgotState = com.zimplifica.domain.entities.ForgotPasswordState.confirmationCodeSent
+                            ForgotPasswordState.DONE -> forgotState = com.zimplifica.domain.entities.ForgotPasswordState.done
+                        }
+                        when(result.parameters.deliveryMedium){
+                            "some"-> deliveryMedium = UserCodeDeliveryMedium.sms
+                            "none"-> deliveryMedium = UserCodeDeliveryMedium.unknown
+                        }
+
+                        val userCodeDeliveryDetails = UserCodeDeliveryDetails(deliveryMedium,result.parameters.destination, result.parameters.attributeName)
+                        val forgotPasswordResult = ForgotPasswordResult(forgotState,userCodeDeliveryDetails)
+                        single.onSuccess(Result.success(forgotPasswordResult))
+                    }
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase,confirmForgotPassword Error:", e)
+                    val castedError = (e as? AmazonServiceException)?.let {
+                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                        return@let AWSErrorDecoder.decodeForgotPasswordError(casted)
+                    } ?: kotlin.run {
+                        return@run AWSErrorDecoder.decodeForgotPasswordError(e)
                     }
                     single.onSuccess(Result.failure(castedError))
                 }

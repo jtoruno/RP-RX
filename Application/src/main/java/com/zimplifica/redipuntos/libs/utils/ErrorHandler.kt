@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.libs.utils
 
 import android.util.Log
+import com.zimplifica.domain.entities.ForgotPasswordError
 import com.zimplifica.domain.entities.SignInError
 import com.zimplifica.domain.entities.SignUpError
 import java.lang.Exception
@@ -42,13 +43,26 @@ object ErrorHandler {
                     is SignUpError.internalError->{
                         Log.e("🔴", "SignIn Error: ${signUpError.message}")
                         errorMessage = "Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com"
-                    }
+                }
                     SignUpError.passwordResetRequiredException->errorMessage = "Usuario registrado en el sistema. Por favor cambiar contraseña. "
                     SignUpError.tooManyFailedAttemptsException->errorMessage = "Has alcanzado el máximo de intentos fallidos. Por favor intenta más tarde."
                     SignUpError.tooManyRequestsException->errorMessage = "Has alcanzado el máximo de intentos. Por favor intenta más tarde."
                     SignUpError.userNotConfirmedException->errorMessage = "Usuario no confirmado. Por favor proceder a confirmación."
                     SignUpError.usernameExistsException->errorMessage = "El usuario ingresado está actualmente registrado en el sistema."
                     SignUpError.unknown->errorMessage = "Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com"
+                }
+            }
+
+            AuthenticationErrorType.FORGOT_PASSWORD_ERROR->{
+                val forgotPasswordError = error as ForgotPasswordError
+                when(forgotPasswordError){
+                    ForgotPasswordError.userNotFound -> errorMessage="El usuario ingresado no se encuetra registrado. Por favor intentar con un usuario válido."
+                    ForgotPasswordError.limitExceeded-> errorMessage = "Límite de intentos excedido. Por favor intente dentro de unos minutos."
+                    is ForgotPasswordError.internalError -> {
+                        Log.e("🔴", "ForgotPassword Error: ${forgotPasswordError.message}")
+                        errorMessage = "Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com"
+                    }
+                    ForgotPasswordError.unknown-> errorMessage = "Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com"
                 }
             }
         }
