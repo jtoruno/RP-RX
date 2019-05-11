@@ -10,4 +10,7 @@ interface AuthenticationUseCase {
     fun resendVerificationCode(userId: String) : Observable<Result<SignUpResendConfirmationResult>>
     fun forgotPassword(username : String): Observable<Result<ForgotPasswordResult>>
     fun confirmForgotPassword(username : String, confirmationCode: String, newPassword : String) : Observable<Result<ForgotPasswordResult>>
+
+    fun getCurrentUserState() : Observable<Result<UserStateResult>>
+    fun signOut() : Observable<Result<UserStateResult>>
 }

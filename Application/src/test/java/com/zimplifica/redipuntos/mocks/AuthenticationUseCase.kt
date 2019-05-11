@@ -13,6 +13,20 @@ import com.zimplifica.domain.entities.Result
 import kotlin.math.sin
 
 class AuthenticationUseCase : AuthenticationUseCase {
+    override fun getCurrentUserState(): Observable<Result<UserStateResult>> {
+        return Observable.create create@{ observer ->
+            val response = UserStateResult.signedOut
+            observer.onNext(Result.success(response))
+        }
+    }
+
+    override fun signOut(): Observable<Result<UserStateResult>> {
+        return Observable.create<Result<UserStateResult>> create@{ observer ->
+            val signOutResult = UserStateResult.signedOut
+            val result = Result.success(signOutResult)
+            observer.onNext(result)
+        }
+    }
 
     override fun signIn(username: String, password: String): Observable<Result<SignInResult>> {
         print(username)

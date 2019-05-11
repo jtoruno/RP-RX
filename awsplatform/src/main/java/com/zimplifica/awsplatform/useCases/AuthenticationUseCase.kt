@@ -4,6 +4,8 @@ import android.util.Log
 import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
+import com.amazonaws.mobile.client.UserState
+import com.amazonaws.mobile.client.UserStateDetails
 import com.amazonaws.mobile.client.results.ForgotPasswordState
 import com.zimplifica.awsplatform.Utils.AWSErrorDecoder
 import com.zimplifica.awsplatform.Utils.ErrorMappingHelper
@@ -16,7 +18,6 @@ import io.reactivex.disposables.Disposable
 import java.lang.Exception
 
 class AuthenticationUseCase : AuthenticationUseCase {
-
 
     override fun signIn(username: String, password: String): Observable<Result<SignInResult>> {
         val single = Single.create<Result<SignInResult>> create@{ single ->
@@ -227,6 +228,28 @@ class AuthenticationUseCase : AuthenticationUseCase {
                 }
 
             })
+        }
+        return single.toObservable()
+    }
+
+    override fun getCurrentUserState(): Observable<Result<UserStateResult>> {
+        val single = Single.create<Result<UserStateResult>> create@{ single ->
+            var state : UserStateResult = UserStateResult.signedOut
+            val actual = AWSMobileClient.getInstance().currentUserState().userState
+            state = when(actual){
+                UserState.SIGNED_IN -> UserStateResult.signedIn
+                UserState.SIGNED_OUT, UserState.GUEST, UserState.UNKNOWN, UserState.SIGNED_OUT_FEDERATED_TOKENS_INVALID,
+                UserState.SIGNED_OUT_USER_POOLS_TOKENS_INVALID -> UserStateResult.signedOut
+            }
+            single.onSuccess(Result.success(state))
+        }
+        return single.toObservable()
+    }
+
+    override fun signOut(): Observable<Result<UserStateResult>> {
+        val single = Single.create<Result<UserStateResult>> create@{ single ->
+            AWSMobileClient.getInstance().signOut()
+            single.onSuccess(Result.success(UserStateResult.signedOut))
         }
         return single.toObservable()
     }
