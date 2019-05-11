@@ -159,6 +159,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
             AWSMobileClient.getInstance().forgotPassword(username, object: Callback<com.amazonaws.mobile.client.results.ForgotPasswordResult>{
                 override fun onResult(result: com.amazonaws.mobile.client.results.ForgotPasswordResult?) {
                     if(result!=null){
+                        Log.i("ForgotPassword", "Info ${result.parameters.destination}")
                         var forgotState : com.zimplifica.domain.entities.ForgotPasswordState = com.zimplifica.domain.entities.ForgotPasswordState.confirmationCodeSent
                         var deliveryMedium : UserCodeDeliveryMedium = UserCodeDeliveryMedium.unknown
                         when(result.state){

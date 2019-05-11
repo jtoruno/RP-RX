@@ -70,4 +70,54 @@ object ValidationService {
         if(!isValidEmail(username) && !isNumberWithExtension(username) && !isNumberWithoutExtension(username)){return false}
         return true
     }
+
+    private fun validatePasswordLenght(password : String) : Boolean{
+        val minPasswordLenght = 8
+        val maxPasswordLenght = 20
+        if(password.length < minPasswordLenght || password.length > maxPasswordLenght){
+            return false
+        }
+        return true
+    }
+
+    private fun validatePasswordCapitalLowerLetters(password: String) : Boolean {
+        val pattern1 = Pattern.compile(".*[A-Z].*")
+        val pattern1Sub = Pattern.compile(".*[a-z].*")
+        if (pattern1.matcher(password).matches() && pattern1Sub.matcher(password).matches()){
+            return true
+        }
+        return false
+    }
+
+    private fun validatePasswordNumbers(password: String): Boolean{
+        val pattern2 = Pattern.compile(".*\\d.*")
+        if(pattern2.matcher(password).matches()){
+            return true
+        }
+        return false
+    }
+
+    private fun validatePasswordSpecialCharacters(password: String) : Boolean {
+        val pattern3 = Pattern.compile(".*[!\$#@_.+-].*")
+        if(pattern3.matcher(password).matches()){
+            return true
+        }
+        return false
+    }
+
+    fun validatePassword(password: String) : Boolean {
+        var isSuccess = true
+        if (!validatePasswordLenght(password)){isSuccess = false}
+        if (!validatePasswordCapitalLowerLetters(password)){isSuccess = false}
+        if (!validatePasswordNumbers(password)){isSuccess = false}
+        if (!validatePasswordSpecialCharacters(password)){isSuccess = false}
+
+        return isSuccess
+    }
+
+    fun validateConfirmForgotPassword(confirmationCode : String, password: String) : Boolean{
+        val confirmationCodeValidation = validateVerificationCode(confirmationCode)
+        val passwordValidation = validatePassword(password)
+        return confirmationCodeValidation && passwordValidation
+    }
 }
