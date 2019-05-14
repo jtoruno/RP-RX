@@ -64,6 +64,13 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
             startActivity(intent)
         }
 
+        this.viewModel.outputs.signedInAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
 
     }
 

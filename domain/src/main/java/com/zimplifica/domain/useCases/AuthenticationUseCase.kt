@@ -13,4 +13,8 @@ interface AuthenticationUseCase {
 
     fun getCurrentUserState() : Observable<Result<UserStateResult>>
     fun signOut() : Observable<Result<UserStateResult>>
+
+    fun updateUserAttributes( attributes: Map<String, String>) : Observable<Result<Boolean>>
+    fun verifyEmail() : Observable<Result<String>>
+    fun confirmEmail(verificationCode: String) : Observable<Result<Boolean>>
 }

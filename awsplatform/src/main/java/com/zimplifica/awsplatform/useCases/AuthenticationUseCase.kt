@@ -236,11 +236,13 @@ class AuthenticationUseCase : AuthenticationUseCase {
         val single = Single.create<Result<UserStateResult>> create@{ single ->
             var state : UserStateResult = UserStateResult.signedOut
             val actual = AWSMobileClient.getInstance().currentUserState().userState
+            Log.e("UserState", actual.toString())
             state = when(actual){
                 UserState.SIGNED_IN -> UserStateResult.signedIn
                 UserState.SIGNED_OUT, UserState.GUEST, UserState.UNKNOWN, UserState.SIGNED_OUT_FEDERATED_TOKENS_INVALID,
                 UserState.SIGNED_OUT_USER_POOLS_TOKENS_INVALID -> UserStateResult.signedOut
             }
+            Log.e("UserState", state.toString())
             single.onSuccess(Result.success(state))
         }
         return single.toObservable()
@@ -250,6 +252,80 @@ class AuthenticationUseCase : AuthenticationUseCase {
         val single = Single.create<Result<UserStateResult>> create@{ single ->
             AWSMobileClient.getInstance().signOut()
             single.onSuccess(Result.success(UserStateResult.signedOut))
+        }
+        return single.toObservable()
+    }
+
+    override fun updateUserAttributes(attributes: Map<String, String>): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            AWSMobileClient.getInstance().updateUserAttributes(attributes,object: Callback<List<com.amazonaws.mobile.client.results.UserCodeDeliveryDetails>>{
+                override fun onResult(result: List<com.amazonaws.mobile.client.results.UserCodeDeliveryDetails>?) {
+                     single.onSuccess(Result.success(true))
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase, updateUserAttributes Error:", e)
+                    val castedError = (e as? AmazonServiceException)?.let {
+                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                        return@let AWSErrorDecoder.decodeForgotPasswordError(casted)
+                    } ?: kotlin.run {
+                        return@run AWSErrorDecoder.decodeForgotPasswordError(e)
+                    }
+                    single.onSuccess(Result.failure(castedError))
+                }
+
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun verifyEmail(): Observable<Result<String>> {
+        val single = Single.create<Result<String>> create@{ single->
+            AWSMobileClient.getInstance().verifyUserAttribute("email",object : Callback<com.amazonaws.mobile.client.results.UserCodeDeliveryDetails>{
+                override fun onResult(result: com.amazonaws.mobile.client.results.UserCodeDeliveryDetails?) {
+                    if(result?.destination != null){
+                        single.onSuccess(Result.success(result.destination))
+                    }else{
+                        val error = Exception("[Platform] [AuthenticationUseCase] [VerifyEmail]")
+                        single.onSuccess(Result.failure(error))
+                    }
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase, verifyEmail Error:", e)
+                    val castedError = (e as? AmazonServiceException)?.let {
+                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                        return@let AWSErrorDecoder.decodeForgotPasswordError(casted)
+                    } ?: kotlin.run {
+                        return@run AWSErrorDecoder.decodeForgotPasswordError(e)
+                    }
+                    single.onSuccess(Result.failure(castedError))
+                }
+
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun confirmEmail(verificationCode: String): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{single->
+            AWSMobileClient.getInstance().confirmVerifyUserAttribute("email",verificationCode,object : Callback<Void>{
+                override fun onResult(result: Void?) {
+                    single.onSuccess(Result.success(true))
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase, confirmEmail Error:", e)
+                    val castedError = (e as? AmazonServiceException)?.let {
+                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
+                        return@let AWSErrorDecoder.decodeForgotPasswordError(casted)
+                    } ?: kotlin.run {
+                        return@run AWSErrorDecoder.decodeForgotPasswordError(e)
+                    }
+                    single.onSuccess(Result.failure(castedError))
+                }
+
+            })
         }
         return single.toObservable()
     }

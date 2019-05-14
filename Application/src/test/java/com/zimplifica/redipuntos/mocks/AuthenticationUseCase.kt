@@ -13,6 +13,7 @@ import com.zimplifica.domain.entities.Result
 import kotlin.math.sin
 
 class AuthenticationUseCase : AuthenticationUseCase {
+
     override fun getCurrentUserState(): Observable<Result<UserStateResult>> {
         return Observable.create create@{ observer ->
             val response = UserStateResult.signedOut
@@ -128,6 +129,38 @@ class AuthenticationUseCase : AuthenticationUseCase {
                 single.onSuccess(Result.success(forgotPasswordResult))
             }else{
                 val error = ForgotPasswordError.userNotFound
+                single.onSuccess(Result.failure(error))
+            }
+        }
+        return single.toObservable()
+    }
+
+    override fun updateUserAttributes(attributes: Map<String, String>): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{single->
+            val email = attributes["email"]
+            if(email != null  &&  email == "dsanchez@zimplifica"){
+                single.onSuccess(Result.success(true))
+            }else{
+                val error = Exception("XXXX")
+                single.onSuccess(Result.failure(error))
+            }
+        }
+        return single.toObservable()
+    }
+
+    override fun verifyEmail(): Observable<Result<String>> {
+        val single = Single.create<Result<String>> create@{single->
+            single.onSuccess(Result.success("j****@g****.com"))
+        }
+        return single.toObservable()
+    }
+
+    override fun confirmEmail(verificationCode: String): Observable<Result<Boolean>> {
+        val single= Single.create<Result<Boolean>> create@{single->
+            if (verificationCode == "949494"){
+                single.onSuccess(Result.success(true))
+            }else{
+                val error = Exception("xxxx")
                 single.onSuccess(Result.failure(error))
             }
         }
