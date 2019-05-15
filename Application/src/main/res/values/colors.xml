@@ -7,4 +7,5 @@
     <color name="colorAccentLight">#fff671</color>
     <color name="colorAccentDark">#c89300</color>
     <color name="homeColorBtn">#555555</color>
+    <color name="navDisableColor">#858687</color>
 </resources>
