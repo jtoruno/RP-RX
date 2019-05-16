@@ -9,11 +9,13 @@ class PayFragmentVMTest : RPTestCase() {
     lateinit var vm : PayFragmentVM.ViewModel
     val nextButtonEnabled = TestObserver<Boolean>()
     val changeAmountAction = TestObserver<String>()
+    val nextButtonAction = TestObserver<Float>()
 
     private fun setUpEnvironment(environment: Environment){
         this.vm = PayFragmentVM.ViewModel(environment)
         this.vm.outputs.changeAmountAction().subscribe(this.changeAmountAction)
         this.vm.outputs.nextButtonEnabled().subscribe(this.nextButtonEnabled)
+        this.vm.outputs.nextButtonAction().subscribe(this.nextButtonAction)
         this.vm.outputs.changeAmountAction().subscribe {
             print(it+"\n")
         }
@@ -42,5 +44,13 @@ class PayFragmentVMTest : RPTestCase() {
         changeAmountAction.assertValues("₡ 2","₡ 25","₡ 255","₡ 2,555")
         this.vm.inputs.keyPressed("⬅")
         changeAmountAction.assertValues("₡ 2","₡ 25","₡ 255","₡ 2,555","₡ 255")
+    }
+
+    @Test
+    fun testPayButtonAction(){
+        setUpEnvironment(environment()!!)
+        this.vm.inputs.keyPressed("1")
+        this.vm.inputs.nextButtonPressed()
+        nextButtonAction.assertValueCount(1)
     }
 }

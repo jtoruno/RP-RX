@@ -2,6 +2,7 @@ package com.zimplifica.redipuntos.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -17,6 +18,7 @@ import com.zimplifica.redipuntos.viewModels.PayFragmentVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_pay.*
 import android.widget.Toast
+import com.zimplifica.redipuntos.ui.activities.SPSelectionActivity
 import kotlinx.android.synthetic.main.number_keyboard.*
 
 
@@ -46,6 +48,8 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
         button_0.setOnClickListener(clickAction)
         button_delete.setOnClickListener(clickAction)
 
+        pay_fragment_btn.setOnClickListener { this.viewModel.inputs.nextButtonPressed() }
+
         super.onActivityCreated(savedInstanceState)
         this.viewModel.outputs.nextButtonEnabled().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -54,6 +58,13 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
             }
         this.viewModel.outputs.changeAmountAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe { pay_fragment_amount.text = it }
+
+        this.viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(activity!!,SPSelectionActivity::class.java)
+                intent.putExtra("amount", it)
+                startActivity(intent)
+            }
     }
 
     private val clickAction = View.OnClickListener {

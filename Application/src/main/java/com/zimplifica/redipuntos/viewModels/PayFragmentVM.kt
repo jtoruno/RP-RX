@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.support.annotation.NonNull
+import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
 import io.reactivex.Observable
@@ -10,13 +11,16 @@ import io.reactivex.subjects.PublishSubject
 interface PayFragmentVM {
     interface Inputs {
         fun keyPressed(key : String)
+        fun nextButtonPressed()
     }
     interface Outputs{
         fun nextButtonEnabled() : Observable<Boolean>
         fun changeAmountAction() : Observable<String>
+        fun nextButtonAction() : Observable<Float>
     }
 
     class ViewModel (@NonNull val environment: Environment) : FragmentViewModel<PayFragmentVM>(environment), Inputs, Outputs{
+
 
         val inputs : Inputs = this
         val outputs : Outputs = this
@@ -25,10 +29,12 @@ interface PayFragmentVM {
 
         //Inputs
         private val keyPressed = PublishSubject.create<String>()
+        private val nextButtonPressed = PublishSubject.create<Unit>()
 
         //Outputs
         private val nextButtonEnabled = BehaviorSubject.create<Boolean>()
         private val changeAmountAction = PublishSubject.create<String>()
+        private val nextButtonAction = PublishSubject.create<Float>()
 
         init {
             keyPressed
@@ -40,12 +46,23 @@ interface PayFragmentVM {
             keyPressed
                 .map { return@map this.validAmount() }
                 .subscribe(this.nextButtonEnabled)
+
+            changeAmountAction
+                .takeWhen(nextButtonPressed)
+                .map { return@map this.amountFloat }
+                .subscribe(this.nextButtonAction)
         }
 
 
         override fun keyPressed(key: String) {
             return this.keyPressed.onNext(key)
         }
+
+        override fun nextButtonPressed() {
+            return this.nextButtonPressed.onNext(Unit)
+        }
+
+        override fun nextButtonAction(): Observable<Float> = this.nextButtonAction
 
         override fun nextButtonEnabled(): Observable<Boolean> = this.nextButtonEnabled
 

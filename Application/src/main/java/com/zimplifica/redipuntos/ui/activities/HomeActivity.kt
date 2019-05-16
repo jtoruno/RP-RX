@@ -24,6 +24,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import android.view.View
+import android.widget.Toast
 
 
 @RequiresActivityViewModel(HomeViewModel.ViewModel::class)
@@ -34,6 +35,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
     lateinit var Movementsfragment : Fragment
     private val fm = supportFragmentManager
     lateinit var active : Fragment
+    private var menuActionBar : Menu ? = null
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,18 +112,21 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 fm.beginTransaction().hide(active).show(Payfragment).commit()
                 active = Payfragment
                 toolbar.title = "Pagar"
+                invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.nav_movements->{
                 fm.beginTransaction().hide(active).show(Movementsfragment).commit()
                 active = Movementsfragment
                 toolbar.title = "Movimientos"
+                invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.nav_catalog->{
                 fm.beginTransaction().hide(active).show(Catalogfragment).commit()
                 active = Catalogfragment
                 toolbar.title = "Catálogo"
+                invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -137,8 +142,13 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuActionBar = menu
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.home, menu)
+        when(active){
+            is PayFragment -> {menuInflater.inflate(R.menu.toolbar_points_menu, menu)}
+            else -> {menuInflater.inflate(R.menu.home, menu)}
+        }
+        //menuInflater.inflate(R.menu.home, menu)
         return true
     }
 
@@ -148,6 +158,9 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
             R.id.action_settings -> return true
+            R.id.points_action -> {
+                Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show()
+                return true}
             else -> return super.onOptionsItemSelected(item)
         }
     }

@@ -12,10 +12,12 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ui.activities.SPSelectionActivity">
+        </activity>
         <activity
                 android:name=".ui.activities.HomeActivity"
-                android:screenOrientation="portrait"
                 android:label="@string/title_activity_home"
+                android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
@@ -61,7 +63,6 @@
                 android:name=".ui.activities.WalkThrough"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppThemeNoActionBar">
-
         </activity>
         <activity
                 android:name=".ui.activities.TakePhoneActivity"
