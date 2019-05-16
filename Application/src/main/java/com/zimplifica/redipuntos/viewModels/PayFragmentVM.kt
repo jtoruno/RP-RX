@@ -77,7 +77,7 @@ interface PayFragmentVM {
             amountFloat = 0.0F
         }
         private fun formatFloatToString(mFloat : Float): String{
-            return "₡ "+String.format("%,.1f", mFloat)
+            return "₡ "+String.format("%,.0f", mFloat)
         }
 
     }

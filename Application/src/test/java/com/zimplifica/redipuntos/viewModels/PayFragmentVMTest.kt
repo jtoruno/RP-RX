@@ -33,14 +33,14 @@ class PayFragmentVMTest : RPTestCase() {
     fun testChangeAmountAction(){
         setUpEnvironment(environment()!!)
         this.vm.inputs.keyPressed("2")
-        changeAmountAction.assertValues("₡ 2.0")
+        changeAmountAction.assertValues("₡ 2")
         this.vm.inputs.keyPressed("5")
-        changeAmountAction.assertValues("₡ 2.0","₡ 25.0")
+        changeAmountAction.assertValues("₡ 2","₡ 25")
         this.vm.inputs.keyPressed("5")
-        changeAmountAction.assertValues("₡ 2.0","₡ 25.0","₡ 255.0")
+        changeAmountAction.assertValues("₡ 2","₡ 25","₡ 255")
         this.vm.inputs.keyPressed("5")
-        changeAmountAction.assertValues("₡ 2.0","₡ 25.0","₡ 255.0","₡ 2,555.0")
+        changeAmountAction.assertValues("₡ 2","₡ 25","₡ 255","₡ 2,555")
         this.vm.inputs.keyPressed("⬅")
-        changeAmountAction.assertValues("₡ 2.0","₡ 25.0","₡ 255.0","₡ 2,555.0","₡ 255.0")
+        changeAmountAction.assertValues("₡ 2","₡ 25","₡ 255","₡ 2,555","₡ 255")
     }
 }

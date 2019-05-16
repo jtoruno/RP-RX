@@ -70,6 +70,38 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 startActivity(intent)
                 finish()
             }
+
+        home_log_out.setOnClickListener {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                drawer_layout.closeDrawer(GravityCompat.START)
+            }
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Cerrar Sesión")
+            builder.setMessage("¿Desea salir de la aplicación?")
+            builder.setPositiveButton("Aceptar"){
+                    _,_ ->
+                this.viewModel.inputs.signOutButtonPressed()
+            }
+            builder.setNegativeButton("Cancelar", null)
+            val dialog = builder.create()
+            dialog.show()
+        }
+        home_payment_methods.setOnClickListener {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                drawer_layout.closeDrawer(GravityCompat.START)
+            }
+        }
+        home_change_password.setOnClickListener {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                drawer_layout.closeDrawer(GravityCompat.START)
+            }
+        }
+        home_account_info.setOnClickListener {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                drawer_layout.closeDrawer(GravityCompat.START)
+            }
+        }
+
     }
 
     private val navItemListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -155,9 +187,4 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
-
-    fun keyBoardAction(view: View) {
-        //Payfragment.
-    }
-
 }

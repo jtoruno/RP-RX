@@ -5,13 +5,6 @@
              android:layout_height="match_parent"
              tools:context=".ui.fragments.PayFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:textColor="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Pay"/>
-
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
               android:text="₡ 0"
               android:id="@+id/pay_fragment_amount"
@@ -29,8 +22,9 @@
             android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/pay_fragment_btn" android:id="@+id/include"/>
     <Button
+            android:alpha="0.5"
             android:textSize="16sp"
-            android:background="@drawable/btn_state"
+            android:background="@drawable/btn_enabled"
             android:text="Realizar Pago"
             android:textAllCaps="false"
             android:layout_width="match_parent"
