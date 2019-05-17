@@ -9,9 +9,9 @@ import io.reactivex.annotations.NonNull
 import org.junit.runner.RunWith
 import org.junit.Before
 import junit.framework.TestCase
+import org.junit.Ignore
 import org.robolectric.annotation.Config
 import org.robolectric.RuntimeEnvironment
-
 
 
 @RunWith(RPGraddleTestRunner::class)
