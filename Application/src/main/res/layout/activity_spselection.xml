@@ -38,6 +38,7 @@
                 <ImageView android:layout_width="wrap_content"
                            android:layout_height="fill_parent"
                            android:layout_marginEnd="18dp"
+                           android:id="@+id/sp_take_qr_code"
                            android:src="@drawable/ic_camera_alt_black_24dp"
                            app:layout_constraintBottom_toBottomOf="parent"
                            app:layout_constraintEnd_toEndOf="parent"

@@ -38,6 +38,7 @@ android {
 final auto_parcel_version = "0.3.1"
 final dagger_version = "2.11"
 final rx_lifecycle_version = "0.3.0"
+final zxing_version = "3.5.0"
 
 //Test
 final robolectric_version = "3.8"
@@ -87,6 +88,11 @@ dependencies {
     implementation "com.trello:rxlifecycle-components:$rx_lifecycle_version"
 
     implementation 'com.amazonaws:aws-android-sdk-cognitoauth:2.10.0'
+
+    //Zxing
+    implementation "com.journeyapps:zxing-android-embedded:$zxing_version"
+
+    implementation 'me.dm7.barcodescanner:zxing:1.9.8'
 
     //implementation 'com.amazonaws:aws-android-sdk-appsync:2.9.+'
     //implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
