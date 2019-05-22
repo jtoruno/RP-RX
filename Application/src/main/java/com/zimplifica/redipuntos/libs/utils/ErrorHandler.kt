@@ -21,7 +21,7 @@ object ErrorHandler {
         var errorMessage = "Ocurrió un error"
         when(authenticationErrorType){
             AuthenticationErrorType.SIGN_IN_ERROR ->{
-                val signInError = error as? SignInError
+                val signInError = error as? SignInError ?: return ErrorWrapper(error, errorMessage)
                 when(signInError){
                     SignInError.invalidCredentials -> errorMessage = "Las credenciales son inválidas"
                     SignInError.userNotConfirmed -> errorMessage = "El usuario no está confirmado"
@@ -34,7 +34,7 @@ object ErrorHandler {
                 }
             }
             AuthenticationErrorType.SIGN_UP_ERROR->{
-                val signUpError = error as SignUpError
+                val signUpError = error as? SignUpError ?: return ErrorWrapper(error, errorMessage)
                 when(signUpError){
                     SignUpError.aliasExists->errorMessage = "El usuario ingresado está actualmente registrado en el sistema."
                     SignUpError.codeDeliveryFailure->errorMessage = "Error al enviar el código de verificación."
@@ -54,7 +54,7 @@ object ErrorHandler {
             }
 
             AuthenticationErrorType.FORGOT_PASSWORD_ERROR->{
-                val forgotPasswordError = error as ForgotPasswordError
+                val forgotPasswordError = error as? ForgotPasswordError ?: return ErrorWrapper(error, errorMessage)
                 when(forgotPasswordError){
                     ForgotPasswordError.userNotFound -> errorMessage="El usuario ingresado no se encuetra registrado. Por favor intentar con un usuario válido."
                     ForgotPasswordError.limitExceeded-> errorMessage = "Límite de intentos excedido. Por favor intente dentro de unos minutos."

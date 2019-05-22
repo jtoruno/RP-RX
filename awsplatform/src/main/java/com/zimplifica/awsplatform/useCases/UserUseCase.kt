@@ -8,9 +8,9 @@ import com.zimplifica.domain.useCases.UserUseCase
 import io.reactivex.Observable
 import io.reactivex.Single
 
-class UserUseCase(val context: Context) : UserUseCase {
+class UserUseCase : UserUseCase {
 
-    val client = AppSyncClient(context).client
+    //val client = AppSyncClient(context).client
 
     override fun getUserInformation(useCache: Boolean): Observable<Result<UserInformationResult>> {
         val single = Single.create<Result<UserInformationResult>> create@{ single->

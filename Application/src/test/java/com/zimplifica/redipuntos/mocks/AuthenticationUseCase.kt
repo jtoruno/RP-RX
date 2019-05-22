@@ -30,9 +30,10 @@ class AuthenticationUseCase : AuthenticationUseCase {
     }
 
     override fun signIn(username: String, password: String): Observable<Result<SignInResult>> {
-        print(username)
+
        return Observable.create { single ->
-            if((username == "+50688889999" || username == "zimple@zimple.com") && password == "123Jose_"){
+
+           if((username == "+50688889999" || username == "zimple@zimple.com") && password == "123Jose_"){
                 val signInResult = SignInResult("signedIn")
                 val result = Result.success(signInResult)
                 single.onNext(result)
@@ -60,9 +61,9 @@ class AuthenticationUseCase : AuthenticationUseCase {
         }
     }
 
-    override fun signUp(userId: String, username: String, password: String): Observable<Result<SignUpResult>> {
+    override fun signUp(userId: String, username: String, password: String,verificationCode: String): Observable<Result<SignUpResult>> {
         val single = Single.create<Result<SignUpResult>> create@{ single ->
-            if((username == "+50688889999" || username == "zimple@zimple.com") && password == "123Jose_"){
+            if((username == "+50688889999" || username == "zimple@zimple.com") && password == "123Jose_" && verificationCode == "123456"){
                 val signUpResult = SignUpResult(SignUpState.unconfirmed, username, password)
                 single.onSuccess(Result.success(signUpResult))
             }
@@ -73,7 +74,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
         }
         return single.toObservable()
     }
-
+    /*
     override fun confirmSignUp(userId: String, verificationCode: String): Observable<Result<SignUpConfirmationResult>> {
         val single = Single.create<Result<SignUpConfirmationResult>> create@{ single ->
             if(userId == "E621E1F8-C36C-495A-93FC-0C247A3E6E5F" && verificationCode == "123456"){
@@ -86,7 +87,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
             }
         }
         return single.toObservable()
-    }
+    }*/
 
     override fun resendVerificationCode(userId: String): Observable<Result<SignUpResendConfirmationResult>> {
         val single = Single.create<Result<SignUpResendConfirmationResult>> create@{ single ->
@@ -166,4 +167,17 @@ class AuthenticationUseCase : AuthenticationUseCase {
         }
         return single.toObservable()
     }
+
+    override fun verifyPhoneNumber(phoneNumber: String): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            if(phoneNumber == "88889999"){
+                single.onSuccess(Result.success(true))
+            }else{
+                val error = SignUpError.internalError("Invalid phone number")
+                single.onSuccess(Result.failure(error))
+            }
+        }
+        return single.toObservable()
+    }
+
 }

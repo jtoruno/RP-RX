@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -79,7 +80,10 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
         //Cambiar con la pantalla
         this.viewModel.outputs.verifiedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("SIgnIn","Inicio de Sesión correcto")
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish()
+                //showDialog("SIgnIn","Inicio de Sesión correcto")
             }
     }
 

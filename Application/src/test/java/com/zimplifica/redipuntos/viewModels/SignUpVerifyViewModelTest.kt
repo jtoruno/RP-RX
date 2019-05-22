@@ -21,7 +21,7 @@ class SignUpVerifyViewModelTest : RPTestCase(){
         //environment.sharedPreferences().edit().putString("userId","E621E1F8-C36C-495A-93FC-0C247A3E6E5F").apply()
         //environment.sharedPreferences().edit().putString("phoneNumber","+50688889999").apply()
         //environment.sharedPreferences().edit().putString("password","123Jose").apply()
-        this.vm.username = "+50688889999"
+        this.vm.username = "88889999"
         this.vm.userId = "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
         this.vm.password = "123Jose_"
         this.vm.outputs.verificationButtonEnabled().subscribe(this.verificationButtonEnabled)
@@ -36,7 +36,7 @@ class SignUpVerifyViewModelTest : RPTestCase(){
         setUpEnvironment(environment()!!)
         //val n = environment()!!.sharedPreferences().getString("phoneNumber","")
         val username = this.vm.getUserName()
-        assertEquals("+50688889999",username)
+        assertEquals("88889999",username)
     }
 
     @Test

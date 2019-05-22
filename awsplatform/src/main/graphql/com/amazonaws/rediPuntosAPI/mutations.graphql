@@ -1,0 +1,123 @@
+# this is an auto generated file. This will be overwritten
+mutation InitPhoneVerification($username: String!, $phoneNumber: String!) {
+  initPhoneVerification(username: $username, phoneNumber: $phoneNumber) {
+    success
+    message
+  }
+}
+mutation CheckPhoneVerification(
+  $username: String!
+  $phoneNumber: String!
+  $verificationCode: String!
+) {
+  checkPhoneVerification(
+    username: $username
+    phoneNumber: $phoneNumber
+    verificationCode: $verificationCode
+  ) {
+    success
+    message
+  }
+}
+mutation UpdatePersonalInfo(
+  $username: String!
+  $firstName: String!
+  $lastName: String!
+  $birthdate: String!
+  $identityNumber: String!
+) {
+  updatePersonalInfo(
+    username: $username
+    firstName: $firstName
+    lastName: $lastName
+    birthdate: $birthdate
+    identityNumber: $identityNumber
+  ) {
+    lastName
+    firstName
+    birthdate
+    identityNumber
+  }
+}
+mutation UpdateUserEndpoint($username: String!, $endpoint: EndpointInput) {
+  updateUserEndpoint(username: $username, endpoint: $endpoint) {
+    success
+    message
+  }
+}
+mutation AddPaymentMethod($paymentMethod: PaymentMethodInput!) {
+  addPaymentMethod(paymentMethod: $paymentMethod) {
+    username
+    cardId
+    cardNumber
+    expirationDate
+    issuer
+    rewards
+    automaticRedemption
+  }
+}
+mutation DisablePaymentMethod($owner: ID!, $cardId: String!) {
+  disablePaymentMethod(owner: $owner, cardId: $cardId) {
+    username
+    cardId
+    cardNumber
+    expirationDate
+    issuer
+    rewards
+    automaticRedemption
+  }
+}
+mutation RequestPayment($input: RequestPaymentInput!) {
+  requestPayment(input: $input) {
+    success
+    message
+  }
+}
+mutation ToggleAutomaticRedemption($username: String!, $cardId: String!) {
+  toggleAutomaticRedemption(username: $username, cardId: $cardId) {
+    success
+    message
+  }
+}
+mutation SendTransactionNotification(
+  $input: sendTransactionNotificationInput!
+) {
+  sendTransactionNotification(input: $input) {
+    orderId
+    datetime
+    transactionType
+    item {
+      type
+      description
+      amount
+      ... on SitePaymentItem {
+        vendorId
+        vendorName
+      }
+      ... on GTIItem {
+        companyId
+        agreementId
+        invoiceId
+        clientName
+        serviceId
+        paymentType
+        expirationDate
+        period
+        isPrepaid
+      }
+    }
+    fee
+    total
+    status
+    wayToPay {
+      rediPuntos
+      creditCard {
+        cardId
+        cardNumber
+        issuer
+      }
+      creditCardRewards
+      creditCardCharge
+    }
+  }
+}

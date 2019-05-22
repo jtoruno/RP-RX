@@ -5,6 +5,7 @@ import android.util.Log
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.UserStateDetails
+import com.zimplifica.awsplatform.AppSync.AppSyncClient
 import com.zimplifica.domain.useCases.AuthenticationUseCase
 import com.zimplifica.domain.useCases.UseCaseProvider
 import java.lang.Exception
@@ -20,8 +21,9 @@ class UseCaseProvider(context: Context) : UseCaseProvider{
             override fun onError(e: Exception?) {
                 Log.e("INIT", "Initialization error.", e)
             }
-
         })
+        //Probar
+        AppSyncClient.initClient(context)
     }
     override fun makeAuthenticationUseCase(): AuthenticationUseCase {
         return com.zimplifica.awsplatform.useCases.AuthenticationUseCase()

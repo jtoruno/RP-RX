@@ -2,9 +2,37 @@ package com.zimplifica.awsplatform.AppSync
 
 import android.content.Context
 import com.amazonaws.mobile.client.AWSMobileClient
+import com.amazonaws.mobile.config.AWSConfiguration
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient
 
 
+object AppSyncClient{
+    enum class API{
+        rediPuntosAPI
+    }
+    enum class Source {
+        cache, server, unkwnon
+    }
+    private var clientSync : AWSAppSyncClient ? = null
+
+    private val key = "rediPuntosAPI"
+
+    fun getClient() : AWSAppSyncClient{
+        return this.clientSync!!
+    }
+
+    fun initClient(context: Context){
+        val id = context.resources.getIdentifier("awsconfiguration","raw",context.packageName)
+
+        this.clientSync = AWSAppSyncClient.builder()
+            .credentialsProvider(AWSMobileClient.getInstance())
+            .awsConfiguration(AWSConfiguration(context,id,key))
+            .context(context)
+            .build()
+    }
+}
+
+/*
 class AppSyncClient(val context: Context){
     enum class API{
         rediPuntosAPI

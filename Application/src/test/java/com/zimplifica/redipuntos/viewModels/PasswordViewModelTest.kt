@@ -5,6 +5,7 @@ import com.zimplifica.domain.entities.SignUpResult
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.ErrorWrapper
+import com.zimplifica.redipuntos.models.SignUpModel
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 
@@ -19,7 +20,7 @@ class PasswordViewModelTest : RPTestCase() {
     val validPasswordNumbers = TestObserver<Boolean>()
     val validPasswordSpecialCharacters = TestObserver<Boolean>()
 
-    val signedUpAction = TestObserver<SignUpResult>()
+    val verifyPhoneNumberAction = TestObserver<SignUpModel>()
     val showError = TestObserver<ErrorWrapper>()
     val loadingEnabled = TestObserver<Boolean>()
 
@@ -35,12 +36,15 @@ class PasswordViewModelTest : RPTestCase() {
         this.vm.outputs.validPasswordNumbers().subscribe(this.validPasswordNumbers)
         this.vm.outputs.validPasswordSpecialCharacters().subscribe(this.validPasswordSpecialCharacters)
 
-        this.vm.outputs.signedUpAction().subscribe(this.signedUpAction)
+        this.vm.outputs.verifyPhoneNumberAction().subscribe(this.verifyPhoneNumberAction)
         this.vm.outputs.showError().subscribe(this.showError)
         this.vm.outputs.loadingEnabled().subscribe(this.loadingEnabled)
+        this.vm.outputs.showError().subscribe {
+            print(it.friendlyMessage)
+        }
 
-        this.vm.outputs.signedUpAction().subscribe {
-            print(it.username + " " + it.password)
+        this.vm.outputs.verifyPhoneNumberAction().subscribe {
+            print(it.userId+" "+it.phoneNumber + " " + it.password)
         }
     }
 
@@ -104,24 +108,25 @@ class PasswordViewModelTest : RPTestCase() {
         this.validPasswordSpecialCharacters.assertValues(false, true)
 
     }
-
     @Test
-    fun testSignedUpAction(){
+    fun testVerifyPhoneNumberAction(){
         setUpEnviroment(environment()!!)
         this.vm.inputs.username("88889999")
         this.vm.inputs.password("123Jose_")
         this.vm.inputs.signUpButtonPressed()
-        signedUpAction.assertValueCount(1)
+        val uuid = this.vm.getUuid()
+        val signUpModel = SignUpModel(uuid,"88889999","123Jose_")
+        verifyPhoneNumberAction.assertValueCount(1)
     }
 
     @Test
     fun testSignedUpActionError(){
         setUpEnviroment(environment()!!)
-        this.vm.inputs.username("88889999")
-        this.vm.inputs.password("123Jose_2")
+        this.vm.inputs.username("88889997")
+        this.vm.inputs.password("123Jose_")
         this.vm.inputs.signUpButtonPressed()
-        val error = SignUpError.usernameExistsException
-        val wrapper = ErrorWrapper(error,"El usuario ingresado está actualmente registrado en el sistema.")
+        val error = SignUpError.internalError("Invalid phone number")
+        val wrapper = ErrorWrapper(error,"Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com")
         showError.assertValues(wrapper)
     }
 

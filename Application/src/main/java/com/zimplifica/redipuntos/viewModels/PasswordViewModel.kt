@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.support.annotation.NonNull
+import android.support.annotation.VisibleForTesting
 import android.util.Log
 import com.zimplifica.domain.entities.SignUpError
 import com.zimplifica.domain.entities.SignUpResult
@@ -14,6 +15,7 @@ import java.util.*
 import java.util.regex.Pattern
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.redipuntos.libs.utils.*
+import com.zimplifica.redipuntos.models.SignUpModel
 import io.reactivex.functions.BiFunction
 
 interface PasswordViewModel {
@@ -35,7 +37,7 @@ interface PasswordViewModel {
         fun validPasswordNumbers() : Observable<Boolean>
         fun validPasswordSpecialCharacters() : Observable<Boolean>
 
-        fun signedUpAction() : Observable<SignUpResult>
+        fun verifyPhoneNumberAction() : Observable<SignUpModel>
         fun showError() : Observable<ErrorWrapper>
         fun loadingEnabled() : Observable<Boolean>
     }
@@ -48,11 +50,11 @@ interface PasswordViewModel {
         private val uuid = UUID.randomUUID().toString()
 
         //Inputs
-        private val passwordEditTextChanged = PublishSubject.create<String>()
+        private val passwordEditTextChanged = BehaviorSubject.create<String>()
         private val termsButtonPressed = PublishSubject.create<Unit>()
         private val privacyButtonPressed = PublishSubject.create<Unit>()
         private val signUpButtonPressed = PublishSubject.create<Unit>()
-        private val username = PublishSubject.create<String>()
+        private val username = BehaviorSubject.create<String>()
 
         //Outputs
         private val startTermsActivity : Observable<Unit>
@@ -65,7 +67,7 @@ interface PasswordViewModel {
 
         private val loadingEnabled = BehaviorSubject.create<Boolean>()
         private val showError = BehaviorSubject.create<ErrorWrapper>()
-        private val signedUpAction = PublishSubject.create<SignUpResult>()
+        private val verifyPhoneNumberAction = PublishSubject.create<SignUpModel>()
 
         init {
             this.startTermsActivity = this.termsButtonPressed
@@ -97,12 +99,12 @@ interface PasswordViewModel {
                     Pair(t1, t2)
                 })
 
-            val signUpEvent = usernameAndPassword
+            val verifyPhoneNumber = usernameAndPassword
                 .takeWhen(this.signUpButtonPressed)
-                .flatMap{it -> this.submit(uuid,it.second.first, it.second.second)}
+                .flatMap{it -> this.verifyPhoneNumber(uuid,it.second.first, it.second.second)}
                 .share()
 
-            signUpEvent
+            verifyPhoneNumber
                 .filter { it.isFail() }
                 .map { it ->
                     when(it){
@@ -113,23 +115,24 @@ interface PasswordViewModel {
                 .map { ErrorHandler.handleError(it , AuthenticationErrorType.SIGN_UP_ERROR) }
                 .subscribe(this.showError)
 
-            signUpEvent
+            verifyPhoneNumber
                 .filter { !it.isFail() }
                 .map{it ->
                     when(it){
-                        is Result.success -> return@map it.value as SignUpResult
+                        is Result.success -> return@map it.value
                         is Result.failure -> return@map null
                     }}
                 .map { result ->
-                    //Log.e("Result", result.username + result.password)
-                    //val normalizedPhoneNumber = ValidationService.normalizePhoneNumber(result.username)
-                    environment.sharedPreferences().edit().putString("phoneNumber",result.username).apply()
+                    val password = this.passwordEditTextChanged.value
+                    val username = this.username.value
+                    print(username+ password+uuid+"\n")
+                    environment.sharedPreferences().edit().putString("phoneNumber",username).apply()
                     environment.sharedPreferences().edit().putString("userId",uuid).apply()
-                    environment.sharedPreferences().edit().putString("password",result.password).apply()
-                    return@map result
+                    environment.sharedPreferences().edit().putString("password",password).apply()
+                    return@map SignUpModel(uuid,username,password)
                 }
                 .filter { it!=null }
-                .subscribe(this.signedUpAction)
+                .subscribe(this.verifyPhoneNumberAction)
 
         }
 
@@ -141,7 +144,9 @@ interface PasswordViewModel {
 
         override fun privacyPolicyButtonPressed() = this.privacyButtonPressed.onNext(Unit)
 
-        override fun username(username: String) = this.username.onNext(username)
+        override fun username(username: String) {
+            return this.username.onNext(username)
+        }
 
         override fun signUpButtonEnabled(): Observable<Boolean> = this.signUpButtonEnabled
 
@@ -157,21 +162,22 @@ interface PasswordViewModel {
 
         override fun validPasswordSpecialCharacters(): Observable<Boolean> = this.validPasswordSpecialCharacters
 
-        override fun signedUpAction(): Observable<SignUpResult> = this.signedUpAction
+        override fun verifyPhoneNumberAction(): Observable<SignUpModel> = this.verifyPhoneNumberAction
 
         override fun showError(): Observable<ErrorWrapper> = this.showError
 
         override fun loadingEnabled(): Observable<Boolean> = this.loadingEnabled
 
 
-        private fun submit(uuid: String,username : String, password: String) : Observable<Result<SignUpResult>> {
+        private fun verifyPhoneNumber(uuid: String,username : String, password: String) : Observable<Result<Boolean>> {
+            /*
             var usernameFormated = ""
             val credentialType = ValidationService.userCredentialType(username)
             usernameFormated = when(credentialType){
                 UserCredentialType.PHONE_NUMBER -> "+506$username"
                 UserCredentialType.EMAIL -> username
-            }
-            return environment.authenticationUseCase().signUp(uuid, usernameFormated, password)
+            }*/
+            return environment.authenticationUseCase().verifyPhoneNumber(username)
                 .doOnComplete { this.loadingEnabled.onNext(false) }
                 .doOnSubscribe { this.loadingEnabled.onNext(true) }
 
@@ -218,6 +224,10 @@ interface PasswordViewModel {
             if (!validatePasswordSpecialCharacters(password)){isSuccess = false}
 
             return isSuccess
+        }
+        @VisibleForTesting
+        internal fun getUuid() : String{
+            return this.uuid
         }
 
     }

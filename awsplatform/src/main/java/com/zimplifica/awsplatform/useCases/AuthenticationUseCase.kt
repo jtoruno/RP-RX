@@ -7,6 +7,12 @@ import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.UserState
 import com.amazonaws.mobile.client.UserStateDetails
 import com.amazonaws.mobile.client.results.ForgotPasswordState
+import com.amazonaws.rediPuntosAPI.InitPhoneVerificationMutation
+import com.apollographql.apollo.GraphQLCall
+import com.apollographql.apollo.api.Response
+import com.apollographql.apollo.exception.ApolloException
+import com.zimplifica.awsplatform.AppSync.AppSyncClient
+import com.zimplifica.awsplatform.AppSync.CacheOperations
 import com.zimplifica.awsplatform.Utils.AWSErrorDecoder
 import com.zimplifica.awsplatform.Utils.ErrorMappingHelper
 import com.zimplifica.domain.entities.*
@@ -18,6 +24,32 @@ import io.reactivex.disposables.Disposable
 import java.lang.Exception
 
 class AuthenticationUseCase : AuthenticationUseCase {
+
+    private val appSyncClient = AppSyncClient.getClient()
+    private val cacheOperations : CacheOperations = CacheOperations()
+
+    override fun verifyPhoneNumber(phoneNumber: String): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val verificationRequest = InitPhoneVerificationMutation.builder()
+                .username("@")
+                .phoneNumber(phoneNumber)
+                .build()
+            this.appSyncClient.mutate(verificationRequest).enqueue(object : GraphQLCall.Callback<InitPhoneVerificationMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase, verifyPhoneNumber Error:", e)
+                    single.onSuccess(Result.failure(AWSErrorDecoder.decodeSignUpError(e)))
+
+                }
+
+                override fun onResponse(response: Response<InitPhoneVerificationMutation.Data>) {
+                    Log.i("🔵","Verification code sent")
+                    single.onSuccess(Result.success(true))
+                }
+
+            })
+        }
+        return single.toObservable()
+    }
 
     override fun signIn(username: String, password: String): Observable<Result<SignInResult>> {
         val single = Single.create<Result<SignInResult>> create@{ single ->
@@ -49,9 +81,9 @@ class AuthenticationUseCase : AuthenticationUseCase {
         return single.toObservable()
     }
 
-    override fun signUp(userId: String, username: String, password: String): Observable<Result<SignUpResult>> {
+    override fun signUp(userId: String, username: String, password: String, verificationCode: String): Observable<Result<SignUpResult>> {
         val single = Single.create<Result<SignUpResult>> create@{ single ->
-            AWSMobileClient.getInstance().signUp(userId,password, mapOf(Pair("phone_number",username)),null, object: Callback<com.amazonaws.mobile.client.results.SignUpResult>{
+            AWSMobileClient.getInstance().signUp(userId,password, mapOf(Pair("phone_number",username)), mapOf(Pair("verificationCode",verificationCode)), object: Callback<com.amazonaws.mobile.client.results.SignUpResult>{
                 override fun onResult(result: com.amazonaws.mobile.client.results.SignUpResult?) {
                     var state : SignUpState
                     if (result!=null){
@@ -85,7 +117,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
         }
         return single.toObservable()
     }
-
+    /*
     override fun confirmSignUp(userId: String, verificationCode: String): Observable<Result<SignUpConfirmationResult>> {
         val single = Single.create<Result<SignUpConfirmationResult>> create@{ single ->
             AWSMobileClient.getInstance().confirmSignUp(userId, verificationCode, object : Callback<com.amazonaws.mobile.client.results.SignUpResult>{
@@ -118,7 +150,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
             })
         }
         return single.toObservable()
-    }
+    }*/
 
     override fun resendVerificationCode(userId: String): Observable<Result<SignUpResendConfirmationResult>> {
         val single = Single.create<Result<SignUpResendConfirmationResult>> create@{ single ->
@@ -260,7 +292,9 @@ class AuthenticationUseCase : AuthenticationUseCase {
         val single = Single.create<Result<Boolean>> create@{ single ->
             AWSMobileClient.getInstance().updateUserAttributes(attributes,object: Callback<List<com.amazonaws.mobile.client.results.UserCodeDeliveryDetails>>{
                 override fun onResult(result: List<com.amazonaws.mobile.client.results.UserCodeDeliveryDetails>?) {
-                     single.onSuccess(Result.success(true))
+                    val email = attributes["email"] ?: ""
+                    cacheOperations.updateEmail(email)
+                    single.onSuccess(Result.success(true))
                 }
 
                 override fun onError(e: Exception?) {
@@ -311,6 +345,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
         val single = Single.create<Result<Boolean>> create@{single->
             AWSMobileClient.getInstance().confirmVerifyUserAttribute("email",verificationCode,object : Callback<Void>{
                 override fun onResult(result: Void?) {
+                    cacheOperations.updateEmailStatus(true)
                     single.onSuccess(Result.success(true))
                 }
 

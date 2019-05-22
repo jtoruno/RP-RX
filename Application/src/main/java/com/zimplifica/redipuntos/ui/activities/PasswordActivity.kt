@@ -59,6 +59,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         this.viewModel.inputs.username(phone)
         passwordEditText.onChange { this.viewModel.inputs.password(it) }
 
+
         /////////////////////////////
         termnsTxt = findViewById(R.id.termsSignUpPresenterTxt)
         //Clickeable text
@@ -138,7 +139,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
                 showDialog("Lo sentimos",it.friendlyMessage)
             }
 
-        this.viewModel.outputs.signedUpAction()
+        this.viewModel.outputs.verifyPhoneNumberAction()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this,SignUpVerifyActivity::class.java)

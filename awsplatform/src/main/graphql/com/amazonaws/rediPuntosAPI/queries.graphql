@@ -1,0 +1,230 @@
+# this is an auto generated file. This will be overwritten
+query GetUser {
+  getUser {
+    username
+    firstName
+    lastName
+    birthdate
+    identityNumber
+    phoneNumber
+    phoneNumberVerified
+    email
+    emailVerified
+    rewards
+    paymentMethods {
+      username
+      cardId
+      cardNumber
+      expirationDate
+      issuer
+      rewards
+      automaticRedemption
+    }
+  }
+}
+query GetPaymentMethodsByUser($username: ID!) {
+  getPaymentMethodsByUser(username: $username) {
+    items {
+      username
+      cardId
+      cardNumber
+      expirationDate
+      issuer
+      rewards
+      automaticRedemption
+    }
+  }
+}
+query GetTransactionsByUser($username: ID!) {
+  getTransactionsByUser(username: $username) {
+    items {
+      orderId
+      datetime
+      transactionType
+      item {
+        type
+        description
+        amount
+        ... on SitePaymentItem {
+          vendorId
+          vendorName
+        }
+        ... on GTIItem {
+          companyId
+          agreementId
+          invoiceId
+          clientName
+          serviceId
+          paymentType
+          expirationDate
+          period
+          isPrepaid
+        }
+      }
+      fee
+      total
+      status
+      wayToPay {
+        rediPuntos
+        creditCard {
+          cardId
+          cardNumber
+          issuer
+        }
+        creditCardRewards
+        creditCardCharge
+      }
+    }
+  }
+}
+query GetServicesCatalog {
+  getServicesCatalog {
+    categoryId
+    categoryName
+    categoryState
+    services {
+      serviceId
+      serviceName
+      description
+      isPrepaid
+      posterImageFile {
+        ...S3Object
+      }
+      properties {
+        type
+        key
+        name
+      }
+    }
+  }
+}
+query GetCheckoutPayloadGti($input: CheckoutPayloadGTIInput!) {
+  getCheckoutPayloadGTI(input: $input) {
+    order {
+      pid
+      item {
+        type
+        description
+        amount
+        ... on SitePaymentItem {
+          vendorId
+          vendorName
+        }
+        ... on GTIItem {
+          companyId
+          agreementId
+          invoiceId
+          clientName
+          serviceId
+          paymentType
+          expirationDate
+          period
+          isPrepaid
+        }
+      }
+      fee
+      total
+    }
+    paymentOptions {
+      rediPuntos
+      paymentMethods {
+        username
+        cardId
+        cardNumber
+        expirationDate
+        issuer
+        rewards
+        automaticRedemption
+      }
+    }
+  }
+}
+query GetCheckoutPayloadGtiPrepaid($input: CheckoutPayloadGTIPrepaidInput!) {
+  getCheckoutPayloadGTIPrepaid(input: $input) {
+    order {
+      pid
+      item {
+        type
+        description
+        amount
+        ... on SitePaymentItem {
+          vendorId
+          vendorName
+        }
+        ... on GTIItem {
+          companyId
+          agreementId
+          invoiceId
+          clientName
+          serviceId
+          paymentType
+          expirationDate
+          period
+          isPrepaid
+        }
+      }
+      fee
+      total
+    }
+    paymentOptions {
+      rediPuntos
+      paymentMethods {
+        username
+        cardId
+        cardNumber
+        expirationDate
+        issuer
+        rewards
+        automaticRedemption
+      }
+    }
+  }
+}
+query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
+  getCheckoutPayloadSitePay(input: $input) {
+    order {
+      pid
+      item {
+        type
+        description
+        amount
+        ... on SitePaymentItem {
+          vendorId
+          vendorName
+        }
+        ... on GTIItem {
+          companyId
+          agreementId
+          invoiceId
+          clientName
+          serviceId
+          paymentType
+          expirationDate
+          period
+          isPrepaid
+        }
+      }
+      fee
+      total
+    }
+    paymentOptions {
+      rediPuntos
+      paymentMethods {
+        username
+        cardId
+        cardNumber
+        expirationDate
+        issuer
+        rewards
+        automaticRedemption
+      }
+    }
+  }
+}
+query GetVendor($vendorId: String!) {
+  getVendor(vendorId: $vendorId) {
+    pk
+    name
+    address
+  }
+}

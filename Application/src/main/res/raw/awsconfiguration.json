@@ -1,0 +1,27 @@
+{
+  "IdentityManager": {
+    "Default": {}
+  },
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "us-east-1:00125416-d883-4fbb-ad16-02a7db2d1d3e",
+        "Region": "us-east-1"
+      }
+    }
+  },
+  "CognitoUserPool": {
+    "Default": {
+      "PoolId": "us-east-1_UhlRRY8rQ",
+      "AppClientId": "f26bvsg6asg9rgr56mmqctrub",
+      "Region": "us-east-1"
+    }
+  },
+  "AppSync": {
+    "rediPuntosAPI": {
+      "ApiUrl": "https://ogbx7bntu5a5fdvqti5eqwynbi.appsync-api.us-east-1.amazonaws.com/graphql",
+      "Region": "us-east-1",
+      "AuthMode": "AWS_IAM"
+    }
+  }
+}
