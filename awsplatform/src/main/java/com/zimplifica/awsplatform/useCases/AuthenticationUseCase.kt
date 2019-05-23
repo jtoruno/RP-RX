@@ -264,8 +264,8 @@ class AuthenticationUseCase : AuthenticationUseCase {
         return single.toObservable()
     }
 
-    override fun getCurrentUserState(): Observable<Result<UserStateResult>> {
-        val single = Single.create<Result<UserStateResult>> create@{ single ->
+    override fun getCurrentUserState(): Observable<UserStateResult> {
+        val single = Single.create<UserStateResult> create@{ single ->
             var state : UserStateResult = UserStateResult.signedOut
             val actual = AWSMobileClient.getInstance().currentUserState().userState
             Log.e("UserState", actual.toString())
@@ -275,7 +275,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
                 UserState.SIGNED_OUT_USER_POOLS_TOKENS_INVALID -> UserStateResult.signedOut
             }
             Log.e("UserState", state.toString())
-            single.onSuccess(Result.success(state))
+            single.onSuccess(state)
         }
         return single.toObservable()
     }

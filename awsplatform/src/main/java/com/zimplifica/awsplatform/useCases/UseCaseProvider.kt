@@ -8,6 +8,7 @@ import com.amazonaws.mobile.client.UserStateDetails
 import com.zimplifica.awsplatform.AppSync.AppSyncClient
 import com.zimplifica.domain.useCases.AuthenticationUseCase
 import com.zimplifica.domain.useCases.UseCaseProvider
+import com.zimplifica.domain.useCases.UserUseCase
 import java.lang.Exception
 
 class UseCaseProvider(context: Context) : UseCaseProvider{
@@ -27,6 +28,10 @@ class UseCaseProvider(context: Context) : UseCaseProvider{
     }
     override fun makeAuthenticationUseCase(): AuthenticationUseCase {
         return com.zimplifica.awsplatform.useCases.AuthenticationUseCase()
+    }
+
+    override fun makeUserUseCase(): UserUseCase {
+        return com.zimplifica.awsplatform.useCases.UserUseCase()
     }
 
 }

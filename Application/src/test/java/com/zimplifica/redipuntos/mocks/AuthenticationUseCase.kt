@@ -14,10 +14,10 @@ import kotlin.math.sin
 
 class AuthenticationUseCase : AuthenticationUseCase {
 
-    override fun getCurrentUserState(): Observable<Result<UserStateResult>> {
+    override fun getCurrentUserState(): Observable<UserStateResult> {
         return Observable.create create@{ observer ->
             val response = UserStateResult.signedOut
-            observer.onNext(Result.success(response))
+            observer.onNext(response)
         }
     }
 

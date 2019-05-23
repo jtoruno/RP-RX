@@ -5,7 +5,7 @@ import io.reactivex.Observable
 
 interface AuthenticationUseCase {
     fun signIn(username: String,password: String) : Observable<Result<SignInResult>>
-    fun getCurrentUserState() : Observable<Result<UserStateResult>>
+    fun getCurrentUserState() : Observable<UserStateResult>
     fun signUp(userId: String, username: String, password: String, verificationCode: String) : Observable<Result<SignUpResult>>
     fun resendVerificationCode(userId: String) : Observable<Result<SignUpResendConfirmationResult>>
     fun signOut() : Observable<Result<UserStateResult>>

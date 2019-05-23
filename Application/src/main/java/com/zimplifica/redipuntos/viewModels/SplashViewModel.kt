@@ -38,12 +38,6 @@ interface SplashViewModel {
             //getSession.subscribe { Log.e("Result",it.isFail().toString() + (it.successValue() as UserStateResult).toString()) }
 
             getSession
-                .map {
-                    when(it){
-                        is Result.success -> return@map it.value as UserStateResult
-                        is Result.failure -> return@map null
-                    }
-                }
                 .subscribe(this.splashAction)
         }
 
@@ -54,7 +48,7 @@ interface SplashViewModel {
         override fun splashAction(): Observable<UserStateResult> {
             return this.splashAction
         }
-        private fun submit() : Observable<Result<UserStateResult>>{
+        private fun submit() : Observable<UserStateResult>{
             return environment.authenticationUseCase().getCurrentUserState()
         }
 
