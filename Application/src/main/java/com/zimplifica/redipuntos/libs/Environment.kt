@@ -2,23 +2,24 @@ package com.zimplifica.redipuntos.libs
 
 import android.os.Parcelable
 import auto.parcel.AutoParcel
-import com.zimplifica.domain.useCases.AuthenticationUseCase
 import android.content.SharedPreferences
-
-
+import com.zimplifica.redipuntos.models.CurrentUser
+import com.zimplifica.redipuntos.services.AuthenticationService
 
 
 @AutoParcel
 abstract class Environment : Parcelable {
 
     abstract fun webEndpoint(): String
-    abstract fun authenticationUseCase(): AuthenticationUseCase
+    abstract fun authenticationUseCase(): AuthenticationService
     abstract fun sharedPreferences(): SharedPreferences
+    abstract fun currentUser(): CurrentUser
     @AutoParcel.Builder
     abstract class Builder {
         abstract fun webEndpoint(endPoint: String): Builder
-        abstract fun authenticationUseCase(authenticationUseCase: AuthenticationUseCase) : Builder
+        abstract fun authenticationUseCase(authenticationUseCase: AuthenticationService) : Builder
         abstract fun sharedPreferences(sharedPreferences: SharedPreferences): Builder
+        abstract fun currentUser(currentUser: CurrentUser): Builder
         abstract fun build(): Environment
     }
 

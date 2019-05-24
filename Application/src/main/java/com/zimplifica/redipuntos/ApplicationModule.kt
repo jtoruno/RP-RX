@@ -14,27 +14,30 @@ import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
 import com.zimplifica.redipuntos.libs.Environment
-import android.preference.PreferenceManager
-
-
+import com.zimplifica.redipuntos.models.CurrentUser
+import com.zimplifica.redipuntos.services.AuthenticationService
+import com.zimplifica.redipuntos.services.GlobalState
 
 
 @Module
 class ApplicationModule(@NonNull application: Application) {
     val application = application
+    private val state = GlobalState(application.applicationContext)
 
     @Provides
     @Singleton
     fun provideEnvironment(
         @NonNull webEndpoint: String,
-        @NonNull authenticationUseCase: AuthenticationUseCase,
-        @NonNull sharedPreferences: SharedPreferences
+        @NonNull authenticationUseCase: AuthenticationService,
+        @NonNull sharedPreferences: SharedPreferences,
+        @NonNull currentUser: CurrentUser
     ): Environment {
 
         return Environment.builder()
             .webEndpoint(webEndpoint)
             .authenticationUseCase(authenticationUseCase)
             .sharedPreferences(sharedPreferences)
+            .currentUser(currentUser)
             .build()
     }
 
@@ -47,9 +50,9 @@ class ApplicationModule(@NonNull application: Application) {
 
     @Provides
     @Singleton
-    fun provideAuthenticationUseCase() : AuthenticationUseCase {
+    fun provideAuthenticationUseCase() : AuthenticationService {
         val awsProvider =  UseCaseProvider(application.applicationContext)
-        return awsProvider.makeAuthenticationUseCase()
+        return AuthenticationService(state,awsProvider.makeAuthenticationUseCase())
     }
 
     @Provides
@@ -57,6 +60,12 @@ class ApplicationModule(@NonNull application: Application) {
     fun provideSharedPreferences(): SharedPreferences {
         return application.getSharedPreferences("SP", Activity.MODE_PRIVATE)
         //return PreferenceManager.getDefaultSharedPreferences(this.application)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCurrentUser(): CurrentUser{
+        return CurrentUser
     }
 
     /*

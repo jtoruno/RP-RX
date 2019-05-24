@@ -49,6 +49,7 @@ interface SplashViewModel {
             return this.splashAction
         }
         private fun submit() : Observable<UserStateResult>{
+            Log.e("Print",environment.currentUser().getCurrentUser().toString())
             return environment.authenticationUseCase().getCurrentUserState()
         }
 

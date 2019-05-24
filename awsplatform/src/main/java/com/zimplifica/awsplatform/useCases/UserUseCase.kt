@@ -219,7 +219,7 @@ class UserUseCase : UserUseCase {
                 override fun onResponse(response: Response<GetUserQuery.Data>) {
                     if(response.data()!=null){
                         val user = response.data()!!.user
-                        val paymentMethods : List<PaymentMethod> = response.data()!!.user.paymentMethods().map { p ->
+                        val paymentMethods = response.data()!!.user.paymentMethods().map { p ->
                             return@map PaymentMethod(p.cardId(),p.cardNumber(),p.expirationDate(),p.issuer(),p.rewards(),p.automaticRedemption())
                         }
 

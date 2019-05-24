@@ -9,7 +9,7 @@ import com.zimplifica.redipuntos.external.DaggerApplicationComponent
 
 open class RPApplication: Application() {
 
-    lateinit var component: ApplicationComponent
+    private var component: ApplicationComponent ? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -17,11 +17,11 @@ open class RPApplication: Application() {
             .applicationModule(ApplicationModule(this))
             .build()
 
-        component().inject(this)
+        component()?.inject(this)
 
     }
 
-    fun component(): ApplicationComponent {
+    fun component(): ApplicationComponent? {
         return this.component
     }
 }
