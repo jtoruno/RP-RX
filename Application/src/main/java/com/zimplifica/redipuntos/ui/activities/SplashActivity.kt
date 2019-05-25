@@ -10,6 +10,7 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.SplashViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import java.util.concurrent.TimeUnit
 
 @RequiresActivityViewModel(SplashViewModel.ViewModel::class)
 class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
@@ -20,20 +21,17 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
         setContentView(R.layout.activity_splash)
         this.viewModel.inputs.onCreate()
 
-        this.viewModel.outputs.splashAction()
+        this.viewModel.outputs.signedInAction().delay(1,TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                when(it){
-                    UserStateResult.signedIn -> {
-                        val intent = Intent(this, HomeActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                    else -> {
-                        val intent = Intent(this, WalkThrough::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                }
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        this.viewModel.outputs.signedOutAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(this, WalkThrough::class.java)
+                startActivity(intent)
+                finish()
             }
     }
 }

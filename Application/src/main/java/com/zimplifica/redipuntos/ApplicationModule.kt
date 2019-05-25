@@ -17,12 +17,14 @@ import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.CurrentUser
 import com.zimplifica.redipuntos.services.AuthenticationService
 import com.zimplifica.redipuntos.services.GlobalState
+import com.zimplifica.redipuntos.services.UserService
 
 
 @Module
 class ApplicationModule(@NonNull application: Application) {
     val application = application
     private val state = GlobalState(application.applicationContext)
+    private val awsProvider =  UseCaseProvider(application.applicationContext)
 
     @Provides
     @Singleton
@@ -30,7 +32,8 @@ class ApplicationModule(@NonNull application: Application) {
         @NonNull webEndpoint: String,
         @NonNull authenticationUseCase: AuthenticationService,
         @NonNull sharedPreferences: SharedPreferences,
-        @NonNull currentUser: CurrentUser
+        @NonNull currentUser: CurrentUser,
+        @NonNull userUseCase: UserService
     ): Environment {
 
         return Environment.builder()
@@ -38,6 +41,7 @@ class ApplicationModule(@NonNull application: Application) {
             .authenticationUseCase(authenticationUseCase)
             .sharedPreferences(sharedPreferences)
             .currentUser(currentUser)
+            .userUseCase(userUseCase)
             .build()
     }
 
@@ -51,7 +55,7 @@ class ApplicationModule(@NonNull application: Application) {
     @Provides
     @Singleton
     fun provideAuthenticationUseCase() : AuthenticationService {
-        val awsProvider =  UseCaseProvider(application.applicationContext)
+
         return AuthenticationService(state,awsProvider.makeAuthenticationUseCase())
     }
 
@@ -66,6 +70,12 @@ class ApplicationModule(@NonNull application: Application) {
     @Singleton
     fun provideCurrentUser(): CurrentUser{
         return CurrentUser
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserUseCase(): UserService{
+        return UserService(awsProvider.makeUserUseCase(),state)
     }
 
     /*

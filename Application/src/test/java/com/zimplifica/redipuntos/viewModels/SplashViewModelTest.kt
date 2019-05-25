@@ -8,23 +8,19 @@ import org.junit.Test
 
 class SplashViewModelTest : RPTestCase(){
     lateinit var vm : SplashViewModel.ViewModel
-    val result = TestObserver<UserStateResult>()
+    val signedOut = TestObserver<Unit>()
 
 
     private fun setUpEnvironment(environment: Environment){
         this.vm = SplashViewModel.ViewModel(environment)
-        this.vm.outputs.splashAction().subscribe(this.result)
-        this.vm.outputs.splashAction().subscribe {
-            print(it.toString())
-        }
+        this.vm.outputs.signedOutAction().subscribe(this.signedOut)
     }
 
     @Test
     fun testResult(){
         setUpEnvironment(environment()!!)
         this.vm.inputs.onCreate()
-        val response = UserStateResult.signedOut
-        result.assertValues(response)
+        signedOut.assertValueCount(1)
     }
 
 }

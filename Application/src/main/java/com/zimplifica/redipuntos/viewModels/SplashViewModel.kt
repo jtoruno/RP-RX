@@ -3,6 +3,7 @@ package com.zimplifica.redipuntos.viewModels
 import android.support.annotation.NonNull
 import android.util.Log
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.UserStateResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -15,7 +16,9 @@ interface SplashViewModel {
         fun onCreate()
     }
     interface Outputs{
-        fun splashAction() : Observable<UserStateResult>
+        //fun splashAction() : Observable<UserStateResult>
+        fun signedInAction(): Observable<Unit>
+        fun signedOutAction(): Observable<Unit>
     }
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<SplashViewModel>(environment), Inputs, Outputs{
 
@@ -26,7 +29,8 @@ interface SplashViewModel {
         private val onCreate = PublishSubject.create<Unit>()
 
         //Outputs
-        private val splashAction = BehaviorSubject.create<UserStateResult>()
+        private val signedInAction = BehaviorSubject.create<Unit>()
+        private val signedOutAction = BehaviorSubject.create<Unit>()
 
         init {
 
@@ -38,19 +42,46 @@ interface SplashViewModel {
             //getSession.subscribe { Log.e("Result",it.isFail().toString() + (it.successValue() as UserStateResult).toString()) }
 
             getSession
-                .subscribe(this.splashAction)
+                .filter { it == UserStateResult.signedOut }
+                .map { it -> Unit }
+                .subscribe(this.signedOutAction)
+
+            val signedIn = getSession
+                .filter { it == UserStateResult.signedIn }
+                .flatMap { this.finishLoadingUserInfo() }
+                .share()
+
+            signedIn
+                .filter { !it.isFail() }
+                .map {
+                    return@map it.successValue()
+                }
+                .map {
+                    Log.i("UserInfo","nnnn"+it.userPhoneNumber)
+                    return@map Unit
+                }
+                .subscribe(this.signedInAction)
+
         }
 
         override fun onCreate() {
             this.onCreate.onNext(Unit)
         }
 
+        override fun signedInAction(): Observable<Unit> = this.signedInAction
+
+        override fun signedOutAction(): Observable<Unit> = this.signedOutAction
+        /*
         override fun splashAction(): Observable<UserStateResult> {
             return this.splashAction
-        }
+        }*/
         private fun submit() : Observable<UserStateResult>{
             Log.e("Print",environment.currentUser().getCurrentUser().toString())
             return environment.authenticationUseCase().getCurrentUserState()
+        }
+
+        private fun finishLoadingUserInfo() : Observable<Result<UserInformationResult>>{
+            return environment.userUseCase().getUserInformation(false)
         }
 
     }

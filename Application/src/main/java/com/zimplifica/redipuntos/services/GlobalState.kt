@@ -2,24 +2,28 @@ package com.zimplifica.redipuntos.services
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import com.zimplifica.domain.entities.Citizen
 import com.zimplifica.domain.entities.PaymentMethod
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.models.CurrentUser
 import io.reactivex.Observable
 import io.reactivex.subjects.ReplaySubject
 
 @SuppressLint("CheckResult")
 class GlobalState(val context: Context){
-    private val userInformationSubscription : ReplaySubject<UserInformationResult> = ReplaySubject.create(1)
+    private var userInformationSubscription  = ReplaySubject.create<UserInformationResult>(1)
     private val app = context.applicationContext as RPApplication
     private val environment = app.component()?.environment()
     //private val environment = Environment.builder().build()
 
      init {
         this.userInformationSubscription.subscribe { userInfo ->
-            environment?.currentUser()?.setCurrentUser(userInfo)
+            Log.e("GlobalState","  "+userInfo.userPhoneNumber)
+            //environment?.currentUser()?.setCurrentUser(userInfo)
+            CurrentUser.setCurrentUser(userInfo)
         }
     }
 

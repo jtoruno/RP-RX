@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.libs.utils
 
 import android.util.Patterns
+import com.zimplifica.domain.entities.UserInformationResult
 import java.util.regex.Pattern
 
 enum class UserCredentialType {
@@ -120,4 +121,65 @@ object ValidationService {
         val passwordValidation = validatePassword(password)
         return confirmationCodeValidation && passwordValidation
     }
+
+
+    fun validateUserStatus(userInfo: UserInformationResult) : UserConfirmationStatus{
+        var shouldCompleteCitizenInfo = false
+        var shouldCompleteEmail = false
+        var shouldVerifyEmail = false
+        var shouldCompletePaymentMethod = false
+        var email: String? = null
+
+        if (userInfo.citizenId == null) {
+            shouldCompleteCitizenInfo = true
+        }
+
+        if (userInfo.userEmail == null) {
+            shouldCompleteEmail = true
+        } else {
+            email = userInfo.userEmail
+        }
+
+        if (!userInfo.userEmailVerified) {
+            shouldVerifyEmail = true
+
+        }
+
+        if (userInfo.paymentMethods.isEmpty()) {
+            shouldCompletePaymentMethod = true
+        }
+
+        return UserConfirmationStatus(shouldCompleteCitizenInfo,shouldCompleteEmail,shouldVerifyEmail,email,shouldCompletePaymentMethod)
+    }
+}
+
+class UserConfirmationStatus(){
+
+    enum class ConfirmationStatus{
+        missingInfo,completed
+    }
+
+    private var shouldCompleteCitizenInfo = true
+    private var shouldCompleteEmail = true
+    private var shouldVerifyEmail = true
+    private var shouldCompletePaymentMethod = true
+    private var email : String? = null
+
+
+
+    constructor(shouldCompleteCitizenInfo: Boolean, shouldCompleteEmail: Boolean, shouldVerifyEmail: Boolean, email: String?, shouldCompletePaymentMethod: Boolean) : this(){
+        this.shouldCompleteCitizenInfo = shouldCompleteCitizenInfo
+        this.shouldCompleteEmail = shouldCompleteEmail
+        this.shouldVerifyEmail = shouldVerifyEmail
+        this.shouldCompletePaymentMethod = shouldCompletePaymentMethod
+        this.email = email
+    }
+
+    var confirmationStatus : ConfirmationStatus =
+        if (shouldCompleteCitizenInfo||shouldCompleteEmail||shouldVerifyEmail||shouldCompletePaymentMethod){
+             ConfirmationStatus.missingInfo
+        }else{
+             ConfirmationStatus.completed
+        }
+
 }
