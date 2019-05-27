@@ -80,7 +80,8 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
         //Cambiar con la pantalla
         this.viewModel.outputs.verifiedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val intent = Intent(this, HomeActivity::class.java)
+                //val intent = Intent(this, HomeActivity::class.java)
+                val intent = Intent(this, LaunchActivity::class.java)
                 startActivity(intent)
                 finish()
                 //showDialog("SIgnIn","Inicio de Sesión correcto")

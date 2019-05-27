@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.mocks.AuthenticationUseCase
+import com.zimplifica.redipuntos.mocks.UserUseCase
 import com.zimplifica.redipuntos.models.CurrentUser
 import com.zimplifica.redipuntos.services.AuthenticationService
 import com.zimplifica.redipuntos.services.GlobalState
+import com.zimplifica.redipuntos.services.UserService
 import io.reactivex.annotations.NonNull
 import org.junit.runner.RunWith
 import org.junit.Before
@@ -32,6 +34,7 @@ abstract class RPTestCase : TestCase(){
             .sharedPreferences(sharedPref())
             .authenticationUseCase(authenticationService())
             .currentUser(CurrentUser)
+            .userUseCase(userUseCaseService())
             .build()
     }
 
@@ -51,6 +54,11 @@ abstract class RPTestCase : TestCase(){
     private fun authenticationService(): AuthenticationService{
         val global = GlobalState(application()!!)
         return AuthenticationService(global,AuthenticationUseCase())
+    }
+
+    private fun userUseCaseService() : UserService{
+        val global = GlobalState(application()!!)
+        return UserService(UserUseCase(),global)
     }
 
     @NonNull

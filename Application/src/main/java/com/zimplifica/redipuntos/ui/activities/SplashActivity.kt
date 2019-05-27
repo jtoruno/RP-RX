@@ -27,7 +27,7 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
                 startActivity(intent)
                 finish()
             }
-        this.viewModel.outputs.signedOutAction().observeOn(AndroidSchedulers.mainThread())
+        this.viewModel.outputs.signedOutAction().delay(1,TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, WalkThrough::class.java)
                 startActivity(intent)
