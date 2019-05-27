@@ -28,6 +28,7 @@ public class ActivityViewModel<ViewType> {
     private final PublishSubject<Intent> intent = PublishSubject.create();
 
     */
+    private final PublishSubject<Intent> intent = PublishSubject.create();
 
     protected final Environment context;
 
@@ -35,5 +36,15 @@ public class ActivityViewModel<ViewType> {
         this.context = context;
     }
 
+    /**
+     * Takes intent data from the view.
+     */
+    public void intent(final @NonNull Intent intent) {
+        this.intent.onNext(intent);
+    }
+
+    protected @NonNull Observable<Intent> intent() {
+        return this.intent;
+    }
 }
 

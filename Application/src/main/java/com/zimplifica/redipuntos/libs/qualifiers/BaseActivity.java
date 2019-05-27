@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.AnimRes;
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ public abstract class BaseActivity<ViewModelType extends ActivityViewModel> exte
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         assignViewModel(savedInstanceState);
+        this.viewModel.intent(getIntent());
     }
 
     @Override
@@ -34,6 +36,16 @@ public abstract class BaseActivity<ViewModelType extends ActivityViewModel> exte
                 this.viewModel = null;
             }
         }
+    }
+
+    /**
+     * Called when an activity is set to `singleTop` and it is relaunched while at the top of the activity stack.
+     */
+    @CallSuper
+    @Override
+    protected void onNewIntent(final Intent intent) {
+        super.onNewIntent(intent);
+        this.viewModel.intent(intent);
     }
 
     protected final void startActivityWithTransition(final @NonNull Intent intent, final @AnimRes int enterAnim,

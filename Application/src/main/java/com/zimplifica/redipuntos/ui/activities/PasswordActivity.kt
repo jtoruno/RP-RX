@@ -35,7 +35,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
     lateinit var img3 : ImageView
     lateinit var img4 : ImageView
     lateinit var progressBar: ProgressBar
-    private var phone = ""
+    //private var phone = ""
 
 
     @SuppressLint("CheckResult")
@@ -53,10 +53,10 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         img4 = findViewById(R.id.imageView22)
         progressBar = findViewById(R.id.progressBar2)
         progressBar.visibility = View.GONE
-        phone = this.intent.getStringExtra("phone")?:""
+        //phone = this.intent.getStringExtra("phone")?:""
 
-        Log.e("Phone",phone)
-        this.viewModel.inputs.username(phone)
+        //Log.e("Phone",phone)
+        //this.viewModel.inputs.username(phone)
         passwordEditText.onChange { this.viewModel.inputs.password(it) }
 
 
@@ -121,6 +121,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         }
 
         createAccountBtn.setOnClickListener {
+            Log.e("PSVM","CLicked")
             this.viewModel.inputs.signUpButtonPressed()
         }
         this.viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())

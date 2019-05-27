@@ -24,7 +24,7 @@ interface PasswordViewModel {
         fun termsAndConditionsButtonPressed()
         fun privacyPolicyButtonPressed()
         fun signUpButtonPressed()
-        fun username(username: String)
+        //fun username(username: String)
 
     }
     interface Outputs {
@@ -48,13 +48,14 @@ interface PasswordViewModel {
         val outputs : Outputs = this
 
         private val uuid = UUID.randomUUID().toString()
+        private var phone : String? = null
 
         //Inputs
         private val passwordEditTextChanged = BehaviorSubject.create<String>()
         private val termsButtonPressed = PublishSubject.create<Unit>()
         private val privacyButtonPressed = PublishSubject.create<Unit>()
         private val signUpButtonPressed = PublishSubject.create<Unit>()
-        private val username = BehaviorSubject.create<String>()
+        //private val username = BehaviorSubject.create<String>()
 
         //Outputs
         private val startTermsActivity : Observable<Unit>
@@ -92,8 +93,17 @@ interface PasswordViewModel {
                 .map { validatePasswordSpecialCharacters(it)}
                 .subscribe(this.validPasswordSpecialCharacters)
 
+            val phone  = intent()
+                .filter { it.hasExtra("phone") }
+                .map {
+                    this.phone = it.getStringExtra("phone")
+                    Log.e("PSVM","PhoneNumber "+phone)
+                    return@map it.getStringExtra("phone")
+                }
+
+
             val usernameAndPassword = Observable.combineLatest<String, String, Pair<String, String>>(
-                username,
+                phone,
                 passwordEditTextChanged,
                 BiFunction { t1, t2 ->
                     Pair(t1, t2)
@@ -124,7 +134,7 @@ interface PasswordViewModel {
                     }}
                 .map { result ->
                     val password = this.passwordEditTextChanged.value
-                    val username = this.username.value
+                    val username = this.phone ?:""
                     print(username+ password+uuid+"\n")
                     environment.sharedPreferences().edit().putString("phoneNumber",username).apply()
                     environment.sharedPreferences().edit().putString("userId",uuid).apply()
@@ -143,10 +153,10 @@ interface PasswordViewModel {
         override fun termsAndConditionsButtonPressed() = this.termsButtonPressed.onNext(Unit)
 
         override fun privacyPolicyButtonPressed() = this.privacyButtonPressed.onNext(Unit)
-
+        /*
         override fun username(username: String) {
             return this.username.onNext(username)
-        }
+        }*/
 
         override fun signUpButtonEnabled(): Observable<Boolean> = this.signUpButtonEnabled
 

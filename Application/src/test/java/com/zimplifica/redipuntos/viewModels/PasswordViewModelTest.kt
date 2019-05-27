@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.viewModels
 
+import android.content.Intent
 import com.zimplifica.domain.entities.SignUpError
 import com.zimplifica.domain.entities.SignUpResult
 import com.zimplifica.redipuntos.RPTestCase
@@ -111,7 +112,8 @@ class PasswordViewModelTest : RPTestCase() {
     @Test
     fun testVerifyPhoneNumberAction(){
         setUpEnviroment(environment()!!)
-        this.vm.inputs.username("88889999")
+        //this.vm.inputs.username("88889999")
+        this.vm.intent(Intent().putExtra("phone","88889999"))
         this.vm.inputs.password("123Jose_")
         this.vm.inputs.signUpButtonPressed()
         val uuid = this.vm.getUuid()
@@ -122,7 +124,8 @@ class PasswordViewModelTest : RPTestCase() {
     @Test
     fun testSignedUpActionError(){
         setUpEnviroment(environment()!!)
-        this.vm.inputs.username("88889997")
+        //this.vm.inputs.username("88889997")
+        this.vm.intent(Intent().putExtra("phone","88889997"))
         this.vm.inputs.password("123Jose_")
         this.vm.inputs.signUpButtonPressed()
         val error = SignUpError.internalError("Invalid phone number")
@@ -133,7 +136,8 @@ class PasswordViewModelTest : RPTestCase() {
     @Test
     fun testLoadingEnabled(){
         setUpEnviroment(environment()!!)
-        vm.inputs.username("88889999")
+        //vm.inputs.username("88889999")
+        this.vm.intent(Intent().putExtra("phone","88889999"))
         vm.inputs.password("123Jose_")
         vm.inputs.signUpButtonPressed()
         loadingEnabled.assertValues( true, false)
