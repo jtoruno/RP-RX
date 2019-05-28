@@ -1,15 +1,17 @@
 package com.zimplifica.redipuntos.ui.activities
 
+import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.WindowManager
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import com.zimplifica.redipuntos.R
 
 class ScannerIdActivity : AppCompatActivity() , DecoratedBarcodeView.TorchListener {
-    private var capture: CaptureManager? = null
-    private var barcodeScannerView: DecoratedBarcodeView? = null
+    lateinit var capture: CaptureManager
+    lateinit var barcodeScannerView: DecoratedBarcodeView
 
 
 
@@ -18,6 +20,11 @@ class ScannerIdActivity : AppCompatActivity() , DecoratedBarcodeView.TorchListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scanner_id)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        barcodeScannerView = findViewById(R.id.zxing_barcode_scanner)
+        barcodeScannerView.setTorchListener(this)
+        capture = CaptureManager(this,barcodeScannerView)
+        capture.initializeFromIntent(intent,savedInstanceState)
+        capture.decode()
     }
 
     override fun onTorchOn() {
@@ -27,4 +34,38 @@ class ScannerIdActivity : AppCompatActivity() , DecoratedBarcodeView.TorchListen
     override fun onTorchOff() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
+
+    override fun onResume() {
+        super.onResume()
+        capture.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        capture.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        capture.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        capture.onSaveInstanceState(outState)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return barcodeScannerView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
+    }
+
+    /**
+     * Check if the device's camera has a Flashlight.
+     * @return true if there is Flashlight, otherwise false.
+     */
+    private fun hasFlash(): Boolean {
+        return applicationContext.packageManager
+            .hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)
+    }
+
 }

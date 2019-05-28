@@ -21,7 +21,7 @@ class GlobalState(val context: Context){
 
      init {
         this.userInformationSubscription.subscribe { userInfo ->
-            Log.e("GlobalState","  "+userInfo.userPhoneNumber)
+            Log.e("GlobalState","  "+userInfo.userPhoneNumber+userInfo.citizenId)
             //environment?.currentUser()?.setCurrentUser(userInfo)
             CurrentUser.setCurrentUser(userInfo)
         }

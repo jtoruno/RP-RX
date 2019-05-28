@@ -37,7 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="30dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="30dp"
             app:layout_constraintHorizontal_bias="0.0" android:layout_marginBottom="48dp"
-            app:layout_constraintBottom_toTopOf="@+id/button"/>
+            app:layout_constraintBottom_toTopOf="@+id/citizen_next_btn"/>
     <Button
             android:text="Continuar"
             android:textSize="16sp"
@@ -45,7 +45,7 @@
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="50dp"
+            android:id="@+id/citizen_next_btn" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="50dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="50dp" android:layout_marginBottom="44dp"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintHorizontal_bias="1.0"/>
 </android.support.constraint.ConstraintLayout>

@@ -20,9 +20,17 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.ScannerIdActivity">
+        <activity android:name=".ui.activities.ConfirmCitizenInfoActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.CitizenInfoActivity">
+        <activity
+                android:name=".ui.activities.ScannerIdActivity"
+                android:screenOrientation="landscape"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+                android:name=".ui.activities.CitizenInfoActivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.LaunchActivity"
