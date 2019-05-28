@@ -105,6 +105,28 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 drawer_layout.closeDrawer(GravityCompat.START)
             }
         }
+        this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Log.e("Home","showCompletePersonalInfoAlert")
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("Completar Información Personal")
+                builder.setMessage("RediPuntos requiere saber un poco mas de ti, ¿deseas completar tu información?")
+                builder.setPositiveButton("Completar Información"){
+                    _,_ ->
+                    this.viewModel.inputs.completePersonalInfoButtonPressed()
+                }
+                builder.setNegativeButton("Luego", null)
+                val dialog = builder.create()
+                dialog.show()
+            }
+
+        this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(this,CitizenInfoActivity::class.java)
+                startActivity(intent)
+            }
+
+        this.viewModel.inputs.onCreate()
 
     }
 

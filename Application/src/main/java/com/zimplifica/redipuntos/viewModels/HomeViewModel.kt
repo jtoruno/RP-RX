@@ -1,38 +1,63 @@
 package com.zimplifica.redipuntos.viewModels
 
+import android.annotation.SuppressLint
 import android.support.annotation.NonNull
+import android.util.Log
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserStateResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.libs.utils.UserConfirmationStatus
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 interface HomeViewModel {
     interface Inputs {
+        fun onCreate()
+        fun completePersonalInfoButtonPressed()
         fun signOutButtonPressed()
     }
     interface Outputs {
+        fun showCompletePersonalInfoAlert() : Observable<Unit>
+
+        /// Emits to go to complete personal info.
+        fun goToCompletePersonalInfoScreen() : Observable<Unit>
+
         fun signOutAction() : Observable<Unit>
 
     }
-
+    @SuppressLint("CheckResult")
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<HomeViewModel>(environment), Inputs, Outputs{
 
         val inputs : Inputs = this
         val outputs : Outputs = this
-        var amountFloat : Float = 0.0F
-        private val delete = "⬅"
 
         //Inputs
+        private val onCreate = PublishSubject.create<Unit>()
         private val signOutButtonPressed = PublishSubject.create<Unit>()
+        private val completePersonalInfoButtonPressed = PublishSubject.create<Unit>()
 
 
         //Outputs
         private val signOutAction = PublishSubject.create<Unit>()
+        private val showCompletePersonalInfoAlert = PublishSubject.create<Unit>()
+        private val goToCompletePersonalInfoScreen : Observable<Unit>
 
         init {
+            onCreate
+                .map { return@map environment.currentUser().userConfirmationStatus() }
+                .subscribe {
+                    Log.e("Status",it?.confirmationStatus.toString())
+                    when(it?.confirmationStatus){
+                        UserConfirmationStatus.ConfirmationStatus.missingInfo ->{
+                            this.showCompletePersonalInfoAlert.onNext(Unit)
+                        }
+                        else -> {
+                        }
+                    }
+                }
+
             val signOutEvent = signOutButtonPressed
                 .flatMap { this.signOut() }
                 .share()
@@ -40,6 +65,22 @@ interface HomeViewModel {
                 .map {  return@map  }
                 .subscribe(this.signOutAction)
 
+            this.goToCompletePersonalInfoScreen = this.completePersonalInfoButtonPressed
+
+        }
+
+        override fun onCreate() {
+            this.onCreate.onNext(Unit)
+        }
+
+        override fun completePersonalInfoButtonPressed() {
+            return this.completePersonalInfoButtonPressed.onNext(Unit)
+        }
+
+        override fun showCompletePersonalInfoAlert(): Observable<Unit> = this.showCompletePersonalInfoAlert
+
+        override fun goToCompletePersonalInfoScreen(): Observable<Unit> {
+            return this.goToCompletePersonalInfoScreen
         }
 
         override fun signOutButtonPressed() {

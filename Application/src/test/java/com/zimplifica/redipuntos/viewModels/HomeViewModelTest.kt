@@ -1,24 +1,24 @@
 package com.zimplifica.redipuntos.viewModels
 
+import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.models.CurrentUser
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 
 class HomeViewModelTest : RPTestCase() {
     lateinit var vm : HomeViewModel.ViewModel
     val signOutAction = TestObserver<Unit>()
-    //val nextButtonEnabled = TestObserver<Boolean>()
-    //val changeAmountAction = TestObserver<String>()
+    val showCompletePersonalInfoAlert = TestObserver<Unit>()
+    val goToCompletePersonalInfoScreen = TestObserver<Unit>()
 
 
     private fun setUpEnvironment(environment: Environment){
         this.vm = HomeViewModel.ViewModel(environment)
         this.vm.outputs.signOutAction().subscribe(this.signOutAction)
-
-        //this.vm.outputs.nextButtonEnabled().subscribe(this.nextButtonEnabled)
-        //this.vm.outputs.changeAmountAction().subscribe(this.changeAmountAction)
-
+        this.vm.outputs.showCompletePersonalInfoAlert().subscribe(this.showCompletePersonalInfoAlert)
+        this.vm.outputs.goToCompletePersonalInfoScreen().subscribe(this.goToCompletePersonalInfoScreen)
     }
 
     @Test
@@ -27,29 +27,25 @@ class HomeViewModelTest : RPTestCase() {
         this.vm.inputs.signOutButtonPressed()
         this.signOutAction.assertValueCount(1)
     }
-    /*
-    @Test
-    fun testNextButtonEnabled(){
-        setUpEnvironment(environment()!!)
-        this.vm.inputs.keyPressed("1")
-        nextButtonEnabled.assertValues(true)
-        this.vm.inputs.keyPressed("⬅")
-        nextButtonEnabled.assertValues(true, false)
 
+    @Test
+    fun testGoToCompletePersonalInfoScreen(){
+        setUpEnvironment(environment()!!)
+        this.vm.inputs.completePersonalInfoButtonPressed()
+        this.goToCompletePersonalInfoScreen.assertValueCount(1)
     }
 
     @Test
-    fun testChangeAmountAction(){
-        setUpEnvironment(environment()!!)
-        this.vm.inputs.keyPressed("2")
-        changeAmountAction.assertValues("₡2.0")
-        this.vm.inputs.keyPressed("5")
-        changeAmountAction.assertValues("₡2.0","₡25.0")
-        this.vm.inputs.keyPressed("5")
-        changeAmountAction.assertValues("₡2.0","₡25.0","₡255.0")
-        this.vm.inputs.keyPressed("5")
-        changeAmountAction.assertValues("₡2.0","₡25.0","₡255.0","₡2,555.0")
-        this.vm.inputs.keyPressed("⬅")
-        changeAmountAction.assertValues("₡2.0","₡25.0","₡255.0","₡2,555.0","₡255.0")
-    }*/
+    fun testshowCompletePersonalInfoAlert(){
+        val currentUser = UserInformationResult("550e8400-e29b-41d4-a716-446655440000", "11565O433",
+            "José", "Sanchez",
+            "10/10/1994", "josedani.04.24@gmail.com", "+50686137284",
+            true,  false,null, null, mutableListOf())
+        val currentU = CurrentUser
+        currentU.setCurrentUser((currentUser))
+        setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())
+        this.vm.inputs.onCreate()
+        this.showCompletePersonalInfoAlert.assertValueCount(1)
+    }
+
 }
