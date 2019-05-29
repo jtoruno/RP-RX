@@ -10,4 +10,5 @@
     <color name="navDisableColor">#858687</color>
     <color name="grayBackgground">#efeff3</color>
     <color name="red">#ea3323</color>
+    <color name="grayIconTint">#cccccc</color>
 </resources>

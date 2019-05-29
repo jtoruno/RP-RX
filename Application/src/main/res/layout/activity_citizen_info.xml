@@ -12,6 +12,7 @@
             android:text="Proporcione su identificación"
             android:textColor="@android:color/white"
             android:textSize="20sp"
+            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView15" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
@@ -36,16 +37,16 @@
             android:id="@+id/textView16"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="30dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="30dp"
-            app:layout_constraintHorizontal_bias="0.0" android:layout_marginBottom="48dp"
+            app:layout_constraintHorizontal_bias="0.0" android:layout_marginBottom="92dp"
             app:layout_constraintBottom_toTopOf="@+id/citizen_next_btn"/>
     <Button
             android:text="Continuar"
-            android:textSize="16sp"
-            android:background="@drawable/btn_state"
+            android:textSize="18sp"
+            android:background="@color/colorAccent"
             android:textAllCaps="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/citizen_next_btn" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="50dp"
-            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="50dp" android:layout_marginBottom="44dp"
+            android:id="@+id/citizen_next_btn" app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="0dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="0dp" android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintHorizontal_bias="1.0"/>
 </android.support.constraint.ConstraintLayout>

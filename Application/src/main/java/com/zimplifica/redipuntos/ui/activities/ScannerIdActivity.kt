@@ -4,15 +4,17 @@ import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import android.view.WindowManager
 import com.journeyapps.barcodescanner.CaptureManager
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import com.zimplifica.redipuntos.R
+import kotlinx.android.synthetic.main.custom_bar_code.*
 
 class ScannerIdActivity : AppCompatActivity() , DecoratedBarcodeView.TorchListener {
     lateinit var capture: CaptureManager
     lateinit var barcodeScannerView: DecoratedBarcodeView
-
+    private var torchFlag = false
 
 
 
@@ -25,14 +27,26 @@ class ScannerIdActivity : AppCompatActivity() , DecoratedBarcodeView.TorchListen
         capture = CaptureManager(this,barcodeScannerView)
         capture.initializeFromIntent(intent,savedInstanceState)
         capture.decode()
+        if (!hasFlash()){
+            torch_bar_code.visibility = View.GONE
+        }
+
+        torch_bar_code.setOnClickListener {
+            if (torchFlag){
+                barcodeScannerView.setTorchOff()
+            }else{
+                barcodeScannerView.setTorchOn()
+            }
+            torchFlag=!torchFlag
+        }
     }
 
     override fun onTorchOn() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        torch_bar_code.setImageResource(R.drawable.ic_highlight_white_24dp)
     }
 
     override fun onTorchOff() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        torch_bar_code.setImageResource(R.drawable.ic_highlight_black_24dp)
     }
 
     override fun onResume() {
@@ -59,6 +73,11 @@ class ScannerIdActivity : AppCompatActivity() , DecoratedBarcodeView.TorchListen
         return barcodeScannerView.onKeyDown(keyCode, event) || super.onKeyDown(keyCode, event)
     }
 
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
     /**
      * Check if the device's camera has a Flashlight.
      * @return true if there is Flashlight, otherwise false.
