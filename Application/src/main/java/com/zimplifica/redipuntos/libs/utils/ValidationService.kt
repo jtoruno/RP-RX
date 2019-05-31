@@ -25,7 +25,7 @@ object ValidationService {
         }
     }
 
-    private fun isValidEmail(username : String): Boolean{
+    fun isValidEmail(username : String): Boolean{
         return Patterns.EMAIL_ADDRESS.matcher(username).matches()
     }
 

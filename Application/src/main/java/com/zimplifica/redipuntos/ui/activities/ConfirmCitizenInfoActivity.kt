@@ -1,7 +1,7 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
-import android.support.v7.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -29,7 +29,7 @@ class ConfirmCitizenInfoActivity : BaseActivity<ConfirmCitizenInfoVM.ViewModel>(
                 val lastName = "${it.apellido1} ${it.apellido2}"
                 citizen_last_name_text.setText(lastName)
                 citizen_birth_date_text.setText(it.fechaNacimiento)
-                citizen_id_number_text.setText(it.cedula)
+                citizen_id_number_text.setText(transformUserId(it.cedula))
             }
 
         next_btn_confirm_citizen.setOnClickListener {
@@ -49,6 +49,9 @@ class ConfirmCitizenInfoActivity : BaseActivity<ConfirmCitizenInfoVM.ViewModel>(
         this.viewModel.outputs.citizenInformationConfirmed().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Toast.makeText(this,"Completada la información personal correctamente", Toast.LENGTH_LONG).show()
+                //finish()
+                val intent = Intent(this, CompleteEmailActivity::class.java)
+                startActivity(intent)
                 finish()
             }
     }
@@ -60,5 +63,10 @@ class ConfirmCitizenInfoActivity : BaseActivity<ConfirmCitizenInfoVM.ViewModel>(
 
     override fun onBackPressed() {
         finish()
+    }
+
+    private fun transformUserId(userIdString : String?) : String {
+        if (userIdString == null){return ""}
+        return userIdString.substring(0,1) + "-" + userIdString.substring(1,5) + "-" + userIdString.substring(5,userIdString.length)
     }
 }

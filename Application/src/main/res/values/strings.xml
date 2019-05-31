@@ -24,5 +24,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="barcodeinfo">Por favor enfoque en el recuadro el código de barras \n ubicado en la parte posterior de su cédula de identidad</string>
+    <string name="barcodeinfo">Por favor enfoque en el recuadro el código de barras \n ubicado en la parte posterior de
+        su cédula de identidad
+    </string>
 </resources>
