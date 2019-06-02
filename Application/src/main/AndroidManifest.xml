@@ -20,6 +20,8 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ui.activities.CompletePaymentActivity">
+        </activity>
         <activity android:name=".ui.activities.ConfirmEmailActivity">
         </activity>
         <activity android:name=".ui.activities.CompleteEmailActivity">
