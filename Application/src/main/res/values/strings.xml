@@ -27,4 +27,5 @@
     <string name="barcodeinfo">Por favor enfoque en el recuadro el código de barras \n ubicado en la parte posterior de
         su cédula de identidad
     </string>
+    <string name="title_activity_add_payment">AddPaymentActivity</string>
 </resources>

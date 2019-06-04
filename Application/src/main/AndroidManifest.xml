@@ -20,11 +20,20 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.CompletePaymentActivity">
+        <activity android:name=".ui.activities.AddPaymentActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.ConfirmEmailActivity">
+        <activity
+                android:name=".ui.activities.CompletePaymentActivity"
+                android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.CompleteEmailActivity">
+        <activity
+                android:name=".ui.activities.ConfirmEmailActivity"
+                android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".ui.activities.CompleteEmailActivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.ConfirmCitizenInfoActivity"

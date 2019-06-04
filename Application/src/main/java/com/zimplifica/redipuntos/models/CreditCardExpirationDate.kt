@@ -1,8 +1,13 @@
 package com.zimplifica.redipuntos.models
 
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CreditCardExpirationDate(var value : String) {
+    val isValid by lazy { validateDate() }
+    val fullDate by lazy { FullDate() }
+    val valueFormatted by lazy { formatDate() }
+
     enum class ExpirationDateStatus{
         invalid, valid, unkown
     }
@@ -12,7 +17,7 @@ class CreditCardExpirationDate(var value : String) {
         if (d.isEmpty()){return ""}
         var number = d
         if(d.length >= 2){
-            number = number.substring(0,2)+"/"+number.substring(2,number.length)
+            number = number.substring(0,2)+"/"+number.substring(3,number.length)
         }
         return number
     }
@@ -29,9 +34,9 @@ class CreditCardExpirationDate(var value : String) {
         val number = handleCharactersLimit()
         if(number.length == 5){
             val month = number.substring(0,2)
-            val year = number.substring(2,number.length)
+            val year = number.substring(3,number.length)
             val dateAsString = "01/$month/20$year"
-            val date = Date(dateAsString)
+            val date = SimpleDateFormat("dd/MM/yyyy").parse(dateAsString)
             if (date > Date()){
                 return ExpirationDateStatus.valid
             }
@@ -44,11 +49,11 @@ class CreditCardExpirationDate(var value : String) {
         }
     }
 
-    private fun getFullDate() : String? {
+    private fun FullDate() : String? {
         val number = handleCharactersLimit()
         if(validateDate() == ExpirationDateStatus.valid){
             val month = number.substring(0,2)
-            val year = number.substring(2,number.length)
+            val year = number.substring(3,number.length)
             return "01/$month/20$year"
         }
         else{

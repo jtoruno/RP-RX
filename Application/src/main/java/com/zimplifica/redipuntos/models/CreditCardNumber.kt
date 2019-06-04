@@ -138,7 +138,7 @@ class CreditCardNumber(var value : String) {
         if(creditCard.isEmpty()){return ""}
         var number = creditCard
         if(number.length > 12){
-            number = number.substring(0,4)+" "+number.substring(4,8)+" "+number.substring(8,number.length)
+            number = number.substring(0,4)+" "+number.substring(4,8)+" "+number.substring(8,12)+" "+number.substring(12,number.length)
         }
         else if(number.length > 8){
             number = number.substring(0,4)+" "+number.substring(4,8)+" "+number.substring(8,number.length)
