@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.widget.TextView
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
@@ -15,6 +17,10 @@ import com.zimplifica.redipuntos.viewModels.AddPaymentVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_add_payment.*
 
+
+
+
+
 @RequiresActivityViewModel(AddPaymentVM.ViewModel::class)
 class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
 
@@ -24,9 +30,11 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
         setContentView(R.layout.activity_add_payment)
         supportActionBar?.title = "Método de Pago"
         add_payment_name.onChange { this.viewModel.inputs.cardHolderChanged(it) }
-        add_payment_number.addTextChangedListener(cardNumberWatcher)
-        //add_payment_number.onChange { this.viewModel.inputs.cardNumberChanged(it) }
-
+        /*
+        add_payment_number.onChange {
+            this.viewModel.inputs.cardNumberChanged(it)
+        }*/
+        add_payment_number.addTextChangedListener(textWatcher)
         add_payment_exp_date.onChange { this.viewModel.inputs.cardExpirationChanged(it) }
         add_payment_cvv.onChange { this.viewModel.inputs.cardSecurityCodeChanged(it) }
 
@@ -37,7 +45,27 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
 
         viewModel.outputs.cardNumber().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+
+                Log.e("CardNumber", it.valueFormatted)
                 //add_payment_number.setText(it.valueFormatted)
+                //add_payment_number.setText(it.valueFormatted)
+
+                add_payment_number.addTextChangedListener(object : TextWatcher{
+                    override fun afterTextChanged(s: Editable?) {
+                        val text = s.toString()
+                        if (text.length == 4){
+                            s?.append("N")
+                        }
+                    }
+
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                    }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                    }
+
+                })
                 when(it.issuer){
                     CreditCardNumber.Issuer.AMEX -> {
                         add_payment_cvv.hint = "CID"
@@ -90,16 +118,17 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
             }
     }
 
-    private val cardNumberWatcher = object : TextWatcher {
+    private val textWatcher = object : TextWatcher{
+
         override fun afterTextChanged(s: Editable?) {
+
         }
 
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            this@AddPaymentActivity.viewModel.inputs.cardNumberChanged(s.toString())
         }
 
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            this@AddPaymentActivity.viewModel.inputs.cardNumberChanged(s?.toString() ?: "")
         }
-
     }
 }

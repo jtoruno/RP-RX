@@ -154,7 +154,9 @@ interface AddPaymentVM {
 
         override fun cardHolderChanged(cardHolder: String) = this.cardHolderChanged.onNext(cardHolder)
 
-        override fun cardNumberChanged(number: String) = this.cardNumberChanged.onNext(number)
+        override fun cardNumberChanged(number: String) {
+            return this.cardNumberChanged.onNext(number)
+        }
 
         override fun cardExpirationChanged(date: String) = this.cardExpirationChanged.onNext(date)
 
