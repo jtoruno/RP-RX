@@ -29,59 +29,45 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_payment)
         supportActionBar?.title = "Método de Pago"
+
         add_payment_name.onChange { this.viewModel.inputs.cardHolderChanged(it) }
-        /*
+
         add_payment_number.onChange {
-            this.viewModel.inputs.cardNumberChanged(it)
-        }*/
-        add_payment_number.addTextChangedListener(textWatcher)
+            val text = it.replace(" ","")
+            this.viewModel.inputs.cardNumberChanged(text)
+        }
+        //add_payment_number.addTextChangedListener(textWatcher)
         add_payment_exp_date.onChange { this.viewModel.inputs.cardExpirationChanged(it) }
         add_payment_cvv.onChange { this.viewModel.inputs.cardSecurityCodeChanged(it) }
 
-        viewModel.outputs.cardHolder().observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                add_payment_name.text = Editable.Factory.getInstance().newEditable(it)
-            }
 
         viewModel.outputs.cardNumber().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
 
-                Log.e("CardNumber", it.valueFormatted)
+                //Log.e("CardNumber", it.valueFormatted)
                 //add_payment_number.setText(it.valueFormatted)
                 //add_payment_number.setText(it.valueFormatted)
-
-                add_payment_number.addTextChangedListener(object : TextWatcher{
-                    override fun afterTextChanged(s: Editable?) {
-                        val text = s.toString()
-                        if (text.length == 4){
-                            s?.append("N")
-                        }
-                    }
-
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                    }
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                    }
-
-                })
                 when(it.issuer){
                     CreditCardNumber.Issuer.AMEX -> {
-                        add_payment_cvv.hint = "CID"
+                        //add_payment_number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.amex,0,0,0)
+                        add_payment_cvv_layout.hint = "CID"
 
                     }
                     CreditCardNumber.Issuer.MASTERCARD -> {
-                        add_payment_cvv.hint = "CVV"
+                        //add_payment_number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.mastercard,0,0,0)
+                        add_payment_cvv_layout.hint = "CVV"
                     }
                     CreditCardNumber.Issuer.VISA -> {
-                        add_payment_cvv.hint = "CVV"
+                        ////add_payment_number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.visa,0,0,0)
+                        add_payment_cvv_layout.hint = "CVV"
                     }
                     CreditCardNumber.Issuer.DISCOVER -> {
-                        add_payment_cvv.hint = "CVV"
+                        //add_payment_number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.discover,0,0,0)
+                        add_payment_cvv_layout.hint = "CVV"
                     }
                     CreditCardNumber.Issuer.UNKNOWN -> {
-                        add_payment_cvv.hint = "CVV"
+                        //add_payment_number.setCompoundDrawablesWithIntrinsicBounds(R.drawable.creditcard,0,0,0)
+                        add_payment_cvv_layout.hint = "CVV"
                     }
                 }
 
@@ -101,7 +87,7 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
 
         viewModel.outputs.cardExpirationDate().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                add_payment_exp_date.setText(it.valueFormatted)
+                //add_payment_exp_date.setText(it.valueFormatted)
                 when(it.isValid){
                     CreditCardExpirationDate.ExpirationDateStatus.invalid -> {
                         input_layout_exp_date.error = "Ingrese una fecha válida"
@@ -111,11 +97,11 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
                     }
                 }
             }
-
+        /*
         viewModel.outputs.cardSecurityCode().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 add_payment_cvv.setText(it.valueFormatted)
-            }
+            }*/
     }
 
     private val textWatcher = object : TextWatcher{
