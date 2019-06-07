@@ -73,6 +73,7 @@ interface AddPaymentVM {
         private val cardNumber = BehaviorSubject.create<CreditCardNumber>()
         private val cardExpirationDate = BehaviorSubject.create<CreditCardExpirationDate>()
         private val cardSecurityCode = BehaviorSubject.create<CreditCardSegurityCode>()
+        //private val cardSecurityCode : Observable<CreditCardSegurityCode>
         private val isFormValid = BehaviorSubject.create<Boolean>()
         private val showError = BehaviorSubject.create<String>()
         private val loading = BehaviorSubject.create<Boolean>()
@@ -162,7 +163,9 @@ interface AddPaymentVM {
 
         override fun cardSecurityCodeChanged(code: String) = this.cardSecurityCodeChanged.onNext(code)
 
-        override fun addPaymentMethodButtonPressed() = this.addPaymentMethodButtonPressed.onNext(Unit)
+        override fun addPaymentMethodButtonPressed(){
+            return this.addPaymentMethodButtonPressed.onNext(Unit)
+        }
 
         override fun cardHolder(): Observable<String> = this.cardHolder
 
