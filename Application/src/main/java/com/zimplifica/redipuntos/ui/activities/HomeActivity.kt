@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import android.view.View
 import android.widget.Toast
+import com.zimplifica.redipuntos.models.ManagerNav
 
 
 @RequiresActivityViewModel(HomeViewModel.ViewModel::class)
@@ -122,8 +123,10 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
 
         this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                /*
                 val intent = Intent(this,CompletePaymentActivity::class.java)
-                startActivity(intent)
+                startActivity(intent)*/
+                ManagerNav.getInstance(this).initNav()
             }
 
         this.viewModel.inputs.onCreate()

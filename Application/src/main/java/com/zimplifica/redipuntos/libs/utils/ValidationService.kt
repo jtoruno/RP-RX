@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.libs.utils
 
+import android.util.Log
 import android.util.Patterns
 import com.zimplifica.domain.entities.UserInformationResult
 import java.util.regex.Pattern
@@ -153,27 +154,27 @@ object ValidationService {
     }
 }
 
-class UserConfirmationStatus(){
+class UserConfirmationStatus(var shouldCompleteCitizenInfo: Boolean, var shouldCompleteEmail: Boolean, var shouldVerifyEmail: Boolean, var email: String?, var shouldCompletePaymentMethod: Boolean){
 
     enum class ConfirmationStatus{
         missingInfo,completed
     }
-
+    /*
     private var shouldCompleteCitizenInfo = true
     private var shouldCompleteEmail = true
     private var shouldVerifyEmail = true
     private var shouldCompletePaymentMethod = true
     private var email : String? = null
+    */
 
-
-
+    /*
     constructor(shouldCompleteCitizenInfo: Boolean, shouldCompleteEmail: Boolean, shouldVerifyEmail: Boolean, email: String?, shouldCompletePaymentMethod: Boolean) : this(){
         this.shouldCompleteCitizenInfo = shouldCompleteCitizenInfo
         this.shouldCompleteEmail = shouldCompleteEmail
         this.shouldVerifyEmail = shouldVerifyEmail
         this.shouldCompletePaymentMethod = shouldCompletePaymentMethod
         this.email = email
-    }
+    }*/
 
     var confirmationStatus : ConfirmationStatus =
         if (shouldCompleteCitizenInfo||shouldCompleteEmail||shouldVerifyEmail||shouldCompletePaymentMethod){

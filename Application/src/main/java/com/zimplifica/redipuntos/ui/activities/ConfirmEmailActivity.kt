@@ -11,6 +11,7 @@ import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
+import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.viewModels.ConfirmEmailVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_confirm_email.*
@@ -80,6 +81,7 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
             .subscribe {
                 Toast.makeText(this,"Correo Confirmado", Toast.LENGTH_SHORT).show()
                 finish()
+                ManagerNav.getInstance(this).initNav()
             }
 
     }

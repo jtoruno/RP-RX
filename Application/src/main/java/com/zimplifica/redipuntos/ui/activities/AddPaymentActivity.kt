@@ -19,6 +19,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_add_payment.*
 import android.text.InputFilter
 import android.view.View
+import com.zimplifica.redipuntos.models.ManagerNav
 
 
 @RequiresActivityViewModel(AddPaymentVM.ViewModel::class)
@@ -134,6 +135,7 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
         viewModel.outputs.paymentMethodSaved().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 finish()
+                ManagerNav.getInstance(this).initNav()
             }
 
     }

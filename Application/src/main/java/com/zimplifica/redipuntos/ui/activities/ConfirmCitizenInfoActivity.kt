@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
+import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.viewModels.ConfirmCitizenInfoVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_confirm_citizen_info.*
@@ -49,10 +50,12 @@ class ConfirmCitizenInfoActivity : BaseActivity<ConfirmCitizenInfoVM.ViewModel>(
         this.viewModel.outputs.citizenInformationConfirmed().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Toast.makeText(this,"Completada la información personal correctamente", Toast.LENGTH_LONG).show()
-                //finish()
+                finish()
+                ManagerNav.getInstance(this).initNav()
+                /*
                 val intent = Intent(this, CompleteEmailActivity::class.java)
                 startActivity(intent)
-                finish()
+                finish()*/
             }
     }
 
