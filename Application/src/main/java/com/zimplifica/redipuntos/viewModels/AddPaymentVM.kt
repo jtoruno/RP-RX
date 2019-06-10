@@ -12,6 +12,7 @@ import com.zimplifica.redipuntos.models.CreditCardNumber
 import com.zimplifica.redipuntos.models.CreditCardSegurityCode
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
@@ -104,19 +105,23 @@ interface AddPaymentVM {
                 .share()
                 .subscribe(this.cardSecurityCode)
 
+            /*
             val form1 = Observable.combineLatest<String, CreditCardNumber, Pair<String, CreditCardNumber>>(
                 cardHolder, cardNumber,
                 BiFunction { t1, t2 ->
                     Pair(t1, t2)
                 }
-            )
+            )*/
 
-            val form2 = Observable.combineLatest<CreditCardExpirationDate,CreditCardSegurityCode,Pair<CreditCardExpirationDate,CreditCardSegurityCode>>(
-                cardExpirationDate,cardSecurityCode,
-                BiFunction { t1, t2 ->
-                    Pair(t1, t2)
-                }
-            )
+            val form : Observable<Boolean> = Observables.combineLatest(cardHolder,cardNumber,
+                cardExpirationDate,cardSecurityCode) {a,b,c,d -> return@combineLatest (a.isNotEmpty()
+                    && b.status == CreditCardNumber.Status.valid
+                    && c.isValid == CreditCardExpirationDate.ExpirationDateStatus.valid
+                    && d.isValid)}
+
+            form.subscribe(this.isFormValid)
+
+            /*
             form1
                 .map {
                     return@map (it.first.isNotEmpty()
@@ -124,15 +129,12 @@ interface AddPaymentVM {
                             && cardExpirationDate.value.isValid == CreditCardExpirationDate.ExpirationDateStatus.valid
                             && cardSecurityCode.value.isValid)
                 }
-                .subscribe(this.isFormValid)
+                .subscribe(this.isFormValid)*/
 
-            val addPaymentMethodEvent = form1
+            val addPaymentMethodEvent = form
                 .takeWhen(addPaymentMethodButtonPressed)
                 .filter{
-                    return@filter (it.second.first.isNotEmpty()
-                            && it.second.second.status == CreditCardNumber.Status.valid
-                            && cardExpirationDate.value.isValid == CreditCardExpirationDate.ExpirationDateStatus.valid
-                            && cardSecurityCode.value.isValid)
+                    it.second
                 }
                 .flatMap {
                     val cardHolder = cardHolder.value

@@ -98,7 +98,7 @@ class CacheOperations{
                 override fun onResponse(response: Response<GetUserQuery.Data>) {
                     val user = response.data()?.user
                     if(user!= null){
-                        val paymentList = user.paymentMethods()
+                        val paymentList = user.paymentMethods().toMutableList()
                         val paymentObj = GetUserQuery.PaymentMethod("__PaymentMethod","",paymentMethod.cardId,
                             paymentMethod.cardNumberWithMask, paymentMethod.cardExpirationDate, paymentMethod.issuer, paymentMethod.rewards,
                             paymentMethod.automaticRedemption)

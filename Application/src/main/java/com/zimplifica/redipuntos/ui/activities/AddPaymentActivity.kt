@@ -43,6 +43,9 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
         add_payment_exp_date.onChange { this.viewModel.inputs.cardExpirationChanged(it) }
         add_payment_exp_date.addTextChangedListener(textWatcher)
         add_payment_cvv.onChange { this.viewModel.inputs.cardSecurityCodeChanged(it) }
+        add_payment_btn.setOnClickListener {
+            this.viewModel.inputs.addPaymentMethodButtonPressed()
+        }
 
 
         viewModel.outputs.cardNumber().observeOn(AndroidSchedulers.mainThread())
@@ -106,11 +109,11 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
                     }
                 }
             }
-        /*
+
         viewModel.outputs.isFormValid().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 add_payment_btn.isEnabled = it
-            }*/
+            }
 
         viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -127,6 +130,12 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
                     progressBar9.visibility = View.GONE
                 }
             }
+
+        viewModel.outputs.paymentMethodSaved().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                finish()
+            }
+
     }
 
     private val textWatcher = object : TextWatcher{

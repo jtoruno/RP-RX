@@ -15,7 +15,7 @@
             android:text="Continuar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/button" android:layout_marginBottom="0dp"
+            android:id="@+id/complete_payment_btn" android:layout_marginBottom="0dp"
             app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="0dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="0dp"/>
@@ -35,7 +35,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView20" android:layout_marginBottom="124dp"
-            app:layout_constraintBottom_toTopOf="@+id/button" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/complete_payment_btn" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="20dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="20dp"
             app:layout_constraintHorizontal_bias="0.0"/>
     <TextView

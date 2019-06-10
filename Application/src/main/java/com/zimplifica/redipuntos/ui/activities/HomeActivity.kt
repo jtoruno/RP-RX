@@ -122,7 +122,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
 
         this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val intent = Intent(this,AddPaymentActivity::class.java)
+                val intent = Intent(this,CompletePaymentActivity::class.java)
                 startActivity(intent)
             }
 

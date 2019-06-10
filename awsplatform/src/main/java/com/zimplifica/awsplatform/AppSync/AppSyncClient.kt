@@ -25,7 +25,7 @@ object AppSyncClient{
 
     private var CLIENTS: Map<AppSyncClientMode,AWSAppSyncClient> ?= null
 
-    private var clientSync : AWSAppSyncClient ? = null
+    //private var clientSync : AWSAppSyncClient ? = null
 
     private val publicKey = "publicAPI"
     private val privateKey = "privateAPI"
@@ -43,12 +43,12 @@ object AppSyncClient{
         val id = context.resources.getIdentifier("awsconfiguration","raw",context.packageName)
 
         var array = mutableMapOf<AppSyncClientMode,AWSAppSyncClient>()
-
+        /*
         this.clientSync = AWSAppSyncClient.builder()
             .credentialsProvider(AWSMobileClient.getInstance())
             .awsConfiguration(AWSConfiguration(context,id, publicKey))
             .context(context)
-            .build()
+            .build()*/
 
         array[AppSyncClientMode.PUBLIC] = AWSAppSyncClient.builder()
             .context(context)
