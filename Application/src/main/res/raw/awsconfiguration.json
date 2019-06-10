@@ -18,10 +18,17 @@
     }
   },
   "AppSync": {
-    "rediPuntosAPI": {
+    "privateAPI": {
       "ApiUrl": "https://ogbx7bntu5a5fdvqti5eqwynbi.appsync-api.us-east-1.amazonaws.com/graphql",
       "Region": "us-east-1",
-      "AuthMode": "AWS_IAM"
+      "AuthMode": "AMAZON_COGNITO_USER_POOLS",
+      "ClientDatabasePrefix": "privatedb"
+    },
+    "publicAPI": {
+      "ApiUrl": "https://ogbx7bntu5a5fdvqti5eqwynbi.appsync-api.us-east-1.amazonaws.com/graphql",
+      "Region": "us-east-1",
+      "AuthMode": "AWS_IAM",
+      "ClientDatabasePrefix": "publicdb"
     }
   }
 }

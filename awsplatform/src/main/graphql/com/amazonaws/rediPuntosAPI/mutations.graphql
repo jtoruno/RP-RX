@@ -1,33 +1,17 @@
 # this is an auto generated file. This will be overwritten
-mutation InitPhoneVerification($username: String!, $phoneNumber: String!) {
-  initPhoneVerification(username: $username, phoneNumber: $phoneNumber) {
-    success
-    message
-  }
-}
-mutation CheckPhoneVerification(
-  $username: String!
-  $phoneNumber: String!
-  $verificationCode: String!
-) {
-  checkPhoneVerification(
-    username: $username
-    phoneNumber: $phoneNumber
-    verificationCode: $verificationCode
-  ) {
+mutation InitPhoneVerification($phoneNumber: String!) {
+  initPhoneVerification(phoneNumber: $phoneNumber) {
     success
     message
   }
 }
 mutation UpdatePersonalInfo(
-  $username: String!
   $firstName: String!
   $lastName: String!
   $birthdate: String!
   $identityNumber: String!
 ) {
   updatePersonalInfo(
-    username: $username
     firstName: $firstName
     lastName: $lastName
     birthdate: $birthdate
@@ -56,8 +40,8 @@ mutation AddPaymentMethod($paymentMethod: PaymentMethodInput!) {
     automaticRedemption
   }
 }
-mutation DisablePaymentMethod($owner: ID!, $cardId: String!) {
-  disablePaymentMethod(owner: $owner, cardId: $cardId) {
+mutation DisablePaymentMethod($cardId: String!) {
+  disablePaymentMethod(cardId: $cardId) {
     username
     cardId
     cardNumber
@@ -73,8 +57,8 @@ mutation RequestPayment($input: RequestPaymentInput!) {
     message
   }
 }
-mutation ToggleAutomaticRedemption($username: String!, $cardId: String!) {
-  toggleAutomaticRedemption(username: $username, cardId: $cardId) {
+mutation ToggleAutomaticRedemption($cardId: String!) {
+  toggleAutomaticRedemption(cardId: $cardId) {
     success
     message
   }
@@ -90,10 +74,6 @@ mutation SendTransactionNotification(
       type
       description
       amount
-      ... on SitePaymentItem {
-        vendorId
-        vendorName
-      }
       ... on GTIItem {
         companyId
         agreementId
@@ -104,6 +84,10 @@ mutation SendTransactionNotification(
         expirationDate
         period
         isPrepaid
+      }
+      ... on SitePaymentItem {
+        vendorId
+        vendorName
       }
     }
     fee

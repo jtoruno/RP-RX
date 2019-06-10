@@ -1,106 +1,76 @@
 package com.zimplifica.awsplatform.AppSync
 
 import android.content.Context
+import android.util.Log
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.config.AWSConfiguration
 import com.amazonaws.mobileconnectors.appsync.AWSAppSyncClient
+import com.amazonaws.mobileconnectors.appsync.sigv4.CognitoUserPoolsAuthProvider
+
+
+
+
+
 
 
 object AppSyncClient{
-    enum class API{
-        rediPuntosAPI
+    enum class AppSyncClientMode {
+        PUBLIC,
+        PRIVATE
     }
+
     enum class Source {
         cache, server, unkwnon
     }
+
+    private var CLIENTS: Map<AppSyncClientMode,AWSAppSyncClient> ?= null
+
     private var clientSync : AWSAppSyncClient ? = null
 
-    private val key = "rediPuntosAPI"
+    private val publicKey = "publicAPI"
+    private val privateKey = "privateAPI"
 
+    /*
     fun getClient() : AWSAppSyncClient{
         return this.clientSync!!
+    }*/
+
+    fun getClient(choice : AppSyncClientMode) : AWSAppSyncClient?{
+        return this.CLIENTS?.get(choice)
     }
 
-    fun initClient(context: Context){
+    fun initClients(context: Context){
         val id = context.resources.getIdentifier("awsconfiguration","raw",context.packageName)
+
+        var array = mutableMapOf<AppSyncClientMode,AWSAppSyncClient>()
 
         this.clientSync = AWSAppSyncClient.builder()
             .credentialsProvider(AWSMobileClient.getInstance())
-            .awsConfiguration(AWSConfiguration(context,id,key))
+            .awsConfiguration(AWSConfiguration(context,id, publicKey))
             .context(context)
             .build()
+
+        array[AppSyncClientMode.PUBLIC] = AWSAppSyncClient.builder()
+            .context(context)
+            .awsConfiguration(AWSConfiguration(context,id, publicKey))
+            .useClientDatabasePrefix(true)
+            .credentialsProvider(AWSMobileClient.getInstance())
+            .build()
+
+        array[AppSyncClient.AppSyncClientMode.PRIVATE] = AWSAppSyncClient.builder()
+            .context(context)
+            .awsConfiguration(AWSConfiguration(context,id, privateKey))
+            .cognitoUserPoolsAuthProvider(CognitoUserPoolsAuthProvider {
+                try {
+                    return@CognitoUserPoolsAuthProvider AWSMobileClient.getInstance().tokens.idToken.tokenString
+                } catch (e: Exception) {
+                    Log.e("APPSYNC_ERROR", e.localizedMessage)
+                    return@CognitoUserPoolsAuthProvider e.localizedMessage
+                }
+            })
+            .useClientDatabasePrefix(true)
+            .build()
+
+        this.CLIENTS = array
     }
 }
-
-/*
-class AppSyncClient(val context: Context){
-    enum class API{
-        rediPuntosAPI
-    }
-    enum class Source {
-        cache, server, unkwnon
-    }
-
-    var client : AWSAppSyncClient ? = null
-
-    init {
-        client = getInstance()
-    }
-
-    private fun getInstance() : AWSAppSyncClient{
-        if(client == null){
-            client = AWSAppSyncClient.builder()
-                .credentialsProvider(AWSMobileClient.getInstance())
-                .context(context)
-                .build()
-        }
-        return client!!
-    }
-
-}
-/*
-class AppSyncClient(val context: Context){
-    private var client : AWSAppSyncClient ?= null
-    fun getInstance() : AWSAppSyncClient{
-        if(client == null){
-            client = AWSAppSyncClient.builder()
-                .credentialsProvider(AWSMobileClient.getInstance())
-                .context(context)
-                .build()
-        }
-        return client!!
-    }
-}*/
-
-
-/*
-class AppSyncClient {
-    private var client : AWSAppSyncClient ? = null
-    enum class API{
-        rediPuntosAPI
-    }
-    @Synchronized
-    fun getInstance() : AWSAppSyncClient{
-        if(client == null){
-            client = AWSAppSyncClient.builder()
-                .credentialsProvider(AWSMobileClient.getInstance())
-                .build()
-        }
-        return client!!
-    }
-*/
-    /*
-    companion object {
-        private lateinit var client : AWSAppSyncClient
-        val shared : AWSAppSyncClient
-        get() {
-            if(client == null){
-                client = AWSAppSyncClient.builder()
-                    .credentialsProvider(AWSMobileClient.getInstance())
-                    .build()
-            }
-            return client
-        }
-    }
-
-}*/

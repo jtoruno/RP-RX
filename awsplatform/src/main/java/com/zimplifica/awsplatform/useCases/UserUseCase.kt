@@ -21,7 +21,7 @@ import java.util.*
 
 class UserUseCase : UserUseCase {
 
-    private val appSyncClient = AppSyncClient.getClient()
+    private val appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
     private val cacheOperations = CacheOperations()
 
     override fun requestPayment(requestPaymentInput: RequestPaymentInput): Observable<Result<RequestPayment>> {
@@ -40,7 +40,7 @@ class UserUseCase : UserUseCase {
             val mutation = RequestPaymentMutation.builder()
                 .input(input)
                 .build()
-            this.appSyncClient.mutate(mutation).enqueue(object : GraphQLCall.Callback<RequestPaymentMutation.Data>(){
+            this.appSyncClient!!.mutate(mutation).enqueue(object : GraphQLCall.Callback<RequestPaymentMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [requestPayment] Error.",e)
                     single.onSuccess(Result.failure(e))
@@ -74,7 +74,7 @@ class UserUseCase : UserUseCase {
             val query = GetCheckoutPayloadSitePayQuery.builder()
                 .input(input)
                 .build()
-            this.appSyncClient.query(query).enqueue(object : GraphQLCall.Callback<GetCheckoutPayloadSitePayQuery.Data>(){
+            this.appSyncClient!!.query(query).enqueue(object : GraphQLCall.Callback<GetCheckoutPayloadSitePayQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [checkoutPayloadSitePay] Error.",e)
                     single.onSuccess(Result.failure(e))
@@ -111,7 +111,7 @@ class UserUseCase : UserUseCase {
             val mutation = AddPaymentMethodMutation.builder()
                 .paymentMethod(input)
                 .build()
-            this.appSyncClient.mutate(mutation).enqueue(object : GraphQLCall.Callback<AddPaymentMethodMutation.Data>(){
+            this.appSyncClient!!.mutate(mutation).enqueue(object : GraphQLCall.Callback<AddPaymentMethodMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [addPaymentMethod] Error.",e)
                     single.onSuccess(Result.failure(e))
@@ -134,14 +134,14 @@ class UserUseCase : UserUseCase {
     override fun fetchTransactions(username: String, useCache: Boolean): Observable<Result<TransactionsResult>> {
         val single = Single.create<Result<TransactionsResult>> create@{ single ->
             val query = GetTransactionsByUserQuery.builder()
-                .username(username)
+                //.username(username)
                 .build()
             val cachePolicy =  if(useCache){
                 AppSyncResponseFetchers.CACHE_FIRST
             }else{
                 AppSyncResponseFetchers.CACHE_AND_NETWORK
             }
-            this.appSyncClient.query(query).responseFetcher(cachePolicy).enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
+            this.appSyncClient!!.query(query).responseFetcher(cachePolicy).enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [fetchTransactions] Error.",e)
                     single.onSuccess(Result.failure(e))
@@ -210,7 +210,7 @@ class UserUseCase : UserUseCase {
             }else{
                 AppSyncResponseFetchers.CACHE_AND_NETWORK
             }
-            this.appSyncClient.query(query).responseFetcher(cachePolicy).enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
+            this.appSyncClient!!.query(query).responseFetcher(cachePolicy).enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [GetUserInformation] Error.",e)
                     single.onSuccess(Result.failure(e))
@@ -237,13 +237,13 @@ class UserUseCase : UserUseCase {
     override fun updateUserInfo(citizen: CitizenInput): Observable<Result<Citizen>> {
         val single = Single.create<Result<Citizen>> create@{ single ->
             val mutation = UpdatePersonalInfoMutation.builder()
-                .username(citizen.citizenId)
+                //.username(citizen.citizenId)
                 .firstName(citizen.firstName)
                 .lastName(citizen.lastName)
                 .birthdate(citizen.birthDate)
                 .identityNumber(citizen.citizenId)
                 .build()
-            this.appSyncClient.mutate(mutation).enqueue(object: GraphQLCall.Callback<UpdatePersonalInfoMutation.Data>(){
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<UpdatePersonalInfoMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [UpdateUserInfo] Error.",e)
                     single.onSuccess(Result.failure(e))
@@ -266,7 +266,7 @@ class UserUseCase : UserUseCase {
     override fun getVendorInformation(vendorId: String): Observable<Result<Vendor>> {
         val single = Single.create<Result<Vendor>> create@{ single ->
             val query = GetVendorQuery.builder().vendorId(vendorId).build()
-            this.appSyncClient.query(query).enqueue(object :GraphQLCall.Callback<GetVendorQuery.Data>(){
+            this.appSyncClient!!.query(query).enqueue(object :GraphQLCall.Callback<GetVendorQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getVendorInformation] Error.",e)
                     single.onSuccess(Result.failure(e))

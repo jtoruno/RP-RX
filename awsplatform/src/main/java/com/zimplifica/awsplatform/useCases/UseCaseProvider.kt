@@ -24,7 +24,7 @@ class UseCaseProvider(context: Context) : UseCaseProvider{
             }
         })
         //Probar
-        AppSyncClient.initClient(context)
+        AppSyncClient.initClients(context)
     }
     override fun makeAuthenticationUseCase(): AuthenticationUseCase {
         return com.zimplifica.awsplatform.useCases.AuthenticationUseCase()

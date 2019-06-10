@@ -8,10 +8,6 @@ subscription SubscribeToOrder($orderId: String) {
       type
       description
       amount
-      ... on SitePaymentItem {
-        vendorId
-        vendorName
-      }
       ... on GTIItem {
         companyId
         agreementId
@@ -22,6 +18,10 @@ subscription SubscribeToOrder($orderId: String) {
         expirationDate
         period
         isPrepaid
+      }
+      ... on SitePaymentItem {
+        vendorId
+        vendorName
       }
     }
     fee

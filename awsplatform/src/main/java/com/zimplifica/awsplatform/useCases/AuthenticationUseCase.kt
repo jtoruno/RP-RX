@@ -25,16 +25,16 @@ import java.lang.Exception
 
 class AuthenticationUseCase : AuthenticationUseCase {
 
-    private val appSyncClient = AppSyncClient.getClient()
+    private val appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PUBLIC)
     private val cacheOperations : CacheOperations = CacheOperations()
 
     override fun verifyPhoneNumber(phoneNumber: String): Observable<Result<Boolean>> {
         val single = Single.create<Result<Boolean>> create@{ single ->
             val verificationRequest = InitPhoneVerificationMutation.builder()
-                .username("@")
+                //.username("@")
                 .phoneNumber(phoneNumber)
                 .build()
-            this.appSyncClient.mutate(verificationRequest).enqueue(object : GraphQLCall.Callback<InitPhoneVerificationMutation.Data>(){
+            this.appSyncClient!!.mutate(verificationRequest).enqueue(object : GraphQLCall.Callback<InitPhoneVerificationMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase, verifyPhoneNumber Error:", e)
                     single.onSuccess(Result.failure(AWSErrorDecoder.decodeSignUpError(e)))
@@ -282,6 +282,8 @@ class AuthenticationUseCase : AuthenticationUseCase {
 
     override fun signOut(): Observable<Result<UserStateResult>> {
         val single = Single.create<Result<UserStateResult>> create@{ single ->
+            val client = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
+            client?.clearCaches()
             AWSMobileClient.getInstance().signOut()
             single.onSuccess(Result.success(UserStateResult.signedOut))
         }

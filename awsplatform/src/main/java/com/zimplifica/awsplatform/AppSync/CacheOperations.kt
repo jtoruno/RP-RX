@@ -10,11 +10,11 @@ import com.zimplifica.domain.entities.Citizen
 import com.zimplifica.domain.entities.PaymentMethod
 
 class CacheOperations{
-    private var appSyncClient = AppSyncClient.getClient()
+    private var appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
 
     fun updateCitizen(citizen: Citizen){
         val query = GetUserQuery.builder().build()
-        appSyncClient.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "Platform, CacheOperations,Citizen Error:", e)
@@ -29,7 +29,7 @@ class CacheOperations{
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
-                        appSyncClient.store.write(query,data).enqueue(null)
+                        appSyncClient?.store?.write(query,data)?.enqueue(null)
                         Log.i("🔵", "Cache updated at [CacheOperations] [updateCitizen]")
                     }
                 }
@@ -39,7 +39,7 @@ class CacheOperations{
 
     fun updateEmail(email : String){
         val query = GetUserQuery.builder().build()
-        appSyncClient.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateEmail Error:", e)
@@ -54,7 +54,7 @@ class CacheOperations{
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
-                        appSyncClient.store.write(query,data).enqueue(null)
+                        appSyncClient!!.store.write(query,data).enqueue(null)
                         Log.i("🔵", "Cache updated at [CacheOperations] [updateEmail]")
                     }
                 }
@@ -64,7 +64,7 @@ class CacheOperations{
 
     fun updateEmailStatus(isConfirmed : Boolean){
         val query = GetUserQuery.builder().build()
-        appSyncClient.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateEmail Error:", e)
@@ -79,7 +79,7 @@ class CacheOperations{
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
-                        appSyncClient.store.write(query,data).enqueue(null)
+                        appSyncClient!!.store.write(query,data).enqueue(null)
                         Log.i("🔵", "Cache updated at [CacheOperations] [updateEmailStatus]")
                     }
                 }
@@ -89,7 +89,7 @@ class CacheOperations{
     //Probar con 0 tarrjetas, por el typename
     fun addPaymentMethod(paymentMethod: PaymentMethod){
         val query = GetUserQuery.builder().build()
-        appSyncClient.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateEmail Error:", e)
@@ -109,7 +109,7 @@ class CacheOperations{
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
-                        appSyncClient.store.write(query,data).enqueue(null)
+                        appSyncClient!!.store.write(query,data).enqueue(null)
                         Log.i("🔵", "Cache updated at [CacheOperations] [addPaymentMethod]")
                     }
                 }
