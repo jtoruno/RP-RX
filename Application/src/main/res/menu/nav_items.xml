@@ -2,14 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_catalog"
-        android:icon="@drawable/ic_catalog_icon"
-        android:title="Catálogo"/>
-    <item
-            android:icon="@drawable/ic_home_black_24dp"
+        android:icon="@drawable/ic_local_offer_black_24dp"
+        android:title="Promociones"/>
+    <item android:icon="@drawable/ic_home_black_24dp"
         android:id="@+id/nav_pay"
         android:title="Pagar"/>
+    <item android:icon="@drawable/ic_blur_on_black_24dp"
+          android:id="@+id/nav_points"
+          android:title="Puntos"/>
     <item android:icon="@drawable/ic_update_black_24dp"
         android:title="Movimientos"
         android:id="@+id/nav_movements"/>
-
 </menu>

@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.app_bar_home.*
 import android.view.View
 import android.widget.Toast
 import com.zimplifica.redipuntos.models.ManagerNav
+import com.zimplifica.redipuntos.ui.fragments.PointsFragment
 
 
 @RequiresActivityViewModel(HomeViewModel.ViewModel::class)
@@ -35,6 +36,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
     lateinit var Catalogfragment : Fragment
     lateinit var Payfragment : Fragment
     lateinit var Movementsfragment : Fragment
+    lateinit var PointsFragment : Fragment
     private val fm = supportFragmentManager
     lateinit var active : Fragment
     private var menuActionBar : Menu ? = null
@@ -47,11 +49,13 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         setSupportActionBar(toolbar)
         Catalogfragment = CatalogFragment()
         Payfragment = PayFragment()
+        PointsFragment = PointsFragment()
         Movementsfragment = MovementsFragment()
         active = Payfragment
 
         fm.beginTransaction().add(R.id.home_frame_layout,Catalogfragment, "catalog").hide(Catalogfragment).commit()
         fm.beginTransaction().add(R.id.home_frame_layout,Payfragment, "pay").commit()
+        fm.beginTransaction().add(R.id.home_frame_layout,PointsFragment, "points").hide(PointsFragment).commit()
         fm.beginTransaction().add(R.id.home_frame_layout,Movementsfragment,"movements").hide(Movementsfragment).commit()
 
         val bottomNav : BottomNavigationView = findViewById(R.id.home_nav_bottom)
@@ -152,7 +156,14 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             R.id.nav_catalog->{
                 fm.beginTransaction().hide(active).show(Catalogfragment).commit()
                 active = Catalogfragment
-                toolbar.title = "Catálogo"
+                toolbar.title = "Promociones"
+                invalidateOptionsMenu()
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.nav_points->{
+                fm.beginTransaction().hide(active).show(PointsFragment).commit()
+                active = PointsFragment
+                toolbar.title = "Puntos"
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
@@ -172,8 +183,8 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         menuActionBar = menu
         // Inflate the menu; this adds items to the action bar if it is present.
         when(active){
-            is PayFragment -> {menuInflater.inflate(R.menu.toolbar_points_menu, menu)}
-            else -> {menuInflater.inflate(R.menu.home, menu)}
+            is PointsFragment -> {menuInflater.inflate(R.menu.toolbar_points_menu, menu)}
+            //else -> {menuInflater.inflate(R.menu.home, menu)}
         }
         //menuInflater.inflate(R.menu.home, menu)
         return true
@@ -186,7 +197,9 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         when (item.itemId) {
             R.id.action_settings -> return true
             R.id.points_action -> {
-                Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this,AddPaymentMethodActivity::class.java)
+                startActivity(intent)
+                //Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show()
                 return true}
             else -> return super.onOptionsItemSelected(item)
         }

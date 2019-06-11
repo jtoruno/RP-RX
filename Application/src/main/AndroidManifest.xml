@@ -20,8 +20,11 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.AddPaymentActivity"
-                  android:screenOrientation="portrait">
+        <activity android:name=".ui.activities.AddPaymentMethodActivity">
+        </activity>
+        <activity
+                android:name=".ui.activities.AddPaymentActivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.CompletePaymentActivity"
