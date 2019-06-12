@@ -122,7 +122,7 @@ class CardEditText : AppCompatEditText {
         if (text.isNullOrEmpty()) return
 
         val end = text!!.length
-        Log.e("OnCHange",start.toString() +" ENd :"+end.toString() +" Before :"+lengthBefore.toString()+"  Afer :"+lengthAfter.toString())
+        //Log.e("OnCHange",start.toString() +" ENd :"+end.toString() +" Before :"+lengthBefore.toString()+"  Afer :"+lengthAfter.toString())
         val cursor = when {
             lengthBefore > lengthAfter -> start
             lengthAfter > 1 -> end

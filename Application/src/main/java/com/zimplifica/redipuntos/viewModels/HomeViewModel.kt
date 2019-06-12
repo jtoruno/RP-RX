@@ -8,6 +8,7 @@ import com.zimplifica.domain.entities.UserStateResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.UserConfirmationStatus
+import com.zimplifica.redipuntos.ui.data.maxCardsAllowed
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -17,6 +18,7 @@ interface HomeViewModel {
         fun onCreate()
         fun completePersonalInfoButtonPressed()
         fun signOutButtonPressed()
+        fun addPaymentButtonPressed()
     }
     interface Outputs {
         fun showCompletePersonalInfoAlert() : Observable<Unit>
@@ -25,6 +27,7 @@ interface HomeViewModel {
         fun goToCompletePersonalInfoScreen() : Observable<Unit>
 
         fun signOutAction() : Observable<Unit>
+        fun addPaymentMethodAction() : Observable<Unit>
 
     }
     @SuppressLint("CheckResult")
@@ -37,12 +40,14 @@ interface HomeViewModel {
         private val onCreate = PublishSubject.create<Unit>()
         private val signOutButtonPressed = PublishSubject.create<Unit>()
         private val completePersonalInfoButtonPressed = PublishSubject.create<Unit>()
+        private val addPaymentButtonPressed = PublishSubject.create<Unit>()
 
 
         //Outputs
         private val signOutAction = PublishSubject.create<Unit>()
         private val showCompletePersonalInfoAlert = PublishSubject.create<Unit>()
         private val goToCompletePersonalInfoScreen : Observable<Unit>
+        private val addPaymentMethodAction : Observable<Unit>
 
         init {
             onCreate
@@ -66,12 +71,23 @@ interface HomeViewModel {
                 .subscribe(this.signOutAction)
 
             this.goToCompletePersonalInfoScreen = this.completePersonalInfoButtonPressed
+            this.addPaymentMethodAction = this.addPaymentButtonPressed
+
 
         }
 
         override fun onCreate() {
             this.onCreate.onNext(Unit)
         }
+
+        override fun addPaymentButtonPressed() {
+            val paymentMethods = environment.currentUser().getCurrentUser()?.paymentMethods?.size ?: return
+            if (paymentMethods < maxCardsAllowed){
+                return addPaymentButtonPressed.onNext(Unit)
+            }
+        }
+
+        override fun addPaymentMethodAction(): Observable<Unit> = this.addPaymentMethodAction
 
         override fun completePersonalInfoButtonPressed() {
             return this.completePersonalInfoButtonPressed.onNext(Unit)

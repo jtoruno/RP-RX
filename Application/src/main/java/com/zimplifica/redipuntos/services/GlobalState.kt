@@ -87,4 +87,16 @@ class GlobalState(val context: Context){
         }
     }
 
+    fun updateCurrentUserDelete(withouPaymentMethod : PaymentMethod){
+        val currentUser =CurrentUser.getCurrentUser()
+        if(currentUser!=null){
+            var paymentMethods = currentUser.paymentMethods.toMutableList()
+            paymentMethods.removeAll{ it.cardId == withouPaymentMethod.cardId}
+            val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
+                currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
+                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods)
+            this.userInformationSubscription.onNext(userInfo)
+        }
+
+    }
 }

@@ -63,4 +63,16 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         return userUseCase.getVendorInformation(vendorId)
     }
 
+    fun disablePaymentMethod(owner: String, cardId: String) : Observable<Result<PaymentMethod>>{
+        return userUseCase.disablePaymentMethod(owner,cardId)
+            .doOnNext {result ->
+                when(result){
+                    is Result.success -> {
+                        this.state.updateCurrentUserDelete(result.value!!)
+                    }
+                    else -> return@doOnNext
+                }
+            }
+    }
+
 }

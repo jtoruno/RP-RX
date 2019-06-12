@@ -11,4 +11,5 @@ interface UserUseCase{
     fun checkoutPayloadSitePay(username: String, amount: Float, vendorId: String, description: String) : Observable<Result<PaymentPayload>>
     fun requestPayment(requestPaymentInput: RequestPaymentInput) : Observable<Result<RequestPayment>>
     fun getVendorInformation(vendorId: String) : Observable<Result<Vendor>>
+    fun disablePaymentMethod(owner: String, cardId: String) : Observable<Result<PaymentMethod>>
 }

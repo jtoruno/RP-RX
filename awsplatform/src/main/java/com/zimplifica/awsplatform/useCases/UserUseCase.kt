@@ -24,6 +24,32 @@ class UserUseCase : UserUseCase {
     private val appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
     private val cacheOperations = CacheOperations()
 
+    override fun disablePaymentMethod(owner: String, cardId: String): Observable<Result<PaymentMethod>> {
+        val single = Single.create<Result<PaymentMethod>> create@{ single ->
+            val mutation = DisablePaymentMethodMutation.builder()
+                .cardId(cardId)
+                .build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object : GraphQLCall.Callback<DisablePaymentMethodMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [disablePaymentMethod] Error.",e)
+                    single.onSuccess(Result.failure(e))
+                }
+
+                override fun onResponse(response: Response<DisablePaymentMethodMutation.Data>) {
+                    val result = response.data()?.disablePaymentMethod()
+                    if(result!=null){
+                        val paymentMethod = PaymentMethod(result.cardId(),result.cardNumber(),result.expirationDate(),
+                            result.issuer(),result.rewards(),result.automaticRedemption())
+                        cacheOperations.addPaymentMethod(paymentMethod)
+                        single.onSuccess(Result.success(paymentMethod))
+                    }
+                }
+
+            })
+        }
+        return single.toObservable()
+    }
+
     override fun requestPayment(requestPaymentInput: RequestPaymentInput): Observable<Result<RequestPayment>> {
         val single = Single.create<Result<RequestPayment>> create@{ single ->
             val wayToPayInput = WayToPayInput.builder()

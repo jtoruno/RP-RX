@@ -132,6 +132,11 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 startActivity(intent)*/
                 ManagerNav.getInstance(this).initNav()
             }
+        this.viewModel.outputs.addPaymentMethodAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                val intent = Intent(this,AddPaymentMethodActivity::class.java)
+                startActivity(intent)
+            }
 
         this.viewModel.inputs.onCreate()
 
@@ -197,8 +202,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         when (item.itemId) {
             R.id.action_settings -> return true
             R.id.points_action -> {
-                val intent = Intent(this,AddPaymentMethodActivity::class.java)
-                startActivity(intent)
+                this.viewModel.inputs.addPaymentButtonPressed()
                 //Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show()
                 return true}
             else -> return super.onOptionsItemSelected(item)
