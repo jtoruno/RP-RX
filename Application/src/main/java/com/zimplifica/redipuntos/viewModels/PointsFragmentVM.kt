@@ -15,13 +15,22 @@ import io.reactivex.subjects.PublishSubject
 interface PointsFragmentVM {
     interface Inputs {
         fun fetchPaymentMethods()
+        fun showDisablePaymentMethodAlert()
+        fun disablePaymentMethodPressed(paymentMethod: PaymentMethod)
     }
     interface Outputs{
         fun paymentMethods() : Observable<List<PaymentMethod>>
         fun totalPoints() : Observable<Double>
         fun newData() : Observable<Unit>
+
+        fun showDisablePaymentMethodAlertAction() : Observable<Unit>
+        fun disablePaymentMethodAction() : Observable<PaymentMethod>
+        fun loading() : Observable<Boolean>
+        fun showError() : Observable<String>
+
     }
     class ViewModel(@NonNull val environment: Environment) : FragmentViewModel<PointsFragmentVM>(environment), Inputs, Outputs{
+
 
 
         val inputs : Inputs = this
@@ -29,11 +38,17 @@ interface PointsFragmentVM {
 
         //Inputs
         private val fetchPaymentMethods = PublishSubject.create<Unit>()
+        private val showDisablePaymentMethodAlert = PublishSubject.create<Unit>()
+        private val disablePaymentMethodPressed = PublishSubject.create<PaymentMethod>()
 
         //Outputs
         private val paymentMethods = BehaviorSubject.create<List<PaymentMethod>>()
         private val totalPoints = BehaviorSubject.create<Double>()
         private val newData = BehaviorSubject.create<Unit>()
+        private val showDisablePaymentMethodAlertAction = BehaviorSubject.create<Unit>()
+        private val disablePaymentMethodAction = BehaviorSubject.create<PaymentMethod>()
+        private val loading = BehaviorSubject.create<Boolean>()
+        private val showError = BehaviorSubject.create<String>()
 
 
         init {
@@ -62,17 +77,51 @@ interface PointsFragmentVM {
             environment.userUseCase().getUserInformationSubscription()
                 .map { Unit }
                 .subscribe(this.newData)
+
+            showDisablePaymentMethodAlert
+                .subscribe(this.showDisablePaymentMethodAlertAction)
+
+            val disablePaymentMethodEvent = disablePaymentMethodPressed
+                .flatMap { return@flatMap this.disablePaymentMethod(it) }
+                .share()
+
+            disablePaymentMethodEvent
+                .filter { !it.isFail() }
+                .map { it.successValue() }
+                .subscribe(this.disablePaymentMethodAction)
+
+            disablePaymentMethodEvent
+                .filter { it.isFail() }
+                .map { return@map "Ocurrió un error al eliminar el medio de pago. Por favor intente más tarde." }
+                .subscribe(this.showError)
         }
 
         override fun fetchPaymentMethods() {
             return this.fetchPaymentMethods.onNext(Unit)
         }
 
+        override fun showDisablePaymentMethodAlert() {
+            return this.showDisablePaymentMethodAlert.onNext(Unit)
+        }
+
+        override fun disablePaymentMethodPressed(paymentMethod: PaymentMethod) {
+            return this.disablePaymentMethodPressed.onNext(paymentMethod)
+        }
+
+        override fun showDisablePaymentMethodAlertAction(): Observable<Unit> = this.showDisablePaymentMethodAlertAction
+
+        override fun disablePaymentMethodAction(): Observable<PaymentMethod> = this.disablePaymentMethodAction
+
+        override fun loading(): Observable<Boolean> = this.loading
+
+
         override fun paymentMethods(): Observable<List<PaymentMethod>> = this.paymentMethods
 
         override fun totalPoints(): Observable<Double> = this.totalPoints
 
         override fun newData(): Observable<Unit> = newData
+
+        override fun showError(): Observable<String> = this.showError
 
         private fun fetchPaymentMethods(userInformation : UserInformationResult) : Observable<Result<List<PaymentMethod>>>{
             val single = Single.create<Result<List<PaymentMethod>>> create@{ single ->
@@ -88,11 +137,13 @@ interface PointsFragmentVM {
             }
             return single.toObservable()
         }
-        /*
+
         private fun disablePaymentMethod(paymentMethod: PaymentMethod) : Observable<Result<PaymentMethod>>{
             val userInfo = environment.currentUser().getCurrentUser()
-            return
-        }*/
+            return environment.userUseCase().disablePaymentMethod(userInfo?.userId ?: "",paymentMethod.cardId)
+                .doOnComplete { this.loading.onNext(false) }
+                .doOnSubscribe { this.loading.onNext(true) }
+        }
 
     }
 }

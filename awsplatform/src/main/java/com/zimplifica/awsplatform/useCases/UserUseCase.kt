@@ -234,7 +234,7 @@ class UserUseCase : UserUseCase {
             val cachePolicy =  if(useCache){
                 AppSyncResponseFetchers.CACHE_FIRST
             }else{
-                AppSyncResponseFetchers.CACHE_AND_NETWORK
+                AppSyncResponseFetchers.NETWORK_ONLY
             }
             this.appSyncClient!!.query(query).responseFetcher(cachePolicy).enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {

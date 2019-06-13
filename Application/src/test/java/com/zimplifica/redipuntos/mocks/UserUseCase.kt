@@ -8,6 +8,21 @@ import org.junit.runner.Request
 import java.lang.Exception
 
 class UserUseCase : UserUseCase{
+    override fun disablePaymentMethod(owner: String, cardId: String): Observable<Result<PaymentMethod>> {
+        val single = Single.create<Result<PaymentMethod>> create@{ single ->
+            println("disable ${owner}")
+            if(owner == "1234" && cardId == "1234"){
+                val paymentM = PaymentMethod("XXXXXX-XXXXX-XXX", "9944", "10/20","VISA", 10.0,  true)
+                single.onSuccess(Result.success(paymentM))
+            }
+            else{
+                val error = Exception("disablePaymentMethod")
+                single.onSuccess(Result.failure(error))
+            }
+        }
+        return single.toObservable()
+    }
+
     override fun getUserInformation(useCache: Boolean): Observable<Result<UserInformationResult>> {
         val single = Single.create<Result<UserInformationResult>> create@{
             val userInfo = UserInformationResult( "e5a06e84-73f4-4a04-bcbc-a70552a4d92a", "115650044",
