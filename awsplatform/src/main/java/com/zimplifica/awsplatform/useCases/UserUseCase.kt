@@ -15,6 +15,7 @@ import com.zimplifica.domain.entities.*
 import com.zimplifica.domain.useCases.UserUseCase
 import io.reactivex.Observable
 import io.reactivex.Single
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
@@ -42,6 +43,9 @@ class UserUseCase : UserUseCase {
                             result.issuer(),result.rewards(),result.automaticRedemption())
                         cacheOperations.addPaymentMethod(paymentMethod)
                         single.onSuccess(Result.success(paymentMethod))
+                    }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
                     }
                 }
 
@@ -77,6 +81,9 @@ class UserUseCase : UserUseCase {
                     if(result!=null){
                         val requestPayment = RequestPayment(result.success(),result.message() ?: "")
                         single.onSuccess(Result.success(requestPayment))
+                    }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
                     }
                 }
             })
@@ -119,6 +126,9 @@ class UserUseCase : UserUseCase {
                         val paymentPayload = PaymentPayload(rediPuntos,order,paymentMethods)
                         single.onSuccess(Result.success(paymentPayload))
                     }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
                 }
             })
         }
@@ -150,6 +160,9 @@ class UserUseCase : UserUseCase {
                             result.issuer(),result.rewards(),result.automaticRedemption())
                         cacheOperations.addPaymentMethod(paymentMethod)
                         single.onSuccess(Result.success(paymentMethod))
+                    }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
                     }
                 }
             })
@@ -220,6 +233,9 @@ class UserUseCase : UserUseCase {
                         val transactionsResult = TransactionsResult(transactions)
                         single.onSuccess(Result.success(transactionsResult))
                     }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
                 }
 
             })
@@ -254,6 +270,9 @@ class UserUseCase : UserUseCase {
                             paymentMethods)
                         single.onSuccess(Result.success(userObj))
                     }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
                 }
             })
         }
@@ -282,6 +301,9 @@ class UserUseCase : UserUseCase {
                         cacheOperations.updateCitizen(citizen)
                         single.onSuccess(Result.success(citizen))
                     }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
                 }
 
             })
@@ -300,9 +322,12 @@ class UserUseCase : UserUseCase {
 
                 override fun onResponse(response: Response<GetVendorQuery.Data>) {
                     val result = response.data()?.vendor
+                    Log.e("AWSPLAT",result.toString())
                     if(result!=null){
                         val vendor = Vendor(result.pk(),result.name(),result.address())
                         single.onSuccess(Result.success(vendor))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
                     }
                 }
 

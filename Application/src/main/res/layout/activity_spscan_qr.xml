@@ -25,13 +25,15 @@
     <LinearLayout android:layout_width="match_parent"
                   android:background="@color/homeColorBtn"
                   android:gravity="center_vertical"
-                  android:layout_height="100dp" app:layout_constraintStart_toStartOf="parent"
+                  android:id="@+id/spscan_qr_ll"
+                  android:layout_height="80dp" app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintEnd_toEndOf="parent"
                   app:layout_constraintBottom_toBottomOf="parent">
         <TextView android:layout_width="match_parent"
                   android:textColor="@color/grayBackgground"
                   android:textAlignment="center"
                   android:textSize="16sp"
+                  android:id="@+id/spscan_qr_txt"
                   android:text="Escanear código del comercio"
                   android:layout_height="wrap_content"/>
 

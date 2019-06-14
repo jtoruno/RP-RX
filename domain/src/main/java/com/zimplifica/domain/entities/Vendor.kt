@@ -1,3 +1,5 @@
 package com.zimplifica.domain.entities
 
-class Vendor(val pk : String, val name : String, val address: String)
+import java.io.Serializable
+
+class Vendor(val pk : String, val name : String, val address: String) : Serializable
