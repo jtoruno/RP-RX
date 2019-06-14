@@ -1,16 +1,20 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.Manifest
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Vibrator
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
@@ -34,10 +38,10 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            WindowManager.LayoutParams.FLAG_FULLSCREEN)
         setContentView(R.layout.activity_spscan_qr)
         request()
 
@@ -56,10 +60,32 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
         this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.e("PBA",it)
+
                 spscan_qr_ll.background = resources.getDrawable(android.R.color.holo_red_dark)
                 spscan_qr_txt.text = it
 
+                Handler().postDelayed({
+                    spscan_qr_ll.background = resources.getDrawable(R.color.homeColorBtn)
+                    spscan_qr_txt.text = "Escanear código del comercio"
+                },2500)
+
             }
+
+        spscan_qr_lottie.addAnimatorListener(object: Animator.AnimatorListener{
+            override fun onAnimationRepeat(animation: Animator?) {
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                spscan_qr_lottie.visibility = View.GONE
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+            }
+
+        })
     }
 
     override fun onResume() {
@@ -79,6 +105,9 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
             Log.e("QR", p0.text)
             if(qrResult != p0.text){
                 qrResult = p0.text
+                spscan_qr_txt.text = "Validando"
+                val vibratorService = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                vibratorService.vibrate(200)
                 this.viewModel.inputs.codeFound(qrResult)
             }
         }

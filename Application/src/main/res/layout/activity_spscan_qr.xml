@@ -15,6 +15,19 @@
 
     </me.dm7.barcodescanner.zxing.ZXingScannerView>
 
+    <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/spscan_qr_lottie"
+            android:scaleType="centerCrop"
+            app:lottie_rawRes="@raw/scanqr"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginBottom="30dp" app:layout_constraintBottom_toTopOf="@+id/spscan_qr_ll"
+            app:layout_constraintHorizontal_bias="0.497"/>
+
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" app:srcCompat="@drawable/ic_close_black_24dp"
