@@ -67,6 +67,7 @@
 
         <activity
                 android:name=".ui.activities.SPSelectionActivity"
+                android:windowSoftInputMode="adjustResize"
                 android:screenOrientation="portrait">
         </activity>
         <activity
