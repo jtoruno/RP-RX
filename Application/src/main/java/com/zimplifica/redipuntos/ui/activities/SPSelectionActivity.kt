@@ -82,6 +82,14 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
             }
 
         supportActionBar?.title = "₡ "+String.format("%,.0f", viewModel.getAmount())
+
+        viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                val intent = Intent(this,PaymentSelectionActivity::class.java)
+                intent.putExtra("SPSelectionObject",it)
+                startActivity(intent)
+                finish()
+            }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

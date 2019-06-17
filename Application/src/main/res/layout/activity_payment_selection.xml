@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:layout_height="match_parent"
+        tools:context=".ui.activities.PaymentSelectionActivity">
+
+
+    <Button
+            android:background="@color/colorAccent"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:text="Pagar ahora"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/payment_selection_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
+            android:layout_alignParentStart="true" android:layout_marginStart="0dp"/>
+    <ScrollView
+            android:layout_above="@id/payment_selection_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_marginTop="0dp" android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true" android:layout_marginEnd="0dp" android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                      android:orientation="vertical">
+            <TextView
+                    android:text="Pizza Hut"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="26sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/textView29"/>
+            <TextView
+                    android:text="Multiplaza de Escazú"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginStart="10dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/textView30"/>
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/navDisableColor"
+                    android:layout_height="1dp" android:id="@+id/view"/>
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" app:srcCompat="@drawable/ic_store_black_24dp"
+                        android:id="@+id/imageView6" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:text="5,000.00"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView31" app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="8dp" android:layout_marginTop="10dp"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                <TextView
+                        android:text="Pago en sitio"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView33" android:layout_marginTop="10dp"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/imageView6"
+                        android:layout_marginStart="24dp" app:layout_constraintBottom_toTopOf="@+id/textView34"/>
+                <TextView
+                        android:textStyle="italic"
+                        android:text="Cena - #889900"
+                        android:textColor="@android:color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView34"
+                        android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/imageView6" android:layout_marginStart="24dp"
+                        app:layout_constraintTop_toBottomOf="@+id/textView33" app:layout_constraintVertical_bias="0.0"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/navDisableColor"
+                    android:layout_height="1dp"/>
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <TextView
+                        android:text="Comisión"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/textView38"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toBottomOf="@+id/textView36"
+                        app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="64dp"/>
+                <TextView
+                        android:text="Subtotal"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/textView36"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="64dp"/>
+                <TextView
+                        android:text="5,000.00"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView39" app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                <TextView
+                        android:text="100.00"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView40"
+                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView39"
+                        app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+                <TextView
+                        android:text="Impuestos"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView41" app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="64dp" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toBottomOf="@+id/textView38" android:layout_marginBottom="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                        android:text="13.00"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView42"
+                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView40"
+                        app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="0dp" app:layout_constraintBottom_toBottomOf="parent"/>
+            </android.support.constraint.ConstraintLayout>
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/navDisableColor"
+                    android:layout_height="1dp"/>
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <CheckBox
+                        android:textColor="@android:color/white"
+                        android:buttonTint="@android:color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/checkBox" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                        android:text="Aplicar RediPuntos"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView43" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/checkBox"
+                        android:layout_marginStart="24dp"/>
+                <TextView
+                        android:text="-5,113.00"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView44" app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="8dp" android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent"/>
+                <TextView
+                        android:text="Tienes 10,000.00 pts"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="italic"
+                        android:id="@+id/textView46"
+                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView43"
+                        app:layout_constraintStart_toEndOf="@+id/checkBox" android:layout_marginStart="24dp"
+                        android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"/>
+            </android.support.constraint.ConstraintLayout>
+            <View
+                    android:layout_width="match_parent"
+                    android:background="@color/navDisableColor"
+                    android:layout_height="1dp"/>
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <TextView
+                        android:text="Total"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/textView47"
+                        android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="64dp"/>
+                <TextView
+                        android:text="0.00"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView48" app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                        android:text="Cargo a la tarjeta"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        android:textStyle="italic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView49" app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="64dp" android:layout_marginTop="4dp"
+                        app:layout_constraintTop_toBottomOf="@+id/textView47" android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+            </android.support.constraint.ConstraintLayout>
+            <View
+                    android:layout_width="match_parent"
+                    android:background="@color/navDisableColor"
+                    android:layout_height="1dp"/>
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" app:srcCompat="@drawable/ic_credit_card_black_24dp"
+                        android:id="@+id/imageView7" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="8dp"/>
+                <TextView
+                        android:text="VISA **** 8080"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView50" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/imageView7"
+                        android:layout_marginStart="24dp"/>
+                <TextView
+                        android:text="Método de pago"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView51" app:layout_constraintStart_toEndOf="@+id/imageView7"
+                        android:layout_marginStart="24dp" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toBottomOf="@+id/textView50" android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                        android:text="Cambiar"
+                        android:textSize="16sp"
+                        android:textColor="@color/colorAccent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView52"
+                        android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+            </android.support.constraint.ConstraintLayout>
+            <View
+                    android:layout_width="match_parent"
+                    android:background="@color/navDisableColor"
+                    android:layout_height="1dp"/>
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <TextView
+                        android:text="Premios"
+                        android:textColor="@android:color/white"
+                        android:textSize="20sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" android:id="@+id/textView53"
+                        app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="64dp"
+                        android:layout_marginTop="16dp" app:layout_constraintTop_toTopOf="parent"/>
+                <TextView
+                        android:text="25.00 pts"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView54" app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                        android:text="Puntos por obtener"
+                        android:textColor="@android:color/white"
+                        android:textSize="12sp"
+                        android:textStyle="italic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/textView55" android:layout_marginTop="8dp"
+                        app:layout_constraintTop_toBottomOf="@+id/textView53" android:layout_marginBottom="8dp"
+                        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="64dp" app:layout_constraintVertical_bias="1.0"/>
+            </android.support.constraint.ConstraintLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
