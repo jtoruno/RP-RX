@@ -87,6 +87,7 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
             .subscribe{
                 val intent = Intent(this,PaymentSelectionActivity::class.java)
                 intent.putExtra("SPSelectionObject",it)
+                intent.putExtra("amount",viewModel.getAmount())
                 startActivity(intent)
                 finish()
             }
