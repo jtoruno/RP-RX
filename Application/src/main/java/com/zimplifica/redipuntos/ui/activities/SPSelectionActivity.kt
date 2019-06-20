@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.util.AndroidException
 import android.util.Log
 import android.view.View
@@ -91,6 +92,12 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
                 startActivity(intent)
                 finish()
             }
+
+        viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                showDialog("Lo sentimos", it)
+            }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -110,5 +117,14 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    private fun showDialog(title : String, message : String){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("Cerrar",null)
+        val dialog = builder.create()
+        dialog.show()
     }
 }

@@ -18,7 +18,7 @@ interface PaymentSelectionVM {
     }
     interface Outputs {
         fun paymentMethodChangedAction() : Observable<PaymentMethod>
-        fun showError() : Observable<String?>
+        fun showError() : Observable<String>
 
         /// Emits when the payment was processed.
         fun finishPaymentProcessingAction() : Observable<Unit>
@@ -29,9 +29,12 @@ interface PaymentSelectionVM {
         /// Emits when the payment method is changed.
         fun paymentInformationChangedAction() : Observable<PaymentInformation>
 
+        fun showVendor() : Observable<Vendor>
+
     }
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<PaymentSelectionVM>(environment), Inputs, Outputs{
+
 
         val inputs : Inputs = this
         val outputs : Outputs = this
@@ -47,7 +50,11 @@ interface PaymentSelectionVM {
         private val nextButtonLoadingIndicator = BehaviorSubject.create<Boolean>()
         private val paymentInformationChangedAction = BehaviorSubject.create<PaymentInformation>()
 
-        private lateinit var vendor : Vendor
+        private val showVendor = BehaviorSubject.create<Vendor>()
+        private val amountObserver = BehaviorSubject.create<Float>()
+        private val orderObservable = BehaviorSubject.create<Order>()
+        private val rediPointsObservable = BehaviorSubject.create<Double>()
+
         private lateinit var paymentPayload: PaymentPayload
         private var amount : Float = 0F
 
@@ -55,22 +62,34 @@ interface PaymentSelectionVM {
             val payloadIntent = intent()
                 .filter { it.hasExtra("SPSelectionObject") }
                 .map {
-                    //val obj = it.getSerializableExtra("SPSelectionObject") as SitePaySellerSelectionObject
-                    //paymentPayload = obj.payload
-                    //vendor = obj.vendor
-                    return@map it.getSerializableExtra("SPSelectionObject") as SitePaySellerSelectionObject
+                    val result = it.getSerializableExtra("SPSelectionObject") as SitePaySellerSelectionObject
+                    paymentPayload = result.payload
+                    return@map result
                 }
+
+            payloadIntent
+                .map { return@map it.vendor }
+                .subscribe(this.showVendor)
+
+            payloadIntent
+                .map { return@map it.payload.order }
+                .subscribe(this.orderObservable)
+
+            payloadIntent
+                .map { return@map it.payload.rediPuntos }
+                .subscribe(this.rediPointsObservable)
+
             val amountIntent = intent()
                 .filter { it.hasExtra("amount") }
                 .map {
-                    amount = it.getFloatExtra("amount",0F)
                     return@map it.getFloatExtra("amount",0F)
                 }
 
-            payloadIntent.subscribe {
-                paymentPayload = it.payload
-                vendor = it.vendor
-            }
+            amountIntent
+                .subscribe(this.amountObserver)
+
+
+
 
             this.paymentMethodChanged
                 .subscribe(this.paymentMethodChangedAction)
@@ -115,7 +134,7 @@ interface PaymentSelectionVM {
 
         override fun paymentMethodChangedAction(): Observable<PaymentMethod> = this.paymentMethodChangedAction
 
-        override fun showError(): Observable<String?> = this.showError
+        override fun showError(): Observable<String> = this.showError
 
         override fun finishPaymentProcessingAction(): Observable<Unit> = this.finishPaymentProcessingAction
 
@@ -123,24 +142,35 @@ interface PaymentSelectionVM {
 
         override fun paymentInformationChangedAction(): Observable<PaymentInformation> = this.paymentInformationChangedAction
 
+        override fun showVendor(): Observable<Vendor> = this.showVendor
+
         private fun requestPayment(input : RequestPaymentInput) : Observable<Result<RequestPayment>>{
             return environment.userUseCase().requestPayment(input)
                 .doOnComplete { this.nextButtonLoadingIndicator.onNext(false) }
                 .doOnSubscribe { this.nextButtonLoadingIndicator.onNext(true) }
         }
 
+
+
         fun getPaymentMethods() : List<PaymentMethod>{
             return this.paymentPayload.paymentMethods
         }
 
-        fun getgetVendor() : Vendor {
-            return this.vendor
+        fun getVendor() : Vendor {
+            return this.showVendor.value
         }
 
         fun getAmount() : Float {
-            return this.amount
+            return this.amountObserver.value
         }
 
+        fun getOrder() : Order {
+            return this.orderObservable.value
+        }
+
+        fun rediPoints() : Double{
+            return this.rediPointsObservable.value
+        }
 
 
     }

@@ -12,4 +12,5 @@
     <color name="red">#ea3323</color>
     <color name="grayIconTint">#cccccc</color>
     <color name="backgroundTransparent">#A6000000 </color>
+    <color name="dialogBackground">#E6efeff4</color>
 </resources>
