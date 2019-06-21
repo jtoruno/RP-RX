@@ -25,6 +25,7 @@ subscription SubscribeToOrder($orderId: String) {
       }
     }
     fee
+    tax
     total
     status
     wayToPay {
@@ -37,5 +38,13 @@ subscription SubscribeToOrder($orderId: String) {
       creditCardRewards
       creditCardCharge
     }
+  }
+}
+subscription SubscribeToEvents($user: String!) {
+  subscribeToEvents(user: $user) {
+    id
+    user
+    type
+    data
   }
 }

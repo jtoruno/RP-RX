@@ -109,6 +109,8 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 drawer_layout.closeDrawer(GravityCompat.START)
             }
+            val intent = Intent(this,AccountInfoActivity::class.java)
+            startActivity(intent)
         }
         this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {

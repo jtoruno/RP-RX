@@ -62,6 +62,7 @@ query GetTransactionsByUser {
         }
       }
       fee
+      tax
       total
       status
       wayToPay {
@@ -123,7 +124,10 @@ query GetCheckoutPayloadGti($input: CheckoutPayloadGTIInput!) {
         }
       }
       fee
+      tax
+      subtotal
       total
+      rewards
     }
     paymentOptions {
       rediPuntos
@@ -164,7 +168,10 @@ query GetCheckoutPayloadGtiPrepaid($input: CheckoutPayloadGTIPrepaidInput!) {
         }
       }
       fee
+      tax
+      subtotal
       total
+      rewards
     }
     paymentOptions {
       rediPuntos
@@ -205,7 +212,10 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
         }
       }
       fee
+      tax
+      subtotal
       total
+      rewards
     }
     paymentOptions {
       rediPuntos
@@ -226,5 +236,94 @@ query GetVendor($vendorId: String!) {
     pk
     name
     address
+  }
+}
+query GetCommerces($limit: Int, $nextToken: String) {
+  getCommerces(limit: $limit, nextToken: $nextToken) {
+    items {
+      commerceId
+      name
+      posterImage
+      promotions {
+        promotionId
+        promotionType
+        title
+        description
+        promotionImage
+        validFrom
+        validTo
+        restrictions
+        waysToUse
+        stores
+        ... on Offer {
+          discount
+        }
+        ... on Coupon {
+          beforeDiscount
+          afterDiscount
+        }
+      }
+      website
+      facebook
+      whatsapp
+      instagram
+      tags
+      category
+      stores {
+        storeId
+        name
+        location {
+          lon
+          lat
+        }
+        phoneNumber
+        schedule {
+          sun {
+            open
+            openningHour
+            closingHour
+          }
+          mon {
+            open
+            openningHour
+            closingHour
+          }
+          tue {
+            open
+            openningHour
+            closingHour
+          }
+          wed {
+            open
+            openningHour
+            closingHour
+          }
+          thu {
+            open
+            openningHour
+            closingHour
+          }
+          fri {
+            open
+            openningHour
+            closingHour
+          }
+          sat {
+            open
+            openningHour
+            closingHour
+          }
+        }
+      }
+    }
+  }
+}
+query GetCategories($limit: Int, $nextToken: String) {
+  getCategories(limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      name
+      categoryImage
+    }
   }
 }

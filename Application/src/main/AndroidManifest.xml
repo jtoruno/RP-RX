@@ -21,12 +21,18 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.PaymentSelectionActivity"
-                  android:theme="@style/AppThemeWithoutDivider"
+        <activity android:name=".ui.activities.AccountInfoActivity"
+                  android:theme="@style/AppThemeWhite"
                   android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.AddPaymentMethodActivity"
-                  android:screenOrientation="portrait">
+        <activity
+                android:name=".ui.activities.PaymentSelectionActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppThemeWithoutDivider">
+        </activity>
+        <activity
+                android:name=".ui.activities.AddPaymentMethodActivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.AddPaymentActivity"

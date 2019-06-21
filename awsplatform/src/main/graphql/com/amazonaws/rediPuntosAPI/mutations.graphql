@@ -53,8 +53,43 @@ mutation DisablePaymentMethod($cardId: String!) {
 }
 mutation RequestPayment($input: RequestPaymentInput!) {
   requestPayment(input: $input) {
-    success
-    message
+    orderId
+    datetime
+    transactionType
+    item {
+      type
+      description
+      amount
+      ... on GTIItem {
+        companyId
+        agreementId
+        invoiceId
+        clientName
+        serviceId
+        paymentType
+        expirationDate
+        period
+        isPrepaid
+      }
+      ... on SitePaymentItem {
+        vendorId
+        vendorName
+      }
+    }
+    fee
+    tax
+    total
+    status
+    wayToPay {
+      rediPuntos
+      creditCard {
+        cardId
+        cardNumber
+        issuer
+      }
+      creditCardRewards
+      creditCardCharge
+    }
   }
 }
 mutation ToggleAutomaticRedemption($cardId: String!) {
@@ -91,6 +126,7 @@ mutation SendTransactionNotification(
       }
     }
     fee
+    tax
     total
     status
     wayToPay {
@@ -103,5 +139,13 @@ mutation SendTransactionNotification(
       creditCardRewards
       creditCardCharge
     }
+  }
+}
+mutation SendEventToClient($user: String!, $event: ClientEventInput!) {
+  sendEventToClient(user: $user, event: $event) {
+    id
+    user
+    type
+    data
   }
 }
