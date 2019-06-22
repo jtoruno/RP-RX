@@ -20,7 +20,7 @@ class SitePaymentItem(val type: String, val description: String, val amount: Dou
 
 class TransactionDetail(var type: TransactionType, val description: String, val amount: Double, var gtiItem: GTIItem?, var sitePaymentItem: SitePaymentItem?)
 
-class Transaction(val orderId: String, val datetime: String, val transactionType: String, val transactionDetail: TransactionDetail, val fee: Double,
-                  val total: Double, val status: TransactionStatus, val wayToPay: WayToPay)
+class Transaction(val orderId: String, val datetime: String, val transactionType: String, val transactionDetail: TransactionDetail, val fee: Double, val tax: Double, val subtotal : Double,
+                  val total: Double, val rewards: Double, val status: TransactionStatus, val wayToPay: WayToPay)
 
 class TransactionsResult(val transactions : List<Transaction>)

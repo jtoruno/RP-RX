@@ -23,7 +23,7 @@ class PaymentSelectionVMTest : RPTestCase() {
         payList.add(PaymentMethod("1234321412341234",  "1234", "",  "visa",  4505.0, false))
         val vendor = Vendor("7120-39345-1023841023-123434", "Manpuku Sushi",  "Jaco")
         val item = Item("","", 5555.5)
-        val order = Order("3c288f1b-e95f-40a2-8f53-40b61d356156", item, 0.0, 5555.5)
+        val order = Order("3c288f1b-e95f-40a2-8f53-40b61d356156", item, 0.0, 10.0,5555.5,5565.5,1.0)
         val paymentPayload = PaymentPayload(1000.0, order, payList)
         val obj = SitePaySellerSelectionObject(vendor,paymentPayload)
 
@@ -40,7 +40,7 @@ class PaymentSelectionVMTest : RPTestCase() {
         vm.outputs.paymentInformationChangedAction().subscribe(this.paymentInformationChangedAction)
         vm.outputs.showVendor().subscribe(this.showVendor)
         vm.outputs.paymentInformationChangedAction().subscribe {
-            println(it.rediPoints.toString() + " rewards" + it.cardAmountToPay +" total" +it.totalAmount )
+            println(it.rediPoints.toString() + " rewards" + it.cardAmountToPay +" total" +it.total )
         }
     }
 
@@ -119,7 +119,7 @@ class PaymentSelectionVMTest : RPTestCase() {
         payList.add(PaymentMethod("1234321412341234",  "1234", "",  "visa",  4505.0, false))
         val vendor = Vendor("7120-39345-1023841023-123434", "Manpuku Sushi",  "Jaco")
         val item = Item("","", 5555.5)
-        val order = Order("53448394-e95f-40a2-8f53-3343234", item, 0.0, 5555.5)
+        val order = Order("53448394-e95f-40a2-8f53-3343234", item, 0.0, 10.0,5555.5,5565.5,1.0)
         val paymentPayload = PaymentPayload(1000.0, order, payList)
         val obj = SitePaySellerSelectionObject(vendor,paymentPayload)
 

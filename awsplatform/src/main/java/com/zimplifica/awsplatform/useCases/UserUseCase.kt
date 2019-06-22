@@ -120,7 +120,7 @@ class UserUseCase : UserUseCase {
                             else -> TransactionStatus.fail
                         }
                         val transaction = Transaction(result.orderId(),result.datetime(),result.transactionType(),transactionDetail,
-                            result.fee(),result.total(),status,way2pay)
+                            result.fee(),result.tax(), result.total(),result.total(),result.total(),status,way2pay)
 
                         val requestPayment = RequestPayment(true, "")
 
@@ -161,7 +161,7 @@ class UserUseCase : UserUseCase {
                     val result = response.data()?.checkoutPayloadSitePay
                     if(result!=null){
                         val item = Item(result.order().item().type(), result.order().item().description(),result.order().item().amount())
-                        val order = Order(result.order().pid(), item,result.order().fee(),result.order().total())
+                        val order = Order(result.order().pid(), item,result.order().fee(),result.order().tax(),result.order().subtotal(),result.order().total(),result.order().rewards())
                         val rediPuntos = result.paymentOptions().rediPuntos()
                         val paymentMethods = result.paymentOptions().paymentMethods().map { element ->
                             return@map PaymentMethod(element.cardId(),element.cardNumber(),element.expirationDate(),element.issuer(),
@@ -278,7 +278,7 @@ class UserUseCase : UserUseCase {
                                 "ValitionFailure" -> TransactionStatus.fail
                                 else -> TransactionStatus.fail
                             }
-                            return@map Transaction(trx.orderId(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.total(),status, wayToPay)
+                            return@map Transaction(trx.orderId(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.total(),trx.total(),trx.total(),status, wayToPay)
                         }
                         val transactionsResult = TransactionsResult(transactions)
                         single.onSuccess(Result.success(transactionsResult))

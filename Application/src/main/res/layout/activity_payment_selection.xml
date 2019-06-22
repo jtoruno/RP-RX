@@ -127,7 +127,7 @@
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView39" app:layout_constraintEnd_toEndOf="parent"
+                        android:id="@+id/payment_s_subtotal" app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
                         app:layout_constraintTop_toTopOf="parent"/>
                 <TextView
@@ -136,8 +136,8 @@
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView40"
-                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView39"
+                        android:id="@+id/payment_s_fee"
+                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/payment_s_subtotal"
                         app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
                 <TextView
                         android:text="Impuestos"
@@ -155,10 +155,10 @@
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView42"
-                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView40"
+                        android:id="@+id/payment_s_tax"
+                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/payment_s_fee"
                         app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="0dp" app:layout_constraintBottom_toBottomOf="parent"/>
+                        app:layout_constraintBottom_toBottomOf="parent"/>
             </android.support.constraint.ConstraintLayout>
             <View
                     android:layout_width="match_parent"
@@ -173,7 +173,8 @@
                         android:textColor="@android:color/white"
                         android:buttonTint="@android:color/white"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" android:id="@+id/checkBox" android:layout_marginTop="8dp"
+                        android:layout_height="wrap_content" android:id="@+id/payment_s_checkBox"
+                        android:layout_marginTop="8dp"
                         app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
                         android:layout_marginStart="8dp"
                         android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"/>
@@ -184,7 +185,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/textView43" android:layout_marginTop="8dp"
-                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/checkBox"
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/payment_s_checkBox"
                         android:layout_marginStart="24dp"/>
                 <TextView
                         android:text="-5,113.00"
@@ -192,7 +193,7 @@
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView44" app:layout_constraintEnd_toEndOf="parent"
+                        android:id="@+id/payment_s_reward_applied" app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginEnd="8dp" android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="parent" android:layout_marginTop="8dp"
                         app:layout_constraintTop_toTopOf="parent"/>
@@ -205,7 +206,7 @@
                         android:textStyle="italic"
                         android:id="@+id/payment_selection_redipoints"
                         android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView43"
-                        app:layout_constraintStart_toEndOf="@+id/checkBox" android:layout_marginStart="24dp"
+                        app:layout_constraintStart_toEndOf="@+id/payment_s_checkBox" android:layout_marginStart="24dp"
                         android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"/>
             </android.support.constraint.ConstraintLayout>
             <View
@@ -231,7 +232,7 @@
                         android:textSize="20sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView48" app:layout_constraintEnd_toEndOf="parent"
+                        android:id="@+id/payment_s_total" app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
                         app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"/>
@@ -313,7 +314,7 @@
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView54" app:layout_constraintEnd_toEndOf="parent"
+                        android:id="@+id/payment_s_rewards" app:layout_constraintEnd_toEndOf="parent"
                         android:layout_marginEnd="8dp" android:layout_marginTop="8dp"
                         app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"/>

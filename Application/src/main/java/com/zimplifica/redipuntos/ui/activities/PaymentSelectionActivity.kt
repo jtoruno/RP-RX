@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Gravity
 import android.view.View
+import com.zimplifica.domain.entities.PaymentInformation
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.OnItemClickListener
 import com.zimplifica.redipuntos.extensions.addOnItemClickListener
@@ -21,6 +23,9 @@ import kotlinx.android.synthetic.main.dialog_custom_card_picker.view.*
 @RequiresActivityViewModel(PaymentSelectionVM.ViewModel::class)
 class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
     lateinit var adapter : RecyclerCardPoints
+    private var applyAwards = false
+
+    lateinit var paymentInformation: PaymentInformation
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +33,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         setContentView(R.layout.activity_payment_selection)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar?.title = "Pago"
+        supportActionBar?.title = ""
 
         adapter = RecyclerCardPoints()
 
@@ -44,6 +49,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
             }
 
         payment_selection_amount.text = "₡ "+String.format("%,.2f", viewModel.getAmount())
+        payment_s_subtotal.text = "₡ "+String.format("%,.2f", viewModel.getAmount())
 
         payment_select_change_method.setOnClickListener {
             openCardPicker()
@@ -51,7 +57,14 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
 
         this.viewModel.outputs.paymentInformationChangedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                this.paymentInformation = it
+                updateData()
+            }
 
+        this.viewModel.outputs.applyRewards().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                this.applyAwards = it
+                updateData()
             }
 
         this.viewModel.outputs.paymentMethodChangedAction().observeOn(AndroidSchedulers.mainThread())
@@ -66,9 +79,31 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
             }
 
         payment_selection_order.text = viewModel.getOrder().item.description
-        payment_selection_redipoints.text = "Tienes "+viewModel.rediPoints()+" pts"
+
+        payment_s_checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+            this.viewModel.inputs.applyRewardsRowPressed(isChecked)
+        }
 
 
+    }
+
+    private fun updateData(){
+        Log.e("PaymentSelection","Update Data")
+        payment_s_fee.text = "₡ "+String.format("%,.2f", paymentInformation.fee)
+        payment_s_tax.text = "₡ "+String.format("%,.2f", paymentInformation.tax)
+        payment_s_reward_applied.text = if (applyAwards){
+            "- ₡ "+String.format("%,.2f", paymentInformation.rediPoints)
+        }else{
+            "₡ "+String.format("%,.2f",0.0)
+        }
+        payment_selection_redipoints.text = "Tienes "+paymentInformation.rediPoints+" pts"
+        val total = if (applyAwards){
+            paymentInformation.total - paymentInformation.rediPoints
+        }else{
+            paymentInformation.total
+        }
+        payment_s_total.text = "₡ "+String.format("%,.2f", total)
+        payment_s_rewards.text = viewModel.getOrder().rewards.toString() + " pts"
 
     }
 

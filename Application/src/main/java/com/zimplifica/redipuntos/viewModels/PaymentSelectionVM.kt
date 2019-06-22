@@ -15,6 +15,7 @@ interface PaymentSelectionVM {
     interface Inputs {
         fun paymentMethodChanged(paymentMethod: PaymentMethod)
         fun nextButtonPressed()
+        fun applyRewardsRowPressed(state : Boolean)
     }
     interface Outputs {
         fun paymentMethodChangedAction() : Observable<PaymentMethod>
@@ -31,10 +32,11 @@ interface PaymentSelectionVM {
 
         fun showVendor() : Observable<Vendor>
 
+        fun applyRewards() : Observable<Boolean>
+
     }
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<PaymentSelectionVM>(environment), Inputs, Outputs{
-
 
         val inputs : Inputs = this
         val outputs : Outputs = this
@@ -42,6 +44,7 @@ interface PaymentSelectionVM {
         //Inputs
         private val paymentMethodChanged = PublishSubject.create<PaymentMethod>()
         private val nextButtonPressed = PublishSubject.create<Unit>()
+        private val applyRewardsRowPressed = BehaviorSubject.create<Boolean>()
 
         //Outputs
         private val paymentMethodChangedAction = BehaviorSubject.create<PaymentMethod>()
@@ -49,6 +52,7 @@ interface PaymentSelectionVM {
         private val finishPaymentProcessingAction = BehaviorSubject.create<Unit>()
         private val nextButtonLoadingIndicator = BehaviorSubject.create<Boolean>()
         private val paymentInformationChangedAction = BehaviorSubject.create<PaymentInformation>()
+        private val applyRewards = BehaviorSubject.create<Boolean>()
 
         private val showVendor = BehaviorSubject.create<Vendor>()
         private val amountObserver = BehaviorSubject.create<Float>()
@@ -95,7 +99,7 @@ interface PaymentSelectionVM {
                 .subscribe(this.paymentMethodChangedAction)
 
             this.paymentMethodChanged
-                .map { return@map PaymentInformation(paymentPayload.rediPuntos,it.rewards, amount.toDouble()) }
+                .map { return@map PaymentInformation(paymentPayload.rediPuntos,it.rewards, amount.toDouble(),paymentPayload.order.fee,paymentPayload.order.tax,paymentPayload.order.total) }
                 .subscribe(this.paymentInformationChangedAction)
 
             val form = Observable.combineLatest<PaymentMethod,PaymentInformation,Pair<PaymentMethod,PaymentInformation>>(this.paymentMethodChanged,this.paymentInformationChangedAction,
@@ -106,7 +110,13 @@ interface PaymentSelectionVM {
             val requestPaymentEvent = form
                 .takeWhen(this.nextButtonPressed)
                 .flatMap {
-                    val wayToPayInput = WayToPayInput(it.second.second.usedRediPoints,it.second.first.cardId,it.second.second.usedCardPoints,it.second.second.cardAmountToPay)
+                    var wayToPayInput : WayToPayInput
+                    wayToPayInput = if(this.applyRewardsRowPressed.value){
+                        WayToPayInput(it.second.second.usedRediPoints,it.second.first.cardId,it.second.second.usedCardPoints,it.second.second.cardAmountToPay)
+
+                    }else{
+                        WayToPayInput(it.second.second.usedRediPoints,it.second.first.cardId,it.second.second.usedCardPoints,it.second.second.cardAmountToPay)
+                    }
                     val requestPaymentInput = RequestPaymentInput(environment.currentUser().getCurrentUser()?.userId?:"",this.paymentPayload.order.pid,wayToPayInput)
                     return@flatMap this.requestPayment(requestPaymentInput)
                 }
@@ -121,7 +131,16 @@ interface PaymentSelectionVM {
                 .filter { !it.isFail() }
                 .map { Unit }
                 .subscribe(this.finishPaymentProcessingAction)
+
+            applyRewardsRowPressed
+                .subscribe(this.applyRewards)
         }
+
+        override fun applyRewardsRowPressed(state: Boolean) {
+            return this.applyRewardsRowPressed.onNext(state)
+        }
+
+        override fun applyRewards(): Observable<Boolean> = this.applyRewards
 
 
         override fun paymentMethodChanged(paymentMethod: PaymentMethod) {
@@ -171,7 +190,6 @@ interface PaymentSelectionVM {
         fun rediPoints() : Double{
             return this.rediPointsObservable.value
         }
-
 
     }
 }
