@@ -35,6 +35,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
+        progressBar13.visibility = View.GONE
 
         adapter = RecyclerCardPoints()
 
@@ -94,6 +95,19 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
             }
 
         payment_selection_btn.setOnClickListener {  viewModel.inputs.nextButtonPressed() }
+
+        viewModel.outputs.nextButtonLoadingIndicator().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if(it){
+                    progressBar13.visibility = View.VISIBLE
+                    payment_selection_btn.isEnabled = false
+                    payment_selection_btn.alpha = 0.5F
+                }else{
+                    progressBar13.visibility = View.GONE
+                    payment_selection_btn.isEnabled = true
+                    payment_selection_btn.alpha = 1F
+                }
+            }
 
 
     }

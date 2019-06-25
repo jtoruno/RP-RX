@@ -5,15 +5,9 @@
              android:layout_height="match_parent"
              tools:context=".ui.fragments.MovementsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:textColor="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Movements"/>
-    <Button
-            android:text="Button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:id="@+id/button"/>
 
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/mov_fragment_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 </FrameLayout>

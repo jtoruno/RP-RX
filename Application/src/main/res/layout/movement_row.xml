@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="wrap_content">
+
+    <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp" app:srcCompat="@drawable/cutmypic"
+            android:id="@+id/imageView8" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" android:layout_marginTop="12dp" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="12dp" app:layout_constraintBottom_toBottomOf="parent"/>
+    <TextView
+            android:text="Pizza Hut"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView29" app:layout_constraintStart_toEndOf="@+id/imageView8"
+            android:layout_marginStart="8dp" android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+            android:text="Pago en Sitio"
+            android:textColor="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView31" app:layout_constraintStart_toEndOf="@+id/imageView8"
+            android:layout_marginStart="8dp" android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView29"/>
+    <TextView
+            android:text="Pago exitoso"
+            android:textStyle="bold"
+            android:textColor="@color/customGreen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView34"
+            app:layout_constraintTop_toBottomOf="@+id/textView31" app:layout_constraintStart_toEndOf="@+id/imageView8"
+            android:layout_marginStart="8dp"/>
+    <TextView
+            android:text="₡ 29,001.00"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView40" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"/>
+    <TextView
+            android:text="19:42"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView44" app:layout_constraintStart_toEndOf="@+id/imageView8"
+            android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+</android.support.constraint.ConstraintLayout>
