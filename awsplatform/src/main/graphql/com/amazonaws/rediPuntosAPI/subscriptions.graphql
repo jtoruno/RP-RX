@@ -8,6 +8,10 @@ subscription SubscribeToOrder($orderId: String) {
       type
       description
       amount
+      ... on SitePaymentItem {
+        vendorId
+        vendorName
+      }
       ... on GTIItem {
         companyId
         agreementId
@@ -19,14 +23,12 @@ subscription SubscribeToOrder($orderId: String) {
         period
         isPrepaid
       }
-      ... on SitePaymentItem {
-        vendorId
-        vendorName
-      }
     }
     fee
     tax
+    subtotal
     total
+    rewards
     status
     wayToPay {
       rediPuntos

@@ -9,7 +9,7 @@ interface UserUseCase{
     fun updateUserInfo(citizen: CitizenInput) : Observable<Result<Citizen>>
     fun addPaymentMethod(paymentMethod: PaymentMethodInput ) : Observable<Result<PaymentMethod>>
     fun checkoutPayloadSitePay(username: String, amount: Float, vendorId: String, description: String) : Observable<Result<PaymentPayload>>
-    fun requestPayment(requestPaymentInput: RequestPaymentInput) : Observable<Result<RequestPayment>>
+    fun requestPayment(requestPaymentInput: RequestPaymentInput) : Observable<Result<Transaction>>
     fun getVendorInformation(vendorId: String) : Observable<Result<Vendor>>
     fun disablePaymentMethod(owner: String, cardId: String) : Observable<Result<PaymentMethod>>
 }

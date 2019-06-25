@@ -12,7 +12,7 @@ class PaymentSelectionVMTest : RPTestCase() {
     lateinit var vm : PaymentSelectionVM.ViewModel
     private val paymentMethodChangedAction = TestObserver<PaymentMethod>()
     private val showError = TestObserver<String>()
-    private val finishPaymentProcessingAction = TestObserver<Unit>()
+    private val finishPaymentProcessingAction = TestObserver<Transaction>()
     private val nextButtonLoadingIndicator = TestObserver<Boolean>()
     private val paymentInformationChangedAction = TestObserver<PaymentInformation>()
     private val showVendor = TestObserver<Vendor>()

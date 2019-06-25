@@ -13,4 +13,5 @@
     <color name="grayIconTint">#cccccc</color>
     <color name="backgroundTransparent">#A6000000 </color>
     <color name="dialogBackground">#E6efeff4</color>
+    <color name="customGreen">#66b151</color>
 </resources>

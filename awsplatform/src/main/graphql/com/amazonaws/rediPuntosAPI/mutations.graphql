@@ -60,6 +60,10 @@ mutation RequestPayment($input: RequestPaymentInput!) {
       type
       description
       amount
+      ... on SitePaymentItem {
+        vendorId
+        vendorName
+      }
       ... on GTIItem {
         companyId
         agreementId
@@ -71,14 +75,12 @@ mutation RequestPayment($input: RequestPaymentInput!) {
         period
         isPrepaid
       }
-      ... on SitePaymentItem {
-        vendorId
-        vendorName
-      }
     }
     fee
     tax
+    subtotal
     total
+    rewards
     status
     wayToPay {
       rediPuntos
@@ -109,6 +111,10 @@ mutation SendTransactionNotification(
       type
       description
       amount
+      ... on SitePaymentItem {
+        vendorId
+        vendorName
+      }
       ... on GTIItem {
         companyId
         agreementId
@@ -120,14 +126,12 @@ mutation SendTransactionNotification(
         period
         isPrepaid
       }
-      ... on SitePaymentItem {
-        vendorId
-        vendorName
-      }
     }
     fee
     tax
+    subtotal
     total
+    rewards
     status
     wayToPay {
       rediPuntos

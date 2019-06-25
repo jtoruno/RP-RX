@@ -22,7 +22,7 @@ interface PaymentSelectionVM {
         fun showError() : Observable<String>
 
         /// Emits when the payment was processed.
-        fun finishPaymentProcessingAction() : Observable<Unit>
+        fun finishPaymentProcessingAction() : Observable<Transaction>
 
         /// Emits when the next button loading indicator changes.
         fun nextButtonLoadingIndicator() : Observable<Boolean>
@@ -44,12 +44,12 @@ interface PaymentSelectionVM {
         //Inputs
         private val paymentMethodChanged = PublishSubject.create<PaymentMethod>()
         private val nextButtonPressed = PublishSubject.create<Unit>()
-        private val applyRewardsRowPressed = BehaviorSubject.create<Boolean>()
+        private val applyRewardsRowPressed = BehaviorSubject.createDefault(false)
 
         //Outputs
         private val paymentMethodChangedAction = BehaviorSubject.create<PaymentMethod>()
         private val showError = BehaviorSubject.create<String>()
-        private val finishPaymentProcessingAction = BehaviorSubject.create<Unit>()
+        private val finishPaymentProcessingAction = BehaviorSubject.create<Transaction>()
         private val nextButtonLoadingIndicator = BehaviorSubject.create<Boolean>()
         private val paymentInformationChangedAction = BehaviorSubject.create<PaymentInformation>()
         private val applyRewards = BehaviorSubject.create<Boolean>()
@@ -111,11 +111,12 @@ interface PaymentSelectionVM {
                 .takeWhen(this.nextButtonPressed)
                 .flatMap {
                     var wayToPayInput : WayToPayInput
+                    println("Hello"+applyRewardsRowPressed.value)
                     wayToPayInput = if(this.applyRewardsRowPressed.value){
-                        WayToPayInput(it.second.second.usedRediPoints,it.second.first.cardId,it.second.second.usedCardPoints,it.second.second.cardAmountToPay)
+                        WayToPayInput(it.second.second.usedRediPoints,it.second.first.cardId,0.0,it.second.second.cardAmountToPay)
 
                     }else{
-                        WayToPayInput(it.second.second.usedRediPoints,it.second.first.cardId,it.second.second.usedCardPoints,it.second.second.cardAmountToPay)
+                        WayToPayInput(0.0,it.second.first.cardId,0.0,it.second.second.total)
                     }
                     val requestPaymentInput = RequestPaymentInput(environment.currentUser().getCurrentUser()?.userId?:"",this.paymentPayload.order.pid,wayToPayInput)
                     return@flatMap this.requestPayment(requestPaymentInput)
@@ -129,7 +130,7 @@ interface PaymentSelectionVM {
 
             requestPaymentEvent
                 .filter { !it.isFail() }
-                .map { Unit }
+                .map { it.successValue() }
                 .subscribe(this.finishPaymentProcessingAction)
 
             applyRewardsRowPressed
@@ -155,7 +156,7 @@ interface PaymentSelectionVM {
 
         override fun showError(): Observable<String> = this.showError
 
-        override fun finishPaymentProcessingAction(): Observable<Unit> = this.finishPaymentProcessingAction
+        override fun finishPaymentProcessingAction(): Observable<Transaction> = this.finishPaymentProcessingAction
 
         override fun nextButtonLoadingIndicator(): Observable<Boolean> = this.nextButtonLoadingIndicator
 
@@ -163,7 +164,7 @@ interface PaymentSelectionVM {
 
         override fun showVendor(): Observable<Vendor> = this.showVendor
 
-        private fun requestPayment(input : RequestPaymentInput) : Observable<Result<RequestPayment>>{
+        private fun requestPayment(input : RequestPaymentInput) : Observable<Result<Transaction>>{
             return environment.userUseCase().requestPayment(input)
                 .doOnComplete { this.nextButtonLoadingIndicator.onNext(false) }
                 .doOnSubscribe { this.nextButtonLoadingIndicator.onNext(true) }

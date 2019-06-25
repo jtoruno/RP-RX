@@ -54,8 +54,8 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
-    override fun requestPayment(requestPaymentInput: RequestPaymentInput): Observable<Result<RequestPayment>> {
-        val single = Single.create<Result<RequestPayment>> create@{ single ->
+    override fun requestPayment(requestPaymentInput: RequestPaymentInput): Observable<Result<Transaction>> {
+        val single = Single.create<Result<Transaction>> create@{ single ->
             val wayToPayInput = WayToPayInput.builder()
                 .rediPuntos(requestPaymentInput.wayToPay.rediPuntos)
                 .creditCardId(requestPaymentInput.wayToPay.creditCardId)
@@ -77,7 +77,9 @@ class UserUseCase : UserUseCase {
                 }
 
                 override fun onResponse(response: Response<RequestPaymentMutation.Data>) {
+
                     val result = response.data()?.requestPayment()
+                    Log.e("UserUseCase",response.errors().toString())
                     if(result!=null){
                         var cardDetail : CardDetail ? = null
                         val card = result.wayToPay().creditCard()
@@ -120,11 +122,11 @@ class UserUseCase : UserUseCase {
                             else -> TransactionStatus.fail
                         }
                         val transaction = Transaction(result.orderId(),result.datetime(),result.transactionType(),transactionDetail,
-                            result.fee(),result.tax(), result.total(),result.total(),result.total(),status,way2pay)
+                            result.fee(),result.tax(), result.subtotal(),result.total(),result.rewards(),status,way2pay)
 
-                        val requestPayment = RequestPayment(true, "")
+                        //val requestPayment = RequestPayment(true, "")
 
-                        single.onSuccess(Result.success(requestPayment))
+                        single.onSuccess(Result.success(transaction))
                     }
                     else{
                         single.onSuccess(Result.failure(Exception()))
@@ -278,7 +280,7 @@ class UserUseCase : UserUseCase {
                                 "ValitionFailure" -> TransactionStatus.fail
                                 else -> TransactionStatus.fail
                             }
-                            return@map Transaction(trx.orderId(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.total(),trx.total(),trx.total(),status, wayToPay)
+                            return@map Transaction(trx.orderId(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.subtotal(),trx.total(),trx.rewards(),status, wayToPay)
                         }
                         val transactionsResult = TransactionsResult(transactions)
                         single.onSuccess(Result.success(transactionsResult))

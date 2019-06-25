@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -83,6 +84,16 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         payment_s_checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
             this.viewModel.inputs.applyRewardsRowPressed(isChecked)
         }
+
+        viewModel.outputs.finishPaymentProcessingAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(this,MovementDetailActivity::class.java)
+                intent.putExtra("transaction",it)
+                startActivity(intent)
+                finish()
+            }
+
+        payment_selection_btn.setOnClickListener {  viewModel.inputs.nextButtonPressed() }
 
 
     }

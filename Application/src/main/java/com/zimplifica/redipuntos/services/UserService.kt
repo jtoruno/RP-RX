@@ -55,7 +55,7 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         return userUseCase.checkoutPayloadSitePay(username,amount,vendorId,description)
     }
 
-    fun requestPayment(requestPaymentInput: RequestPaymentInput) : Observable<Result<RequestPayment>> {
+    fun requestPayment(requestPaymentInput: RequestPaymentInput) : Observable<Result<Transaction>> {
         return userUseCase.requestPayment(requestPaymentInput)
     }
 

@@ -45,6 +45,10 @@ query GetTransactionsByUser {
         type
         description
         amount
+        ... on SitePaymentItem {
+          vendorId
+          vendorName
+        }
         ... on GTIItem {
           companyId
           agreementId
@@ -56,14 +60,12 @@ query GetTransactionsByUser {
           period
           isPrepaid
         }
-        ... on SitePaymentItem {
-          vendorId
-          vendorName
-        }
       }
       fee
       tax
+      subtotal
       total
+      rewards
       status
       wayToPay {
         rediPuntos
@@ -107,6 +109,10 @@ query GetCheckoutPayloadGti($input: CheckoutPayloadGTIInput!) {
         type
         description
         amount
+        ... on SitePaymentItem {
+          vendorId
+          vendorName
+        }
         ... on GTIItem {
           companyId
           agreementId
@@ -117,10 +123,6 @@ query GetCheckoutPayloadGti($input: CheckoutPayloadGTIInput!) {
           expirationDate
           period
           isPrepaid
-        }
-        ... on SitePaymentItem {
-          vendorId
-          vendorName
         }
       }
       fee
@@ -151,6 +153,10 @@ query GetCheckoutPayloadGtiPrepaid($input: CheckoutPayloadGTIPrepaidInput!) {
         type
         description
         amount
+        ... on SitePaymentItem {
+          vendorId
+          vendorName
+        }
         ... on GTIItem {
           companyId
           agreementId
@@ -161,10 +167,6 @@ query GetCheckoutPayloadGtiPrepaid($input: CheckoutPayloadGTIPrepaidInput!) {
           expirationDate
           period
           isPrepaid
-        }
-        ... on SitePaymentItem {
-          vendorId
-          vendorName
         }
       }
       fee
@@ -195,6 +197,10 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
         type
         description
         amount
+        ... on SitePaymentItem {
+          vendorId
+          vendorName
+        }
         ... on GTIItem {
           companyId
           agreementId
@@ -205,10 +211,6 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
           expirationDate
           period
           isPrepaid
-        }
-        ... on SitePaymentItem {
-          vendorId
-          vendorName
         }
       }
       fee
@@ -255,12 +257,12 @@ query GetCommerces($limit: Int, $nextToken: String) {
         restrictions
         waysToUse
         stores
-        ... on Offer {
-          discount
-        }
         ... on Coupon {
           beforeDiscount
           afterDiscount
+        }
+        ... on Offer {
+          discount
         }
       }
       website
