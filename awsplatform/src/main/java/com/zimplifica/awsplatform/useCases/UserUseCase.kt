@@ -39,7 +39,7 @@ class UserUseCase : UserUseCase {
                 override fun onResponse(response: Response<DisablePaymentMethodMutation.Data>) {
                     val result = response.data()?.disablePaymentMethod()
                     if(result!=null){
-                        val paymentMethod = PaymentMethod(result.cardId(),result.cardNumber(),result.expirationDate(),
+                        val paymentMethod = PaymentMethod(result.id(),result.cardNumber(),result.expirationDate(),
                             result.issuer(),result.rewards(),result.automaticRedemption())
                         cacheOperations.addPaymentMethod(paymentMethod)
                         single.onSuccess(Result.success(paymentMethod))
@@ -59,13 +59,13 @@ class UserUseCase : UserUseCase {
             val wayToPayInput = WayToPayInput.builder()
                 .rediPuntos(requestPaymentInput.wayToPay.rediPuntos)
                 .creditCardId(requestPaymentInput.wayToPay.creditCardId)
-                .creditCardRewards(requestPaymentInput.wayToPay.creditCardRewards)
+                //.creditCardRewards(requestPaymentInput.wayToPay.creditCardRewards)
                 .creditCardCharge(requestPaymentInput.wayToPay.creditCardCharge)
                 .build()
             val input = com.amazonaws.rediPuntosAPI.type.RequestPaymentInput.builder()
                 .wayToPay(wayToPayInput)
                 .orderId(requestPaymentInput.orderId)
-                .username(requestPaymentInput.username)
+                //.username(requestPaymentInput.username)
                 .build()
             val mutation = RequestPaymentMutation.builder()
                 .input(input)
@@ -84,10 +84,14 @@ class UserUseCase : UserUseCase {
                         var cardDetail : CardDetail ? = null
                         val card = result.wayToPay().creditCard()
                         if(card != null){
-                            cardDetail = CardDetail(card.cardId(),card.cardNumber(),card.issuer())
+                            cardDetail = CardDetail(card.id(),card.cardNumber(),card.issuer())
                         }
-                        val way2pay = WayToPay(result.wayToPay().rediPuntos(),cardDetail,result.wayToPay().creditCardRewards(),result.wayToPay().creditCardCharge())
+                        val way2pay = WayToPay(result.wayToPay().rediPuntos(),cardDetail,0.0,result.wayToPay().creditCardCharge())
                         val transactionDetail = TransactionDetail(TransactionType.directPayment,result.item().description(),result.item().amount(),null,null)
+                        transactionDetail.type = TransactionType.directPayment
+                        transactionDetail.sitePaymentItem = SitePaymentItem(result.item().type(),result.item().description(),result.item().amount(),result.item().vendorId(),
+                            result.item().vendorName())
+                        /*
                         when(result.transactionType()){
                             "GTIItem" -> {
                                 val gtiItem = result.item().asGTIItem()
@@ -114,14 +118,14 @@ class UserUseCase : UserUseCase {
                                         sitePayItem.vendorName())
                                 }
                             }
-                        }
+                        }*/
                         var status : TransactionStatus = when(result.status()){
                             "Successful" -> TransactionStatus.success
                             "pending" -> TransactionStatus.pending
                             "ValitionFailure" -> TransactionStatus.fail
                             else -> TransactionStatus.fail
                         }
-                        val transaction = Transaction(result.orderId(),result.datetime(),result.transactionType(),transactionDetail,
+                        val transaction = Transaction(result.id(),result.datetime(),result.transactionType(),transactionDetail,
                             result.fee(),result.tax(), result.subtotal(),result.total(),result.rewards(),status,way2pay)
 
                         //val requestPayment = RequestPayment(true, "")
@@ -145,7 +149,7 @@ class UserUseCase : UserUseCase {
     ): Observable<Result<PaymentPayload>> {
         val single = Single.create<Result<PaymentPayload>> create@{ single ->
             val input = CheckoutPayloadSitePayInput.builder()
-                .username(username)
+                //.username(username)
                 .amount(amount.toDouble())
                 .vendorId(vendorId)
                 .description(description)
@@ -163,10 +167,10 @@ class UserUseCase : UserUseCase {
                     val result = response.data()?.checkoutPayloadSitePay
                     if(result!=null){
                         val item = Item(result.order().item().type(), result.order().item().description(),result.order().item().amount())
-                        val order = Order(result.order().pid(), item,result.order().fee(),result.order().tax(),result.order().subtotal(),result.order().total(),result.order().rewards())
+                        val order = Order(result.order().id(), item,result.order().fee(),result.order().tax(),result.order().subtotal(),result.order().total(),result.order().rewards())
                         val rediPuntos = result.paymentOptions().rediPuntos()
                         val paymentMethods = result.paymentOptions().paymentMethods().map { element ->
-                            return@map PaymentMethod(element.cardId(),element.cardNumber(),element.expirationDate(),element.issuer(),
+                            return@map PaymentMethod(element.id(),element.cardNumber(),element.expirationDate(),element.issuer(),
                                 element.rewards(),element.automaticRedemption())
                         }
                         val paymentPayload = PaymentPayload(rediPuntos,order,paymentMethods)
@@ -202,7 +206,7 @@ class UserUseCase : UserUseCase {
                 override fun onResponse(response: Response<AddPaymentMethodMutation.Data>) {
                     val result = response.data()?.addPaymentMethod()
                     if(result!=null){
-                        val paymentMethod = PaymentMethod(result.cardId(),result.cardNumber(),result.expirationDate(),
+                        val paymentMethod = PaymentMethod(result.id(),result.cardNumber(),result.expirationDate(),
                             result.issuer(),result.rewards(),result.automaticRedemption())
                         cacheOperations.addPaymentMethod(paymentMethod)
                         single.onSuccess(Result.success(paymentMethod))
@@ -224,7 +228,7 @@ class UserUseCase : UserUseCase {
             val cachePolicy =  if(useCache){
                 AppSyncResponseFetchers.CACHE_FIRST
             }else{
-                AppSyncResponseFetchers.CACHE_AND_NETWORK
+                AppSyncResponseFetchers.NETWORK_ONLY
             }
             this.appSyncClient!!.query(query).responseFetcher(cachePolicy).enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -234,19 +238,24 @@ class UserUseCase : UserUseCase {
 
                 override fun onResponse(response: Response<GetTransactionsByUserQuery.Data>) {
                     val result = response.data()?.transactionsByUser
+                    Log.e("UserUseCase",result.toString())
                     if(result!=null){
                         val items = result.items()
                         val transactions : List<Transaction> = items.map { trx ->
                             var cardDetail : CardDetail ? = null
                             val card = trx.wayToPay().creditCard()
                             if(card != null){
-                                cardDetail = CardDetail(card.cardId(),card.cardNumber(),card.issuer())
+                                cardDetail = CardDetail(card.id(),card.cardNumber(),card.issuer())
                             }
                             /*
                             val cardDetail = CardDetail(trx.wayToPay().creditCard()?.cardId()?: "",trx.wayToPay().creditCard()?.cardNumber()?:"",
                                 trx.wayToPay().creditCard()?.issuer()?: "")*/
-                            val wayToPay = WayToPay(trx.wayToPay().rediPuntos(),cardDetail,trx.wayToPay().creditCardRewards(),trx.wayToPay().creditCardCharge())
+                            val wayToPay = WayToPay(trx.wayToPay().rediPuntos(),cardDetail,0.0,trx.wayToPay().creditCardCharge())
                             var transactionDetail = TransactionDetail(TransactionType.directPayment,trx.item().description(),trx.item().amount(),null,null)
+                            transactionDetail.type = TransactionType.directPayment
+                            transactionDetail.sitePaymentItem = SitePaymentItem(trx.item().type(),trx.item().description(),trx.item().amount(),trx.item().vendorId(),
+                                trx.item().vendorName())
+                            /*
                             when(trx.item().type()){
                                 "GTIItem" -> {
                                     val gtiItem = trx.item().asGTIItem()
@@ -273,14 +282,14 @@ class UserUseCase : UserUseCase {
                                             sitePayItem.vendorName())
                                     }
                                 }
-                            }
+                            }*/
                             var status : TransactionStatus = when(trx.status()){
                                 "Successful" -> TransactionStatus.success
                                 "pending" -> TransactionStatus.pending
                                 "ValitionFailure" -> TransactionStatus.fail
                                 else -> TransactionStatus.fail
                             }
-                            return@map Transaction(trx.orderId(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.subtotal(),trx.total(),trx.rewards(),status, wayToPay)
+                            return@map Transaction(trx.id(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.subtotal(),trx.total(),trx.rewards(),status, wayToPay)
                         }
                         val transactionsResult = TransactionsResult(transactions)
                         single.onSuccess(Result.success(transactionsResult))
@@ -314,10 +323,10 @@ class UserUseCase : UserUseCase {
                     if(response.data()!=null){
                         val user = response.data()!!.user
                         val paymentMethods = response.data()!!.user.paymentMethods().map { p ->
-                            return@map PaymentMethod(p.cardId(),p.cardNumber(),p.expirationDate(),p.issuer(),p.rewards(),p.automaticRedemption())
+                            return@map PaymentMethod(p.id(),p.cardNumber(),p.expirationDate(),p.issuer(),p.rewards(),p.automaticRedemption())
                         }
 
-                        val userObj = UserInformationResult(user.username(),user.identityNumber(),user.firstName(),user.lastName(),
+                        val userObj = UserInformationResult(user.id(),user.identityNumber(),user.firstName(),user.lastName(),
                             user.birthdate(),user.email(),user.phoneNumber(),user.phoneNumberVerified(),user.emailVerified(),null,user.rewards(),
                             paymentMethods)
                         single.onSuccess(Result.success(userObj))
@@ -365,7 +374,7 @@ class UserUseCase : UserUseCase {
 
     override fun getVendorInformation(vendorId: String): Observable<Result<Vendor>> {
         val single = Single.create<Result<Vendor>> create@{ single ->
-            val query = GetVendorQuery.builder().vendorId(vendorId).build()
+            val query = GetVendorQuery.builder().id(vendorId).build()
             this.appSyncClient!!.query(query).enqueue(object :GraphQLCall.Callback<GetVendorQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getVendorInformation] Error.",e)
@@ -376,7 +385,7 @@ class UserUseCase : UserUseCase {
                     val result = response.data()?.vendor
                     Log.e("AWSPLAT",result.toString())
                     if(result!=null){
-                        val vendor = Vendor(result.pk(),result.name(),result.address())
+                        val vendor = Vendor(result.id(),result.name(),result.address())
                         single.onSuccess(Result.success(vendor))
                     }else{
                         single.onSuccess(Result.failure(Exception()))

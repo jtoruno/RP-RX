@@ -1,47 +1,4 @@
 # this is an auto generated file. This will be overwritten
-subscription SubscribeToOrder($orderId: String) {
-  subscribeToOrder(orderId: $orderId) {
-    orderId
-    datetime
-    transactionType
-    item {
-      type
-      description
-      amount
-      ... on SitePaymentItem {
-        vendorId
-        vendorName
-      }
-      ... on GTIItem {
-        companyId
-        agreementId
-        invoiceId
-        clientName
-        serviceId
-        paymentType
-        expirationDate
-        period
-        isPrepaid
-      }
-    }
-    fee
-    tax
-    subtotal
-    total
-    rewards
-    status
-    wayToPay {
-      rediPuntos
-      creditCard {
-        cardId
-        cardNumber
-        issuer
-      }
-      creditCardRewards
-      creditCardCharge
-    }
-  }
-}
 subscription SubscribeToEvents($user: String!) {
   subscribeToEvents(user: $user) {
     id

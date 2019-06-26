@@ -17,22 +17,16 @@ mutation UpdatePersonalInfo(
     birthdate: $birthdate
     identityNumber: $identityNumber
   ) {
+    id
     lastName
     firstName
     birthdate
     identityNumber
   }
 }
-mutation UpdateUserEndpoint($username: String!, $endpoint: EndpointInput) {
-  updateUserEndpoint(username: $username, endpoint: $endpoint) {
-    success
-    message
-  }
-}
 mutation AddPaymentMethod($paymentMethod: PaymentMethodInput!) {
   addPaymentMethod(paymentMethod: $paymentMethod) {
-    username
-    cardId
+    id
     cardNumber
     expirationDate
     issuer
@@ -42,8 +36,7 @@ mutation AddPaymentMethod($paymentMethod: PaymentMethodInput!) {
 }
 mutation DisablePaymentMethod($cardId: String!) {
   disablePaymentMethod(cardId: $cardId) {
-    username
-    cardId
+    id
     cardNumber
     expirationDate
     issuer
@@ -53,7 +46,7 @@ mutation DisablePaymentMethod($cardId: String!) {
 }
 mutation RequestPayment($input: RequestPaymentInput!) {
   requestPayment(input: $input) {
-    orderId
+    id
     datetime
     transactionType
     item {
@@ -63,17 +56,6 @@ mutation RequestPayment($input: RequestPaymentInput!) {
       ... on SitePaymentItem {
         vendorId
         vendorName
-      }
-      ... on GTIItem {
-        companyId
-        agreementId
-        invoiceId
-        clientName
-        serviceId
-        paymentType
-        expirationDate
-        period
-        isPrepaid
       }
     }
     fee
@@ -85,11 +67,10 @@ mutation RequestPayment($input: RequestPaymentInput!) {
     wayToPay {
       rediPuntos
       creditCard {
-        cardId
+        id
         cardNumber
         issuer
       }
-      creditCardRewards
       creditCardCharge
     }
   }
@@ -98,51 +79,6 @@ mutation ToggleAutomaticRedemption($cardId: String!) {
   toggleAutomaticRedemption(cardId: $cardId) {
     success
     message
-  }
-}
-mutation SendTransactionNotification(
-  $input: sendTransactionNotificationInput!
-) {
-  sendTransactionNotification(input: $input) {
-    orderId
-    datetime
-    transactionType
-    item {
-      type
-      description
-      amount
-      ... on SitePaymentItem {
-        vendorId
-        vendorName
-      }
-      ... on GTIItem {
-        companyId
-        agreementId
-        invoiceId
-        clientName
-        serviceId
-        paymentType
-        expirationDate
-        period
-        isPrepaid
-      }
-    }
-    fee
-    tax
-    subtotal
-    total
-    rewards
-    status
-    wayToPay {
-      rediPuntos
-      creditCard {
-        cardId
-        cardNumber
-        issuer
-      }
-      creditCardRewards
-      creditCardCharge
-    }
   }
 }
 mutation SendEventToClient($user: String!, $event: ClientEventInput!) {

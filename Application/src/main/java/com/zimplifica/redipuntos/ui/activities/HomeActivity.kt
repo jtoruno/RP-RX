@@ -29,6 +29,8 @@ import android.widget.Toast
 import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.ui.fragments.PointsFragment
 
+import kotlinx.android.synthetic.main.nav_header_home.view.*
+
 
 @RequiresActivityViewModel(HomeViewModel.ViewModel::class)
 class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnNavigationItemSelectedListener {
@@ -62,8 +64,8 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         bottomNav.setOnNavigationItemSelectedListener(navItemListener)
         bottomNav.selectedItemId = R.id.nav_pay
 
-        val currentUser = this.viewModel.environment.currentUser().getCurrentUser()
-        Log.e("CurrentUser", "Home "+currentUser?.userPhoneNumber)
+        val navigationView = findViewById<NavigationView>(R.id.nav_view)
+        val header = navigationView.getHeaderView(0)
 
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -100,10 +102,24 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 drawer_layout.closeDrawer(GravityCompat.START)
             }
         }
+        home_terms_and_conditions.setOnClickListener {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                drawer_layout.closeDrawer(GravityCompat.START)
+            }
+            val intent = Intent(this, TermsActivity::class.java)
+            startActivity(intent)
+        }
         home_change_password.setOnClickListener {
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 drawer_layout.closeDrawer(GravityCompat.START)
             }
+        }
+        home_privacy.setOnClickListener {
+            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+                drawer_layout.closeDrawer(GravityCompat.START)
+            }
+            val intent = Intent(this, PrivacyActivity::class.java)
+            startActivity(intent)
         }
         home_account_info.setOnClickListener {
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -112,6 +128,15 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             val intent = Intent(this,AccountInfoActivity::class.java)
             startActivity(intent)
         }
+        this.viewModel.outputs.accountInformationResult().observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                val name1 = (it.userFirstName?:"").toLowerCase().capitalize()
+                val name2 = (it.userLastName?:"").toLowerCase().capitalize()
+                header.home_header_name.text = ("$name1 $name2")
+                header.home_header_points.text = "₡ "+String.format("%,.2f", it.rewards?:0.0) +" RediPuntos"
+            }
+
+
         this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.e("Home","showCompletePersonalInfoAlert")

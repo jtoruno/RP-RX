@@ -23,7 +23,7 @@ class CacheOperations{
                 override fun onResponse(response: Response<GetUserQuery.Data>) {
                     val user = response.data()?.user
                     if(user!= null){
-                        val item = GetUserQuery.GetUser(user.__typename(),user.username(),citizen.firstName,
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),citizen.firstName,
                             citizen.lastName,citizen.getBirthDateAsString(),citizen.identityNumber,user.phoneNumber(),user.phoneNumberVerified(),
                             user.email(), user.emailVerified(),user.rewards(),user.paymentMethods())
 
@@ -48,7 +48,7 @@ class CacheOperations{
                 override fun onResponse(response: Response<GetUserQuery.Data>) {
                     val user = response.data()?.user
                     if(user!= null){
-                        val item = GetUserQuery.GetUser(user.__typename(),user.username(),user.firstName(),
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
                             user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
                             email, user.emailVerified(),user.rewards(),user.paymentMethods())
 
@@ -73,7 +73,7 @@ class CacheOperations{
                 override fun onResponse(response: Response<GetUserQuery.Data>) {
                     val user = response.data()?.user
                     if(user!= null){
-                        val item = GetUserQuery.GetUser(user.__typename(),user.username(),user.firstName(),
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
                             user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
                             user.email(), isConfirmed,user.rewards(),user.paymentMethods())
 
@@ -99,11 +99,11 @@ class CacheOperations{
                     val user = response.data()?.user
                     if(user!= null){
                         val paymentList = user.paymentMethods().toMutableList()
-                        val paymentObj = GetUserQuery.PaymentMethod("__PaymentMethod","",paymentMethod.cardId,
+                        val paymentObj = GetUserQuery.PaymentMethod("__PaymentMethod",paymentMethod.cardId,
                             paymentMethod.cardNumberWithMask, paymentMethod.cardExpirationDate, paymentMethod.issuer, paymentMethod.rewards,
                             paymentMethod.automaticRedemption)
                         paymentList.add(paymentObj)
-                        val item = GetUserQuery.GetUser(user.__typename(),user.username(),user.firstName(),
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
                             user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
                             user.email(), user.emailVerified(),user.rewards(),paymentList)
 

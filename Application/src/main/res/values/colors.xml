@@ -14,4 +14,5 @@
     <color name="backgroundTransparent">#A6000000 </color>
     <color name="dialogBackground">#E6efeff4</color>
     <color name="customGreen">#66b151</color>
+    <color name="pendingColor">#EB9100</color>
 </resources>

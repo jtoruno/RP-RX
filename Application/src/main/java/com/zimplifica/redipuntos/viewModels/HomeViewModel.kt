@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.support.annotation.NonNull
 import android.util.Log
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.UserStateResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -29,9 +30,12 @@ interface HomeViewModel {
         fun signOutAction() : Observable<Unit>
         fun addPaymentMethodAction() : Observable<Unit>
 
+        fun accountInformationResult() : Observable<UserInformationResult>
+
     }
     @SuppressLint("CheckResult")
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<HomeViewModel>(environment), Inputs, Outputs{
+
 
         val inputs : Inputs = this
         val outputs : Outputs = this
@@ -49,6 +53,8 @@ interface HomeViewModel {
         private val goToCompletePersonalInfoScreen : Observable<Unit>
         private val addPaymentMethodAction : Observable<Unit>
 
+        private val accountInformationResult = BehaviorSubject.create<UserInformationResult>()
+
         init {
             onCreate
                 .map { return@map environment.currentUser().userConfirmationStatus() }
@@ -62,6 +68,13 @@ interface HomeViewModel {
                         }
                     }
                 }
+
+            onCreate
+                .map { return@map environment.currentUser().getCurrentUser() }
+                .subscribe(this.accountInformationResult)
+
+            environment.userUseCase().getUserInformationSubscription()
+                .subscribe(this.accountInformationResult)
 
             val signOutEvent = signOutButtonPressed
                 .flatMap { this.signOut() }
@@ -104,6 +117,8 @@ interface HomeViewModel {
         }
 
         override fun signOutAction(): Observable<Unit> = this.signOutAction
+
+        override fun accountInformationResult(): Observable<UserInformationResult> = this.accountInformationResult
 
         private fun signOut() : Observable<Result<UserStateResult>>{
             return environment.authenticationUseCase().signOut()

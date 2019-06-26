@@ -1,7 +1,7 @@
 # this is an auto generated file. This will be overwritten
 query GetUser {
   getUser {
-    username
+    id
     firstName
     lastName
     birthdate
@@ -12,8 +12,7 @@ query GetUser {
     emailVerified
     rewards
     paymentMethods {
-      username
-      cardId
+      id
       cardNumber
       expirationDate
       issuer
@@ -25,8 +24,7 @@ query GetUser {
 query GetPaymentMethodsByUser {
   getPaymentMethodsByUser {
     items {
-      username
-      cardId
+      id
       cardNumber
       expirationDate
       issuer
@@ -38,7 +36,7 @@ query GetPaymentMethodsByUser {
 query GetTransactionsByUser {
   getTransactionsByUser {
     items {
-      orderId
+      id
       datetime
       transactionType
       item {
@@ -48,17 +46,6 @@ query GetTransactionsByUser {
         ... on SitePaymentItem {
           vendorId
           vendorName
-        }
-        ... on GTIItem {
-          companyId
-          agreementId
-          invoiceId
-          clientName
-          serviceId
-          paymentType
-          expirationDate
-          period
-          isPrepaid
         }
       }
       fee
@@ -70,129 +57,50 @@ query GetTransactionsByUser {
       wayToPay {
         rediPuntos
         creditCard {
-          cardId
+          id
           cardNumber
           issuer
         }
-        creditCardRewards
         creditCardCharge
       }
     }
   }
 }
-query GetServicesCatalog {
-  getServicesCatalog {
-    categoryId
-    categoryName
-    categoryState
-    services {
-      serviceId
-      serviceName
+query GetTransactionById($id: String) {
+  getTransactionById(id: $id) {
+    id
+    datetime
+    transactionType
+    item {
+      type
       description
-      isPrepaid
-      posterImageFile {
-        ...S3Object
-      }
-      properties {
-        type
-        key
-        name
+      amount
+      ... on SitePaymentItem {
+        vendorId
+        vendorName
       }
     }
-  }
-}
-query GetCheckoutPayloadGti($input: CheckoutPayloadGTIInput!) {
-  getCheckoutPayloadGTI(input: $input) {
-    order {
-      pid
-      item {
-        type
-        description
-        amount
-        ... on SitePaymentItem {
-          vendorId
-          vendorName
-        }
-        ... on GTIItem {
-          companyId
-          agreementId
-          invoiceId
-          clientName
-          serviceId
-          paymentType
-          expirationDate
-          period
-          isPrepaid
-        }
-      }
-      fee
-      tax
-      subtotal
-      total
-      rewards
-    }
-    paymentOptions {
+    fee
+    tax
+    subtotal
+    total
+    rewards
+    status
+    wayToPay {
       rediPuntos
-      paymentMethods {
-        username
-        cardId
+      creditCard {
+        id
         cardNumber
-        expirationDate
         issuer
-        rewards
-        automaticRedemption
       }
-    }
-  }
-}
-query GetCheckoutPayloadGtiPrepaid($input: CheckoutPayloadGTIPrepaidInput!) {
-  getCheckoutPayloadGTIPrepaid(input: $input) {
-    order {
-      pid
-      item {
-        type
-        description
-        amount
-        ... on SitePaymentItem {
-          vendorId
-          vendorName
-        }
-        ... on GTIItem {
-          companyId
-          agreementId
-          invoiceId
-          clientName
-          serviceId
-          paymentType
-          expirationDate
-          period
-          isPrepaid
-        }
-      }
-      fee
-      tax
-      subtotal
-      total
-      rewards
-    }
-    paymentOptions {
-      rediPuntos
-      paymentMethods {
-        username
-        cardId
-        cardNumber
-        expirationDate
-        issuer
-        rewards
-        automaticRedemption
-      }
+      creditCardCharge
     }
   }
 }
 query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
   getCheckoutPayloadSitePay(input: $input) {
     order {
-      pid
+      id
       item {
         type
         description
@@ -200,17 +108,6 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
         ... on SitePaymentItem {
           vendorId
           vendorName
-        }
-        ... on GTIItem {
-          companyId
-          agreementId
-          invoiceId
-          clientName
-          serviceId
-          paymentType
-          expirationDate
-          period
-          isPrepaid
         }
       }
       fee
@@ -222,8 +119,7 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
     paymentOptions {
       rediPuntos
       paymentMethods {
-        username
-        cardId
+        id
         cardNumber
         expirationDate
         issuer
@@ -233,9 +129,9 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
     }
   }
 }
-query GetVendor($vendorId: String!) {
-  getVendor(vendorId: $vendorId) {
-    pk
+query GetVendor($id: String!) {
+  getVendor(id: $id) {
+    id
     name
     address
   }
@@ -243,11 +139,11 @@ query GetVendor($vendorId: String!) {
 query GetCommerces($limit: Int, $nextToken: String) {
   getCommerces(limit: $limit, nextToken: $nextToken) {
     items {
-      commerceId
+      id
       name
       posterImage
       promotions {
-        promotionId
+        id
         promotionType
         title
         description
@@ -272,7 +168,7 @@ query GetCommerces($limit: Int, $nextToken: String) {
       tags
       category
       stores {
-        storeId
+        id
         name
         location {
           lon

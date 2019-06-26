@@ -27,10 +27,12 @@ class TransactionDetail(var type: TransactionType, val description: String, val 
 class Transaction(val orderId: String, val datetime: String, val transactionType: String, val transactionDetail: TransactionDetail, val fee: Double, val tax: Double, val subtotal : Double,
                   val total: Double, val rewards: Double, val status: TransactionStatus, val wayToPay: WayToPay): Serializable{
     var date : String
+    var time : String
     init {
         val dateNow = Date()
         dateNow.time = datetime.toLong()
         date = SimpleDateFormat("dd-MM-yyyy").format(dateNow)
+        time = SimpleDateFormat("HH:mm").format(dateNow)
     }
 }
 
