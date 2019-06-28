@@ -81,7 +81,7 @@ class UserUseCase : UserUseCase{
     ): Observable<Result<PaymentPayload>> {
         val single = Single.create<Result<PaymentPayload>> create@{ single ->
             if (vendorId == "7120-39345-1023841023-123434"){
-                val item = Item("","",5555.5)
+                val item = Item("",5555.5)
                 val order = Order("3c288f1b-e95f-40a2-8f53-40b61d356156", item, 0.0, 5555.5,5555.5,5555.5,40.0)
                 val paymentMethods = mutableListOf<PaymentMethod>()
                 paymentMethods.add(PaymentMethod("1234321412341234","1234","","visa",4505.0,false))

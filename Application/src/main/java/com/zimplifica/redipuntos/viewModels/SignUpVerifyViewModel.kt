@@ -198,7 +198,6 @@ interface SignUpVerifyViewModel {
                 val signInEvent = verifyEvent
                     .filter { !it.isFail() }
                     .flatMap {
-                        print("JOSE")
                         return@flatMap environment.authenticationUseCase().signIn(usernameFormated, it.successValue()?.password!!)
                     }
 

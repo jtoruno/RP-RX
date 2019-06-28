@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -20,6 +22,7 @@ import com.zimplifica.redipuntos.ui.adapters.MovSection
 import com.zimplifica.redipuntos.viewModels.MovementsFragmentVM
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import kotlinx.android.synthetic.main.fragment_movements.*
 import kotlinx.android.synthetic.main.fragment_movements.view.*
 
 @RequiresFragmentViewModel(MovementsFragmentVM.ViewModel::class)
@@ -36,6 +39,8 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
         val manager = LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false)
         recyclerView.layoutManager = manager
         recyclerView.setHasFixedSize(true)
+        val divider = DividerItemDecoration(activity,manager.orientation)
+        recyclerView.addItemDecoration(divider)
         sectionAdapter = SectionedRecyclerViewAdapter()
         recyclerView.adapter = sectionAdapter
         // Inflate the layout for this fragment
@@ -46,14 +51,20 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        mov_fragment_swipe.setOnRefreshListener { viewModel.inputs.fetchTransactions(false) }
+
         this.viewModel.inputs.fetchTransactions(false)
 
         this.viewModel.outputs.fetchTransactionsAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                mov_fragment_swipe.isRefreshing = false
                 sectionAdapter.removeAllSections()
                 for(item in it){
-                    sectionAdapter.addSection(MovSection(item.first,item.second))
+                    sectionAdapter.addSection(MovSection(item.first,item.second){ transaction ->
+                        viewModel.inputs.showMovementDetail(transaction)
+                    })
                 }
+                sectionAdapter.notifyDataSetChanged()
             }
 
         this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())

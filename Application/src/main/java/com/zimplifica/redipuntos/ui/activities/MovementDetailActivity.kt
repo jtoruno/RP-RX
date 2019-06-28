@@ -11,6 +11,8 @@ import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import com.zimplifica.domain.entities.Transaction
+import com.zimplifica.domain.entities.TransactionStatus
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
@@ -33,22 +35,8 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         mov_detail_info.setOnClickListener {  this.viewModel.inputs.paymentInfoButtonPressed() }
         this.viewModel.outputs.transactionAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                generateQR(it.orderId)
-                mov_detail_id.text = it.orderId
-                mov_detail_description.text = it.transactionDetail.description
-                mov_detail_commerce.text = it.transactionDetail.sitePaymentItem?.vendorName ?: ""
-                mov_detail_amount.text = "₡ "+String.format("%,.2f", it.total)
-                val firstName = viewModel.environment.currentUser().getCurrentUser()?.userFirstName ?: ""
-                val lastName = viewModel.environment.currentUser().getCurrentUser()?.userLastName ?: ""
-                mov_detail_user_name.text = ("$firstName $lastName").capitalize()
-                val date = Date()
-                date.time = it.datetime.toLong()
-                mov_detail_date.text = SimpleDateFormat("dd-MMM-yyyy").format(
-                    date)
-                mov_detail_hour.text = SimpleDateFormat("HH:mm").format(date)
+                drawTransaction(it)
             }
-        //imageView11.elevation = 10F
-        //imageView12.elevation = 10F
 
         this.viewModel.outputs.paymentInfoButtonAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -68,7 +56,37 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
             }
     }
 
-    fun openDialog(list : MutableList<Pair<String,String>>){
+    private fun drawTransaction(transaction : Transaction){
+        generateQR(transaction.orderId)
+        mov_detail_id.text = transaction.orderId
+        mov_detail_description.text = transaction.transactionDetail.description?:"Sin descripción"
+        mov_detail_commerce.text = transaction.transactionDetail.sitePaymentItem?.vendorName ?: ""
+        mov_detail_amount.text = "₡ "+String.format("%,.2f", transaction.total)
+        val firstName = viewModel.environment.currentUser().getCurrentUser()?.userFirstName ?: ""
+        val lastName = viewModel.environment.currentUser().getCurrentUser()?.userLastName ?: ""
+        mov_detail_user_name.text = ("$firstName $lastName").capitalize()
+        mov_detail_date.text = transaction.date
+        mov_detail_hour.text = transaction.time
+        when(transaction.status){
+            TransactionStatus.fail -> {
+                mov_detail_status.text = "Transacción erronea"
+                mov_detail_ll.setBackgroundColor(getColor(R.color.red))
+                mov_detail_msj.text = "Pago erroneo, intente de nuevo"
+            }
+            TransactionStatus.pending -> {
+                mov_detail_status.text = "Transacción pendiente"
+                mov_detail_ll.setBackgroundColor(getColor(R.color.pendingColor))
+                mov_detail_msj.text = "Pago pendiente"
+            }
+            TransactionStatus.success -> {
+                mov_detail_status.text = "Transacción exitosa"
+                mov_detail_ll.setBackgroundColor(getColor(R.color.customGreen))
+                mov_detail_msj.text = "Pago aprobado y completado con éxito"
+            }
+        }
+    }
+
+    private fun openDialog(list : MutableList<Pair<String,String>>){
         val builder = AlertDialog.Builder(this)
         val linearLayout = LinearLayout(this)
         linearLayout.orientation = LinearLayout.VERTICAL
@@ -100,20 +118,6 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         val multiFormatWriter = MultiFormatWriter()
         try {
             val bitMatrix = multiFormatWriter.encode(id, BarcodeFormat.QR_CODE, 200, 200)
-            /*
-            val width = bitMatrix.width
-            val height = bitMatrix.height
-            val pixels = IntArray(width * height)
-            for (y in 0 until height) {
-                for (x in 0 until width) {
-                    if (bitMatrix.get(x, y)) {
-                        pixels[y * width + x] = R.color.colorAccent
-                    }
-                }
-            }
-            val bitmapGen = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            bitmapGen.setPixels(pixels, 0, width, 0,0, width, height)*/
-
             val barcodeEncoder = BarcodeEncoder()
             val bitmap = barcodeEncoder.createBitmap(bitMatrix)
 

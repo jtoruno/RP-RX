@@ -64,6 +64,7 @@ class UserUseCase : UserUseCase {
                 .build()
             val input = com.amazonaws.rediPuntosAPI.type.RequestPaymentInput.builder()
                 .wayToPay(wayToPayInput)
+                .paymentDescription(requestPaymentInput.paymentDescription)
                 .orderId(requestPaymentInput.orderId)
                 //.username(requestPaymentInput.username)
                 .build()
@@ -87,9 +88,9 @@ class UserUseCase : UserUseCase {
                             cardDetail = CardDetail(card.id(),card.cardNumber(),card.issuer())
                         }
                         val way2pay = WayToPay(result.wayToPay().rediPuntos(),cardDetail,0.0,result.wayToPay().creditCardCharge())
-                        val transactionDetail = TransactionDetail(TransactionType.directPayment,result.item().description(),result.item().amount(),null,null)
+                        val transactionDetail = TransactionDetail(TransactionType.directPayment,result.paymentDescription(),result.item().amount(),null,null)
                         transactionDetail.type = TransactionType.directPayment
-                        transactionDetail.sitePaymentItem = SitePaymentItem(result.item().type(),result.item().description(),result.item().amount(),result.item().vendorId(),
+                        transactionDetail.sitePaymentItem = SitePaymentItem(result.item().type(),result.paymentDescription(),result.item().amount(),result.item().vendorId(),
                             result.item().vendorName())
                         /*
                         when(result.transactionType()){
@@ -152,7 +153,7 @@ class UserUseCase : UserUseCase {
                 //.username(username)
                 .amount(amount.toDouble())
                 .vendorId(vendorId)
-                .description(description)
+                //.description(description)
                 .build()
             val query = GetCheckoutPayloadSitePayQuery.builder()
                 .input(input)
@@ -166,8 +167,9 @@ class UserUseCase : UserUseCase {
                 override fun onResponse(response: Response<GetCheckoutPayloadSitePayQuery.Data>) {
                     val result = response.data()?.checkoutPayloadSitePay
                     if(result!=null){
-                        val item = Item(result.order().item().type(), result.order().item().description(),result.order().item().amount())
+                        val item = Item(result.order().item().type(), result.order().item().amount())
                         val order = Order(result.order().id(), item,result.order().fee(),result.order().tax(),result.order().subtotal(),result.order().total(),result.order().rewards())
+
                         val rediPuntos = result.paymentOptions().rediPuntos()
                         val paymentMethods = result.paymentOptions().paymentMethods().map { element ->
                             return@map PaymentMethod(element.id(),element.cardNumber(),element.expirationDate(),element.issuer(),
@@ -251,9 +253,9 @@ class UserUseCase : UserUseCase {
                             val cardDetail = CardDetail(trx.wayToPay().creditCard()?.cardId()?: "",trx.wayToPay().creditCard()?.cardNumber()?:"",
                                 trx.wayToPay().creditCard()?.issuer()?: "")*/
                             val wayToPay = WayToPay(trx.wayToPay().rediPuntos(),cardDetail,0.0,trx.wayToPay().creditCardCharge())
-                            var transactionDetail = TransactionDetail(TransactionType.directPayment,trx.item().description(),trx.item().amount(),null,null)
+                            var transactionDetail = TransactionDetail(TransactionType.directPayment,trx.paymentDescription(),trx.item().amount(),null,null)
                             transactionDetail.type = TransactionType.directPayment
-                            transactionDetail.sitePaymentItem = SitePaymentItem(trx.item().type(),trx.item().description(),trx.item().amount(),trx.item().vendorId(),
+                            transactionDetail.sitePaymentItem = SitePaymentItem(trx.item().type(),trx.paymentDescription(),trx.item().amount(),trx.item().vendorId(),
                                 trx.item().vendorName())
                             /*
                             when(trx.item().type()){
@@ -284,9 +286,9 @@ class UserUseCase : UserUseCase {
                                 }
                             }*/
                             var status : TransactionStatus = when(trx.status()){
-                                "Successful" -> TransactionStatus.success
+                                "successful" -> TransactionStatus.success
                                 "pending" -> TransactionStatus.pending
-                                "ValitionFailure" -> TransactionStatus.fail
+                                "valitionFailure" -> TransactionStatus.fail
                                 else -> TransactionStatus.fail
                             }
                             return@map Transaction(trx.id(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.subtotal(),trx.total(),trx.rewards(),status, wayToPay)

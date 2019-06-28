@@ -40,6 +40,7 @@
                           android:layout_marginTop="5dp"
                           android:orientation="horizontal"
                           android:background="@android:color/white"
+                          android:foreground="?android:attr/selectableItemBackground"
                           android:layout_height="wrap_content">
 
                 <android.support.constraint.ConstraintLayout android:layout_width="match_parent"
@@ -72,6 +73,7 @@
                     app:layout_constraintEnd_toEndOf="parent"/>
 
             <LinearLayout android:layout_width="match_parent"
+                          android:foreground="?android:attr/selectableItemBackground"
                           android:id="@+id/home_change_password"
                           android:orientation="horizontal"
                           android:background="@android:color/white"
@@ -109,6 +111,7 @@
                       android:text="Información"/>
 
             <LinearLayout android:layout_width="match_parent"
+                          android:foreground="?android:attr/selectableItemBackground"
                           android:layout_marginTop="5dp"
                           android:id="@+id/home_payment_methods"
                           android:orientation="horizontal"
@@ -145,7 +148,8 @@
                     app:layout_constraintEnd_toEndOf="parent"/>
 
             <LinearLayout android:layout_width="match_parent"
-
+                          android:clickable="true"
+                          android:foreground="?android:attr/selectableItemBackground"
                           android:orientation="horizontal"
                           android:background="@android:color/white"
                           android:layout_height="wrap_content">
@@ -180,6 +184,7 @@
                     app:layout_constraintEnd_toEndOf="parent"/>
 
             <LinearLayout android:layout_width="match_parent"
+                          android:foreground="?android:attr/selectableItemBackground"
                           android:id="@+id/home_terms_and_conditions"
                           android:orientation="horizontal"
                           android:background="@android:color/white"
@@ -213,6 +218,7 @@
                     app:layout_constraintEnd_toEndOf="parent"/>
 
             <LinearLayout android:layout_width="match_parent"
+                          android:foreground="?android:attr/selectableItemBackground"
                           android:id="@+id/home_privacy"
                           android:orientation="horizontal"
                           android:background="@android:color/white"
@@ -280,6 +286,7 @@
             -->
 
         <LinearLayout android:layout_width="match_parent"
+                      android:foreground="?android:attr/selectableItemBackground"
                       android:id="@+id/home_log_out"
                       android:layout_marginTop="30dp"
                       android:orientation="horizontal"

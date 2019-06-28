@@ -2,13 +2,19 @@ package com.zimplifica.redipuntos.viewModels
 
 import android.support.annotation.NonNull
 import android.util.Log
+import com.zimplifica.domain.entities.PaymentPayload
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.Vendor
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.models.SitePaySellerSelectionObject
 import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import java.lang.Exception
+import java.time.temporal.TemporalAmount
 
 interface SPScanQRVM {
     interface Inputs {
@@ -16,10 +22,12 @@ interface SPScanQRVM {
     }
     interface Outputs{
         fun showError() : Observable<String>
-        fun getVendorInformationAction() : Observable<Vendor>
+        //fun getVendorInformationAction() : Observable<Vendor>
+        fun nextScreenAction() : Observable<SitePaySellerSelectionObject>
     }
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<SPScanQRVM>(environment),Inputs,Outputs{
+
 
 
         val inputs : Inputs = this
@@ -29,9 +37,17 @@ interface SPScanQRVM {
         private val codeFound = PublishSubject.create<String>()
         //Outputs
         private val showError = BehaviorSubject.create<String>()
-        private val getVendorInformationAction = BehaviorSubject.create<Vendor>()
+        //private val getVendorInformationAction = BehaviorSubject.create<Vendor>()
+
+        private val nextScreenAction = BehaviorSubject.create<SitePaySellerSelectionObject>()
 
         init {
+            val amountObservable = intent()
+                .filter { it.hasExtra("amount") }
+                .map {
+                    return@map it.getFloatExtra("amount", 0F)
+                }
+
             val getVendorInfoEvent = this.codeFound
                 //.skipWhile { it == "" }
                 .flatMap {
@@ -41,16 +57,33 @@ interface SPScanQRVM {
                 .share()
 
             getVendorInfoEvent
-                .filter { !it.isFail() }
-                .map{return@map it.successValue()}
-                .subscribe(this.getVendorInformationAction)
-
-            getVendorInfoEvent
                 .filter { it.isFail() }
                 .map { return@map "Código inválido, intente de nuevo." }
                 .subscribe(this.showError)
 
+            val vendorInfo = getVendorInfoEvent
+                .filter { !it.isFail() }
+                .map{return@map it.successValue()!!}
 
+
+            val form = Observables.combineLatest(vendorInfo,amountObservable)
+
+            val paymentEvent = form
+                .flatMap { return@flatMap this.requestPayment(it.first?.pk?:"",it.second) }
+                .share()
+
+            paymentEvent
+                .filter { it.isFail() }
+                .map { return@map "Ha ocurrido un error al realizar el pago." }
+                .subscribe(this.showError)
+
+            val paymentPayloadResult = paymentEvent
+                .filter { !it.isFail() }
+                .map { it.successValue()!! }
+
+            Observables.combineLatest(paymentPayloadResult,vendorInfo)
+                .map { return@map SitePaySellerSelectionObject(it.second,it.first) }
+                .subscribe(this.nextScreenAction)
         }
 
 
@@ -60,11 +93,17 @@ interface SPScanQRVM {
 
         override fun showError(): Observable<String> = this.showError
 
-        override fun getVendorInformationAction(): Observable<Vendor> = this.getVendorInformationAction
+        override fun nextScreenAction(): Observable<SitePaySellerSelectionObject> = this.nextScreenAction
+
+        //override fun getVendorInformationAction(): Observable<Vendor> = this.getVendorInformationAction
 
         private fun getVendorInformation (vendorId: String) : Observable<Result<Vendor>>{
             return environment.userUseCase().getVendorInformation(vendorId)
         }
 
+        private fun requestPayment(vendorId: String, amount: Float) : Observable<Result<PaymentPayload>>{
+            return environment.userUseCase().checkoutPayloadSitePay("",amount,vendorId,"")
+        }
     }
+
 }

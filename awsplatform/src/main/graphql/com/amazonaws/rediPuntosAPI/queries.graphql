@@ -41,7 +41,6 @@ query GetTransactionsByUser {
       transactionType
       item {
         type
-        description
         amount
         ... on SitePaymentItem {
           vendorId
@@ -63,6 +62,7 @@ query GetTransactionsByUser {
         }
         creditCardCharge
       }
+      paymentDescription
     }
   }
 }
@@ -73,7 +73,6 @@ query GetTransactionById($id: String) {
     transactionType
     item {
       type
-      description
       amount
       ... on SitePaymentItem {
         vendorId
@@ -95,6 +94,7 @@ query GetTransactionById($id: String) {
       }
       creditCardCharge
     }
+    paymentDescription
   }
 }
 query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
@@ -103,7 +103,6 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
       id
       item {
         type
-        description
         amount
         ... on SitePaymentItem {
           vendorId
@@ -153,12 +152,12 @@ query GetCommerces($limit: Int, $nextToken: String) {
         restrictions
         waysToUse
         stores
+        ... on Offer {
+          discount
+        }
         ... on Coupon {
           beforeDiscount
           afterDiscount
-        }
-        ... on Offer {
-          discount
         }
       }
       website

@@ -18,6 +18,7 @@ import com.zimplifica.redipuntos.viewModels.PayFragmentVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_pay.*
 import android.widget.Toast
+import com.zimplifica.redipuntos.ui.activities.SPScanQRActivity
 import com.zimplifica.redipuntos.ui.activities.SPSelectionActivity
 import kotlinx.android.synthetic.main.number_keyboard.*
 
@@ -61,7 +62,8 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
 
         this.viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val intent = Intent(activity!!,SPSelectionActivity::class.java)
+                //val intent = Intent(activity!!,SPSelectionActivity::class.java)
+                val intent = Intent(activity!!,SPScanQRActivity::class.java)
                 intent.putExtra("amount", it)
                 startActivity(intent)
             }

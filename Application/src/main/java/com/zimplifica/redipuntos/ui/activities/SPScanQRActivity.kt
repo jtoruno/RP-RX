@@ -49,17 +49,24 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
             finish()
         }
 
-        this.viewModel.outputs.getVendorInformationAction().observeOn(AndroidSchedulers.mainThread())
+        this.viewModel.outputs.nextScreenAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                /*
                 val returnIntent = Intent()
                 returnIntent.putExtra("qr",it)
                 setResult(Activity.RESULT_OK,returnIntent)
+                finish()*/
+                val intent = Intent(this,PaymentSelectionActivity::class.java)
+                intent.putExtra("SPSelectionObject",it)
+                intent.putExtra("amount",it.payload.order.subtotal.toFloat())
+                startActivity(intent)
                 finish()
             }
 
         this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.e("PBA",it)
+                qrResult = ""
 
                 spscan_qr_ll.background = resources.getDrawable(android.R.color.holo_red_dark)
                 spscan_qr_txt.text = it

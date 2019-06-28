@@ -6,6 +6,8 @@
                                     android:layout_margin="20dp"
                                     app:cardBackgroundColor="#f6f6f6"
                                     app:contentPadding="2dp"
+                                    android:foreground="?android:attr/selectableItemBackground"
+                                    android:clickable="true"
                                     android:layout_height="wrap_content">
 
     <android.support.constraint.ConstraintLayout

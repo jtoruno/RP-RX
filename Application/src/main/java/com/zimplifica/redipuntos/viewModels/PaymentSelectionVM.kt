@@ -8,6 +8,7 @@ import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.SitePaySellerSelectionObject
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
@@ -16,6 +17,7 @@ interface PaymentSelectionVM {
         fun paymentMethodChanged(paymentMethod: PaymentMethod)
         fun nextButtonPressed()
         fun applyRewardsRowPressed(state : Boolean)
+        fun descriptionTextFieldChanged(description: String)
     }
     interface Outputs {
         fun paymentMethodChangedAction() : Observable<PaymentMethod>
@@ -38,6 +40,7 @@ interface PaymentSelectionVM {
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<PaymentSelectionVM>(environment), Inputs, Outputs{
 
+
         val inputs : Inputs = this
         val outputs : Outputs = this
 
@@ -45,6 +48,7 @@ interface PaymentSelectionVM {
         private val paymentMethodChanged = PublishSubject.create<PaymentMethod>()
         private val nextButtonPressed = PublishSubject.create<Unit>()
         private val applyRewardsRowPressed = BehaviorSubject.createDefault(false)
+        private val descriptionTextFieldChanged = BehaviorSubject.createDefault("")
 
         //Outputs
         private val paymentMethodChangedAction = BehaviorSubject.create<PaymentMethod>()
@@ -101,11 +105,13 @@ interface PaymentSelectionVM {
             this.paymentMethodChanged
                 .map { return@map PaymentInformation(paymentPayload.rediPuntos,it.rewards, amount.toDouble(),paymentPayload.order.fee,paymentPayload.order.tax,paymentPayload.order.total) }
                 .subscribe(this.paymentInformationChangedAction)
-
+            /*
             val form = Observable.combineLatest<PaymentMethod,PaymentInformation,Pair<PaymentMethod,PaymentInformation>>(this.paymentMethodChanged,this.paymentInformationChangedAction,
                 BiFunction { t1, t2 ->
                 Pair(t1, t2)
-            })
+            })*/
+
+            val form = Observables.combineLatest(this.paymentMethodChanged,this.paymentInformationChangedAction,this.descriptionTextFieldChanged)
 
             val requestPaymentEvent = form
                 .takeWhen(this.nextButtonPressed)
@@ -118,7 +124,12 @@ interface PaymentSelectionVM {
                     }else{
                         WayToPayInput(0.0,it.second.first.cardId,0.0,it.second.second.total)
                     }
-                    val requestPaymentInput = RequestPaymentInput(environment.currentUser().getCurrentUser()?.userId?:"",this.paymentPayload.order.pid,wayToPayInput)
+                    val description = if (it.second.third.isNullOrEmpty()){
+                        null
+                    }else{
+                        it.second.third
+                    }
+                    val requestPaymentInput = RequestPaymentInput(environment.currentUser().getCurrentUser()?.userId?:"",this.paymentPayload.order.pid,wayToPayInput, description)
                     return@flatMap this.requestPayment(requestPaymentInput)
                 }
                 .share()
@@ -150,6 +161,10 @@ interface PaymentSelectionVM {
 
         override fun nextButtonPressed() {
             return this.nextButtonPressed.onNext(Unit)
+        }
+
+        override fun descriptionTextFieldChanged(description: String) {
+            return this.descriptionTextFieldChanged.onNext(description)
         }
 
         override fun paymentMethodChangedAction(): Observable<PaymentMethod> = this.paymentMethodChangedAction

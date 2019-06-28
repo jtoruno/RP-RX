@@ -13,9 +13,7 @@ import com.zimplifica.redipuntos.R
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection
 import android.widget.Toast
 import com.amulyakhare.textdrawable.TextDrawable
-import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.zimplifica.domain.entities.TransactionStatus
-import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 
 
 
@@ -60,7 +58,7 @@ class DefaultViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }*/
 
-class MovSection internal constructor(internal val title: String, internal val list : List<Transaction>) :
+class MovSection internal constructor( internal val title: String, internal val list : List<Transaction>,internal val callback : (Transaction) -> Unit) :
     StatelessSection(R.layout.movement_header,R.layout.movement_row) {
     override fun getContentItemsTotal(): Int {
         return list.size
@@ -69,36 +67,40 @@ class MovSection internal constructor(internal val title: String, internal val l
     @SuppressLint("ResourceAsColor")
     override fun onBindItemViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
         val itemHolder = holder as ItemViewHolder
+        val context = itemHolder.itemView.context
         val transaction = list[position]
         itemHolder.vendorName.text = transaction.transactionDetail.sitePaymentItem?.vendorName?:""
-        val generator = ColorGenerator.MATERIAL
-        val initials = transaction.transactionDetail.sitePaymentItem?.vendorName?:""
+        val initials = (transaction.transactionDetail.sitePaymentItem?.vendorName?:"")
             .split(' ')
             .mapNotNull { it.firstOrNull()?.toString() }
             .reduce { acc, s -> acc + s }
         val drawable = TextDrawable.builder()
             .beginConfig()
             .width(80)
+            .bold()
             .height(80)
             .endConfig()
-            .buildRound(initials,generator.getColor(initials))
+            .buildRound(initials,context.getColor(R.color.colorPrimaryLight))
         itemHolder.image.setImageDrawable(drawable)
-        itemHolder.type.text = transaction.transactionType
+        itemHolder.type.text = "Pago en Sitio"
         itemHolder.hour.text = transaction.time
         itemHolder.amount.text = "₡ "+String.format("%,.2f", transaction.total)
         when(transaction.status){
             TransactionStatus.success -> {
                 itemHolder.state.text = "Pago exitoso"
-                itemHolder.state.setTextColor(R.color.customGreen)
+                itemHolder.state.setTextColor(context.resources.getColor(R.color.customGreen,null))
             }
             TransactionStatus.pending -> {
                 itemHolder.state.text = "Pago pendiente"
-                itemHolder.state.setTextColor(R.color.pendingColor)
+                itemHolder.state.setTextColor(context.resources.getColor(R.color.pendingColor,null))
             }
             else -> {
                 itemHolder.state.text = "Pago erroneo"
-                itemHolder.state.setTextColor(R.color.red)
+                itemHolder.state.setTextColor(context.resources.getColor(R.color.red,null))
             }
+        }
+        itemHolder.itemView.setOnClickListener {
+            callback(transaction)
         }
 
     }

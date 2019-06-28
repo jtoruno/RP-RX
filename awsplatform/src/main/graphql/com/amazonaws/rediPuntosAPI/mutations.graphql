@@ -51,7 +51,6 @@ mutation RequestPayment($input: RequestPaymentInput!) {
     transactionType
     item {
       type
-      description
       amount
       ... on SitePaymentItem {
         vendorId
@@ -73,6 +72,7 @@ mutation RequestPayment($input: RequestPaymentInput!) {
       }
       creditCardCharge
     }
+    paymentDescription
   }
 }
 mutation ToggleAutomaticRedemption($cardId: String!) {
