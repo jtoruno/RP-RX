@@ -12,4 +12,5 @@ interface UserUseCase{
     fun requestPayment(requestPaymentInput: RequestPaymentInput) : Observable<Result<Transaction>>
     fun getVendorInformation(vendorId: String) : Observable<Result<Vendor>>
     fun disablePaymentMethod(owner: String, cardId: String) : Observable<Result<PaymentMethod>>
+    fun getTransactionById(id: String) : Observable<Result<Transaction>>
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -32,6 +33,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         supportActionBar?.title = "Comprobante de Pago"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
+        progressBar15.visibility = View.GONE
         mov_detail_info.setOnClickListener {  this.viewModel.inputs.paymentInfoButtonPressed() }
         this.viewModel.outputs.transactionAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -57,6 +59,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
     }
 
     private fun drawTransaction(transaction : Transaction){
+        progressBar15.visibility = View.GONE
         generateQR(transaction.orderId)
         mov_detail_id.text = transaction.orderId
         mov_detail_description.text = transaction.transactionDetail.description?:"Sin descripción"
@@ -74,6 +77,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
                 mov_detail_msj.text = "Pago erroneo, intente de nuevo"
             }
             TransactionStatus.pending -> {
+                progressBar15.visibility = View.VISIBLE
                 mov_detail_status.text = "Transacción pendiente"
                 mov_detail_ll.setBackgroundColor(getColor(R.color.pendingColor))
                 mov_detail_msj.text = "Pago pendiente"

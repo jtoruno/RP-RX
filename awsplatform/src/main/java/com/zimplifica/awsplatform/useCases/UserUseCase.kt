@@ -399,4 +399,48 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
+    override fun getTransactionById(id: String): Observable<Result<Transaction>> {
+        val single = Single.create<Result<Transaction>> create@{ single ->
+            val query = GetTransactionByIdQuery.builder().id(id).build()
+            this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetTransactionByIdQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getTransactionById] Error.",e)
+                    single.onSuccess(Result.failure(e))
+                }
+
+                override fun onResponse(response: Response<GetTransactionByIdQuery.Data>) {
+                    val result = response.data()?.transactionById
+                    if(result != null){
+                        var cardDetail : CardDetail ? = null
+                        val card = result.wayToPay().creditCard()
+                        if(card != null){
+                            cardDetail = CardDetail(card.id(),card.cardNumber(),card.issuer())
+                        }
+                        val way2pay = WayToPay(result.wayToPay().rediPuntos(),cardDetail,0.0,result.wayToPay().creditCardCharge())
+                        val transactionDetail = TransactionDetail(TransactionType.directPayment,result.paymentDescription(),result.item().amount(),null,null)
+                        transactionDetail.type = TransactionType.directPayment
+                        transactionDetail.sitePaymentItem = SitePaymentItem(result.item().type(),result.paymentDescription(),result.item().amount(),result.item().vendorId(),
+                            result.item().vendorName())
+                        val status : TransactionStatus = when(result.status()){
+                            "Successful" -> TransactionStatus.success
+                            "pending" -> TransactionStatus.pending
+                            "ValitionFailure" -> TransactionStatus.fail
+                            else -> TransactionStatus.fail
+                        }
+                        val transaction = Transaction(result.id(),result.datetime(),result.transactionType(),transactionDetail,
+                            result.fee(),result.tax(), result.subtotal(),result.total(),result.rewards(),status,way2pay)
+
+                        single.onSuccess(Result.success(transaction))
+
+                    }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+
 }

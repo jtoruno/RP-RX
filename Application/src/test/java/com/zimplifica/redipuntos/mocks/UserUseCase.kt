@@ -8,6 +8,10 @@ import org.junit.runner.Request
 import java.lang.Exception
 
 class UserUseCase : UserUseCase{
+    override fun getTransactionById(id: String): Observable<Result<Transaction>> {
+        return Observable.never()
+    }
+
     override fun disablePaymentMethod(owner: String, cardId: String): Observable<Result<PaymentMethod>> {
         val single = Single.create<Result<PaymentMethod>> create@{ single ->
             println("disable ${owner}")
