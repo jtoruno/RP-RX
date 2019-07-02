@@ -119,6 +119,7 @@ class CacheOperations{
     }
 
     fun updateTransactions(withExistingTransaction : Transaction){
+
         val query = GetTransactionsByUserQuery.builder().build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
@@ -129,19 +130,49 @@ class CacheOperations{
                 override fun onResponse(response: Response<GetTransactionsByUserQuery.Data>) {
                     val result = response.data()?.transactionsByUser
                     if (result!=null){
-                        val iterator = result.items().toMutableList().iterator()
+                        //var trans : GetTransactionsByUserQuery.Item
+                        val items = result.items().toMutableList()
+                        /*
+                        val iterator = items.iterator()
+
                         while (iterator.hasNext()){
                             val oldValue = iterator.next()
                             if(oldValue.id() == withExistingTransaction.orderId){
-                                val trans = GetTransactionsByUserQuery.Item(oldValue.__typename(),oldValue.id(),oldValue.datetime(),oldValue.transactionType(),oldValue.item(),oldValue.fee(),oldValue.tax(),oldValue.subtotal(),oldValue.total(),
+                                trans = GetTransactionsByUserQuery.Item(oldValue.__typename(),oldValue.id(),oldValue.datetime(),oldValue.transactionType(),oldValue.item(),oldValue.fee(),oldValue.tax(),oldValue.subtotal(),oldValue.total(),
                                     oldValue.rewards(),withExistingTransaction.status.name,oldValue.wayToPay(),oldValue.paymentDescription())
                             }
-                        }
+                        }*/
+                        items.map { oldValue -> if(oldValue.id() == withExistingTransaction.id){
+                            return@map GetTransactionsByUserQuery.Item(oldValue.__typename(),oldValue.id(),oldValue.datetime(),oldValue.transactionType(),oldValue.item(),oldValue.fee(),oldValue.tax(),oldValue.subtotal(),oldValue.total(),
+                                oldValue.rewards(),withExistingTransaction.status.name,oldValue.wayToPay(),oldValue.paymentDescription())
+                        }else{
+                            return@map oldValue
+                        } }
 
+                        val data = query.wrapData(GetTransactionsByUserQuery.Data(GetTransactionsByUserQuery.GetTransactionsByUser("PaginatedTransactions",items)))
+                        appSyncClient!!.store.write(query,data).enqueue(null)
+                        Log.i("🔵", "Cache updated at [CacheOperations] [updateTransactions]")
+                    }
+                } })
+    }
+    fun updateNewTransactions(newTransaction: Transaction){
+        val query = GetTransactionsByUserQuery.builder().build()
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+            .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateTransactions Error:", e)
+                }
+
+                override fun onResponse(response: Response<GetTransactionsByUserQuery.Data>) {
+                    val result = response.data()?.transactionsByUser
+                    if (result!=null){
+                        val items = result.items().toMutableList()
+                        val item = GetTransactionsByUserQuery.Item1("",newTransaction.transactionType,newTransaction.transactionDetail.amount,newTransaction.transactionDetail.vendorId,newTransaction.transactionDetail.vendorName)
                     }
                 }
 
             })
+
     }
 
 }

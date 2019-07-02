@@ -130,17 +130,29 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         Log.e("PaymentSelection","Update Data")
         payment_s_fee.text = "₡ "+String.format("%,.2f", paymentInformation.fee)
         payment_s_tax.text = "₡ "+String.format("%,.2f", paymentInformation.tax)
+        /*
         payment_s_reward_applied.text = if (applyAwards){
             "- ₡ "+String.format("%,.2f", paymentInformation.rediPoints)
         }else{
             "₡ "+String.format("%,.2f",0.0)
-        }
-        payment_selection_redipoints.text = "Tienes "+paymentInformation.rediPoints+" pts"
-        val total = if (applyAwards){
-            paymentInformation.total - paymentInformation.rediPoints
+        }*/
+        val rediPuntosToApply = if (applyAwards){
+            if(paymentInformation.total-paymentInformation.rediPoints < 0.0){
+                paymentInformation.total
+            }else{
+                paymentInformation.rediPoints
+            }
+        } else { 0.0 }
+        payment_s_reward_applied.text = if (applyAwards){
+            "- ₡ "+String.format("%,.2f", rediPuntosToApply)
         }else{
-            paymentInformation.total
+            "₡ "+String.format("%,.2f",0.0)
         }
+
+
+        payment_selection_redipoints.text = "Tienes "+paymentInformation.rediPoints+" pts"
+
+        val total = paymentInformation.total - rediPuntosToApply
         payment_s_total.text = "₡ "+String.format("%,.2f", total)
         payment_s_rewards.text = viewModel.getOrder().rewards.toString() + " pts"
 

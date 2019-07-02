@@ -75,4 +75,8 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
             }
     }
 
+    fun getTransactionById(id: String) : Observable<Result<Transaction>> {
+        return userUseCase.getTransactionById(id)
+    }
+
 }

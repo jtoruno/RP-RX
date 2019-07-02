@@ -13,11 +13,6 @@ class SPScanQRTest : RPTestCase() {
 
     private fun setUpEnvironment(environment: Environment){
         vm = SPScanQRVM.ViewModel(environment)
-        vm.outputs.getVendorInformationAction().subscribe(this.getVendorInformationAction)
-        vm.outputs.showError().subscribe(this.showError)
-        vm.outputs.getVendorInformationAction().subscribe {
-            print(it.address+  it.name+ it.pk)
-        }
 
     }
 

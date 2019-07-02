@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.zimplifica.redipuntos.R
@@ -29,6 +30,23 @@ class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
                 account_info_id_card.setText(it?.citizenId?:"")
                 account_info_date.setText(it?.userBirthDate?:"")
                 account_info_email.setText(it?.userEmail?:"")
+                if (it?.userEmailVerified == true){
+                    account_info_state.text = "Verificado"
+                    account_info_state.setTextColor(getColor(R.color.customGreen))
+                }else{
+                    account_info_state.text = "No verificado"
+                    account_info_state.setTextColor(getColor(R.color.red))
+                }
+            }
+        account_info_ll.setOnClickListener {
+            this.viewModel.inputs.verifyEmailPressed()
+        }
+
+        this.viewModel.outputs.verifyEmailAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(this, AccountEditEmailActivity::class.java)
+                startActivity(intent)
+
             }
     }
 

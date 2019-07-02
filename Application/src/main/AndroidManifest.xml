@@ -21,12 +21,15 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.MovementDetailActivity">
+        <activity android:name=".ui.activities.AccountEditEmailActivity">
+        </activity>
+        <activity
+                android:name=".ui.activities.MovementDetailActivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.AccountInfoActivity"
-                android:screenOrientation="portrait"
-                android:theme="@style/AppThemeWhite">
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.PaymentSelectionActivity"

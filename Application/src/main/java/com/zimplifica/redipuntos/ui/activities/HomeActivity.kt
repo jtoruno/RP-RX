@@ -271,4 +271,6 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+
 }

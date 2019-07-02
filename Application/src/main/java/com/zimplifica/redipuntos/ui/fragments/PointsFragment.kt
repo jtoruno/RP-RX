@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -88,6 +89,7 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
         this.viewModel.inputs.fetchPaymentMethods()
         this.viewModel.outputs.paymentMethods().observeOn(AndroidSchedulers.mainThread()).subscribe {
             adapter.setPaymentMethods(it)
+            adapter.notifyDataSetChanged()
         }
         this.viewModel.outputs.newData().observeOn(AndroidSchedulers.mainThread())
             .subscribe {

@@ -14,12 +14,12 @@ class MovementDetailVMTest : RPTestCase() {
 
 
     val cardDetail = CardDetail("12312412512","2324", "visa")
-    val wayToPay = WayToPay(4000.0,cardDetail, 1000.0,3000.0)
+    val wayToPay = WayToPay(4000.0,cardDetail, 4000.0)
     val sitePaymentItem = SitePaymentItem("","Test",2000.0,"231421agewg24-2131-fwawefa-f2332",
         "Manpuku Sushi")
-    val transactionDetail = TransactionDetail(TransactionType.directPayment, "Test",5550.0,null, sitePaymentItem)
-    val transaction = Transaction("1234", "11-11-2019", "debit", transactionDetail, 0.0, 50.0,6500.0,6500.0,25.0,
-        TransactionStatus.success, wayToPay)
+    val transactionDetail = TransactionDetail(TransactionType.directPayment.toString(), 5550.0,"231421agewg24-2131-fwawefa-f2332", "Manpuku Sushi")
+    val transaction = Transaction("1234", "1562005485489", "debit", transactionDetail, 0.0, 50.0,6500.0,6500.0,25.0,
+        TransactionStatus.success, wayToPay,"")
 
     private fun setUpEnvironment(environment: Environment){
         vm = MovementDetailVM.ViewModel(environment)

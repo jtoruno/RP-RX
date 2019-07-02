@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-        android:background="@android:color/white"
+        android:background="@color/colorPrimary"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,6 +9,7 @@
         tools:context=".ui.activities.AccountInfoActivity">
 
     <android.support.design.widget.TextInputLayout
+            android:textColorHint="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -17,6 +18,9 @@
             android:id="@+id/textInputLayout15">
 
         <android.support.design.widget.TextInputEditText
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
                 android:id="@+id/account_info_name"
                 android:focusable="false"
                 android:enabled="false"
@@ -26,6 +30,7 @@
                 android:hint="Nombre"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
+            android:textColorHint="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -34,6 +39,9 @@
             android:id="@+id/textInputLayout16">
 
         <android.support.design.widget.TextInputEditText
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
                 android:id="@+id/account_info_last_name"
                 android:focusable="false"
                 android:enabled="false"
@@ -43,6 +51,7 @@
                 android:hint="Apellidos"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
+            android:textColorHint="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -51,6 +60,9 @@
             android:id="@+id/textInputLayout17">
 
         <android.support.design.widget.TextInputEditText
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
                 android:id="@+id/account_info_id_card"
                 android:focusable="false"
                 android:text="123456789"
@@ -60,6 +72,7 @@
                 android:hint="Identificación"/>
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
+            android:textColorHint="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
@@ -68,6 +81,9 @@
             android:id="@+id/textInputLayout20">
 
         <android.support.design.widget.TextInputEditText
+                android:backgroundTint="@android:color/white"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
                 android:focusable="false"
                 android:id="@+id/account_info_date"
                 android:text="01/01/2001"
@@ -77,6 +93,7 @@
                 android:hint="Fecha de Nacimiento"/>
     </android.support.design.widget.TextInputLayout>
     <LinearLayout
+            android:id="@+id/account_info_ll"
             android:orientation="horizontal"
             android:layout_marginStart="8dp"
             android:layout_width="match_parent"
@@ -84,10 +101,14 @@
             app:layout_constraintTop_toBottomOf="@+id/textInputLayout20" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp">
         <android.support.design.widget.TextInputLayout
+                android:textColorHint="@android:color/white"
                 android:layout_width="0dp"
                 android:layout_weight="0.7"
                 android:layout_height="wrap_content">
             <android.support.design.widget.TextInputEditText
+                    android:backgroundTint="@color/colorPrimary"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
                     android:text="example@email.com"
                     android:id="@+id/account_info_email"
                     android:focusable="false"
@@ -100,8 +121,8 @@
                 android:textColor="@android:color/holo_green_light"
                 android:textAlignment="center"
                 android:layout_gravity="center_vertical"
-                android:layout_weight="0.2"
+                android:layout_weight="0.3"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content" android:id="@+id/textView30"/>
+                android:layout_height="wrap_content" android:id="@+id/account_info_state"/>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -42,13 +42,13 @@ class UserUseCase : UserUseCase{
         val single = Single.create<Result<TransactionsResult>> create@{ single ->
             if(username == "1234"){
                 val cardDetail = CardDetail("12312412512","2324", "visa")
-                val wayToPay = WayToPay(4000.0,cardDetail, 1000.0,3000.0)
+                val wayToPay = WayToPay(4000.0,cardDetail,4000.0)
                 val sitePaymentItem = SitePaymentItem("","Test",2000.0,"231421agewg24-2131-fwawefa-f2332",
                     "Manpuku Sushi")
-                val transactionDetail = TransactionDetail(TransactionType.directPayment, "Test",5550.0,null, sitePaymentItem)
+                val transactionDetail = TransactionDetail(TransactionType.directPayment.toString(), 5550.0,"231421agewg24-2131-fwawefa-f2332","Manpuku Sushi")
                 val transactions = mutableListOf<Transaction>()
-                transactions.add(Transaction("1234", "11-11-2019", "debit", transactionDetail, 0.0, 50.0,6500.0,6500.0,25.0,TransactionStatus.success, wayToPay))
-                transactions.add(Transaction("4321","11-11-2019","debit",transactionDetail, 0.0,50.0,20500.0,20500.0,40.0,TransactionStatus.fail,wayToPay))
+                transactions.add(Transaction("1234", "11-11-2019", "debit", transactionDetail, 0.0, 50.0,6500.0,6500.0,25.0,TransactionStatus.success, wayToPay,""))
+                transactions.add(Transaction("4321","11-11-2019","debit",transactionDetail, 0.0,50.0,20500.0,20500.0,40.0,TransactionStatus.fail,wayToPay,""))
                 val transactionsResult = TransactionsResult(transactions)
                 single.onSuccess(Result.success(transactionsResult))
             } else {
@@ -103,11 +103,11 @@ class UserUseCase : UserUseCase{
         val single = Single.create<Result<Transaction>> create@{ single ->
             if(requestPaymentInput.orderId == "3c288f1b-e95f-40a2-8f53-40b61d356156"){
                 val cardDetail = CardDetail("12312412512","2324", "visa")
-                val wayToPay = WayToPay(4000.0,cardDetail, 1000.0,3000.0)
+                val wayToPay = WayToPay(4000.0,cardDetail, 4000.0)
                 val sitePaymentItem = SitePaymentItem("","Test",2000.0,"231421agewg24-2131-fwawefa-f2332",
                     "Manpuku Sushi")
-                val transactionDetail = TransactionDetail(TransactionType.directPayment, "Test",5550.0,null, sitePaymentItem)
-                val transaction = Transaction("1234", "11-11-2019", "debit", transactionDetail, 0.0, 50.0,6500.0,6500.0,25.0,TransactionStatus.success, wayToPay)
+                val transactionDetail = TransactionDetail(TransactionType.directPayment.toString(), 5550.0,"231421agewg24-2131-fwawefa-f2332", "Manpuku Sushi")
+                val transaction = Transaction("1234", "11-11-2019", "debit", transactionDetail, 0.0, 50.0,6500.0,6500.0,25.0,TransactionStatus.success, wayToPay,"")
                 //val requestPayment = RequestPayment(true,"Success")
                 single.onSuccess(Result.success(transaction))
             }else{

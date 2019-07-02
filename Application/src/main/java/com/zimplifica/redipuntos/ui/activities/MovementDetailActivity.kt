@@ -20,6 +20,7 @@ import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.MovementDetailVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_movement_detail.*
+import kotlinx.android.synthetic.main.app_bar_home.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -48,9 +49,10 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
                 if(it.rediPuntos > 0.0){
                     list.add(Pair("RediPuntos",it.rediPuntos.toString()))
                 }
+                /*
                 if(it.creditCardRewards> 0.0){
                     list.add(Pair(issuer + " **** " + it.creditCard?.cardNumber.toString(),"₡ "+String.format("%,.2f", it.rediPuntos)))
-                }
+                }*/
                 if(it.creditCardCharge>0.0){
                     list.add(Pair(issuer + " **** " + it.creditCard?.cardNumber.toString(),"₡ "+String.format("%,.2f", it.creditCardCharge)))
                 }
@@ -60,10 +62,10 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
 
     private fun drawTransaction(transaction : Transaction){
         progressBar15.visibility = View.GONE
-        generateQR(transaction.orderId)
-        mov_detail_id.text = transaction.orderId
-        mov_detail_description.text = transaction.transactionDetail.description?:"Sin descripción"
-        mov_detail_commerce.text = transaction.transactionDetail.sitePaymentItem?.vendorName ?: ""
+        generateQR(transaction.id)
+        mov_detail_id.text = transaction.id
+        mov_detail_description.text = transaction.description?:"Sin descripción"
+        mov_detail_commerce.text = transaction.transactionDetail.vendorName
         mov_detail_amount.text = "₡ "+String.format("%,.2f", transaction.total)
         val firstName = viewModel.environment.currentUser().getCurrentUser()?.userFirstName ?: ""
         val lastName = viewModel.environment.currentUser().getCurrentUser()?.userLastName ?: ""

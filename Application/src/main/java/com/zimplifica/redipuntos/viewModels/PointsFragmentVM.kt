@@ -131,7 +131,7 @@ interface PointsFragmentVM {
                     paymentArray.addAll(paymentMethods)
                 }
                 paymentArray.add(PaymentMethod("rediPuntos-card","", "",
-                    "RediPuntos",userInformation.rewards?:0.0,false))
+                    "RediPuntos",environment.currentUser().getCurrentUser()?.rewards?:0.0,false))
                 single.onSuccess(Result.success(paymentArray.toList()))
 
             }

@@ -87,49 +87,19 @@ class UserUseCase : UserUseCase {
                         if(card != null){
                             cardDetail = CardDetail(card.id(),card.cardNumber(),card.issuer())
                         }
-                        val way2pay = WayToPay(result.wayToPay().rediPuntos(),cardDetail,0.0,result.wayToPay().creditCardCharge())
-                        val transactionDetail = TransactionDetail(TransactionType.directPayment,result.paymentDescription(),result.item().amount(),null,null)
-                        transactionDetail.type = TransactionType.directPayment
-                        transactionDetail.sitePaymentItem = SitePaymentItem(result.item().type(),result.paymentDescription(),result.item().amount(),result.item().vendorId(),
-                            result.item().vendorName())
-                        /*
-                        when(result.transactionType()){
-                            "GTIItem" -> {
-                                val gtiItem = result.item().asGTIItem()
-                                if(gtiItem!=null){
-                                    transactionDetail.type = TransactionType.servicePayment
-                                    transactionDetail.gtiItem = GTIItem(result.item().type(),gtiItem.description(),gtiItem.amount(),gtiItem.companyId(),gtiItem.agreementId(),
-                                        gtiItem.invoiceId(),gtiItem.clientName(),gtiItem.serviceId(),gtiItem.paymentType(),gtiItem.expirationDate(),gtiItem.period(),
-                                        gtiItem.isPrepaid)
-                                }
-                            }
-                            "sitepay" -> {
-                                val sitePayItem = result.item().asSitePaymentItem()
-                                if(sitePayItem!=null){
-                                    transactionDetail.type = TransactionType.directPayment
-                                    transactionDetail.sitePaymentItem = SitePaymentItem(result.item().type(),sitePayItem.description(),sitePayItem.amount(),sitePayItem.vendorId(),
-                                        sitePayItem.vendorName())
-                                }
-                            }
-                            else -> {
-                                val sitePayItem = result.item().asSitePaymentItem()
-                                if(sitePayItem!=null){
-                                    transactionDetail.type = TransactionType.directPayment
-                                    transactionDetail.sitePaymentItem = SitePaymentItem(result.item().type(),sitePayItem.description(),sitePayItem.amount(),sitePayItem.vendorId(),
-                                        sitePayItem.vendorName())
-                                }
-                            }
-                        }*/
+                        val way2pay = WayToPay(result.wayToPay().rediPuntos(),cardDetail,result.wayToPay().creditCardCharge())
+                        val transactionDetail = TransactionDetail(result.item().type(),result.item().amount(),result.item().vendorId(),result.item().vendorName())
                         var status : TransactionStatus = when(result.status()){
-                            "Successful" -> TransactionStatus.success
+                            "successful" -> TransactionStatus.success
                             "pending" -> TransactionStatus.pending
                             "ValitionFailure" -> TransactionStatus.fail
                             else -> TransactionStatus.fail
                         }
                         val transaction = Transaction(result.id(),result.datetime(),result.transactionType(),transactionDetail,
-                            result.fee(),result.tax(), result.subtotal(),result.total(),result.rewards(),status,way2pay)
+                            result.fee(),result.tax(), result.subtotal(),result.total(),result.rewards(),status,way2pay,result.paymentDescription())
 
                         //val requestPayment = RequestPayment(true, "")
+                        cacheOperations.updateNewTransactions(transaction)
 
                         single.onSuccess(Result.success(transaction))
                     }
@@ -158,7 +128,7 @@ class UserUseCase : UserUseCase {
             val query = GetCheckoutPayloadSitePayQuery.builder()
                 .input(input)
                 .build()
-            this.appSyncClient!!.query(query).enqueue(object : GraphQLCall.Callback<GetCheckoutPayloadSitePayQuery.Data>(){
+            this.appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY).enqueue(object : GraphQLCall.Callback<GetCheckoutPayloadSitePayQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [checkoutPayloadSitePay] Error.",e)
                     single.onSuccess(Result.failure(e))
@@ -252,11 +222,8 @@ class UserUseCase : UserUseCase {
                             /*
                             val cardDetail = CardDetail(trx.wayToPay().creditCard()?.cardId()?: "",trx.wayToPay().creditCard()?.cardNumber()?:"",
                                 trx.wayToPay().creditCard()?.issuer()?: "")*/
-                            val wayToPay = WayToPay(trx.wayToPay().rediPuntos(),cardDetail,0.0,trx.wayToPay().creditCardCharge())
-                            var transactionDetail = TransactionDetail(TransactionType.directPayment,trx.paymentDescription(),trx.item().amount(),null,null)
-                            transactionDetail.type = TransactionType.directPayment
-                            transactionDetail.sitePaymentItem = SitePaymentItem(trx.item().type(),trx.paymentDescription(),trx.item().amount(),trx.item().vendorId(),
-                                trx.item().vendorName())
+                            val wayToPay = WayToPay(trx.wayToPay().rediPuntos(),cardDetail,trx.wayToPay().creditCardCharge())
+                            var transactionDetail = TransactionDetail(trx.item().type(),trx.item().amount(),trx.item().vendorId(),trx.item().vendorName())
                             /*
                             when(trx.item().type()){
                                 "GTIItem" -> {
@@ -291,7 +258,7 @@ class UserUseCase : UserUseCase {
                                 "valitionFailure" -> TransactionStatus.fail
                                 else -> TransactionStatus.fail
                             }
-                            return@map Transaction(trx.id(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.subtotal(),trx.total(),trx.rewards(),status, wayToPay)
+                            return@map Transaction(trx.id(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.subtotal(),trx.total(),trx.rewards(),status, wayToPay,trx.paymentDescription())
                         }
                         val transactionsResult = TransactionsResult(transactions)
                         single.onSuccess(Result.success(transactionsResult))
@@ -402,7 +369,7 @@ class UserUseCase : UserUseCase {
     override fun getTransactionById(id: String): Observable<Result<Transaction>> {
         val single = Single.create<Result<Transaction>> create@{ single ->
             val query = GetTransactionByIdQuery.builder().id(id).build()
-            this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetTransactionByIdQuery.Data>(){
+            this.appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY).enqueue(object:GraphQLCall.Callback<GetTransactionByIdQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getTransactionById] Error.",e)
                     single.onSuccess(Result.failure(e))
@@ -416,19 +383,18 @@ class UserUseCase : UserUseCase {
                         if(card != null){
                             cardDetail = CardDetail(card.id(),card.cardNumber(),card.issuer())
                         }
-                        val way2pay = WayToPay(result.wayToPay().rediPuntos(),cardDetail,0.0,result.wayToPay().creditCardCharge())
-                        val transactionDetail = TransactionDetail(TransactionType.directPayment,result.paymentDescription(),result.item().amount(),null,null)
-                        transactionDetail.type = TransactionType.directPayment
-                        transactionDetail.sitePaymentItem = SitePaymentItem(result.item().type(),result.paymentDescription(),result.item().amount(),result.item().vendorId(),
-                            result.item().vendorName())
+                        val way2pay = WayToPay(result.wayToPay().rediPuntos(),cardDetail,result.wayToPay().creditCardCharge())
+                        val transactionDetail = TransactionDetail(result.item().type(),result.item().amount(),result.item().vendorId(),result.item().vendorName())
                         val status : TransactionStatus = when(result.status()){
-                            "Successful" -> TransactionStatus.success
+                            "successful" -> TransactionStatus.success
                             "pending" -> TransactionStatus.pending
                             "ValitionFailure" -> TransactionStatus.fail
                             else -> TransactionStatus.fail
                         }
                         val transaction = Transaction(result.id(),result.datetime(),result.transactionType(),transactionDetail,
-                            result.fee(),result.tax(), result.subtotal(),result.total(),result.rewards(),status,way2pay)
+                            result.fee(),result.tax(), result.subtotal(),result.total(),result.rewards(),status,way2pay,result.paymentDescription())
+
+                        cacheOperations.updateTransactions(withExistingTransaction = transaction)
 
                         single.onSuccess(Result.success(transaction))
 
