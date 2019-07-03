@@ -168,6 +168,15 @@ class CacheOperations{
                     if (result!=null){
                         val items = result.items().toMutableList()
                         val item = GetTransactionsByUserQuery.Item1("",newTransaction.transactionType,newTransaction.transactionDetail.amount,newTransaction.transactionDetail.vendorId,newTransaction.transactionDetail.vendorName)
+                        val card = GetTransactionsByUserQuery.CreditCard("",newTransaction.wayToPay.creditCard!!.cardId,newTransaction.wayToPay.creditCard!!.cardNumber,newTransaction.wayToPay.creditCard!!.issuer)
+                        val wtp = GetTransactionsByUserQuery.WayToPay("",newTransaction.wayToPay.rediPuntos,card,newTransaction.wayToPay.creditCardCharge)
+
+                        val transaction = GetTransactionsByUserQuery.Item("",newTransaction.id,newTransaction.datetime,newTransaction.transactionType,item,newTransaction.fee,
+                            newTransaction.tax,newTransaction.subtotal,newTransaction.total,newTransaction.rewards,newTransaction.status.name,wtp,newTransaction.description)
+                        items.add(0,transaction)
+                        Log.i("🔵", "Cache updated at [CacheOperations] [updateTransactions]")
+                        val data = query.wrapData(GetTransactionsByUserQuery.Data(GetTransactionsByUserQuery.GetTransactionsByUser("PaginatedTransactions",items)))
+                        appSyncClient!!.store.write(query,data).enqueue(null)
                     }
                 }
 

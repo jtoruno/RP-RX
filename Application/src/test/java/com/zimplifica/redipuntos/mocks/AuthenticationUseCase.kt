@@ -137,9 +137,10 @@ class AuthenticationUseCase : AuthenticationUseCase {
     }
 
     override fun updateUserAttributes(attributes: Map<String, String>): Observable<Result<Boolean>> {
+        println("VM email "+attributes["email"])
         val single = Single.create<Result<Boolean>> create@{single->
             val email = attributes["email"]
-            if(email != null  &&  email == "dsanchez@zimplifica"){
+            if(email != null  &&  email == "dsanchez@zimplifica.com" || email == "jtoru@zimplifica.com"){
                 single.onSuccess(Result.success(true))
             }else{
                 val error = Exception("XXXX")

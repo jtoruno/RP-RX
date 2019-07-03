@@ -80,7 +80,9 @@ interface AccountEditEmailVM {
             val event = this.emailValueChanged
                 .filter { this.validateEmailScenarios(it) }
                 .takeWhen(this.verifyEmailPressed)
-                .flatMap { this.handleUpdateEmailAndVerifyEmail(it.second) }
+                .flatMap {
+                    this.handleUpdateEmailAndVerifyEmail(it.second)
+                }
                 .share()
 
             event
@@ -151,6 +153,7 @@ interface AccountEditEmailVM {
 
         private fun handleUpdateEmailAndVerifyEmail(email: String) : Observable<Result<String>>{
             return Observable.create<Result<String>> { disposable ->
+
                 val updateEmailEvent = this.updateEmail(email)
                     .share()
                 updateEmailEvent

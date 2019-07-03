@@ -9,11 +9,14 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.AccountInfoVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_account_info.*
 
 
 @RequiresActivityViewModel(AccountInfoVM.ViewModel::class)
 class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
+
+    private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +26,7 @@ class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
-        this.viewModel.outputs.userInformationAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.userInformationAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 account_info_name.setText(it?.userFirstName?:"")
                 account_info_last_name.setText(it?.userLastName?:"")
@@ -37,17 +40,21 @@ class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
                     account_info_state.text = "No verificado"
                     account_info_state.setTextColor(getColor(R.color.red))
                 }
-            }
+            })
         account_info_ll.setOnClickListener {
             this.viewModel.inputs.verifyEmailPressed()
         }
 
-        this.viewModel.outputs.verifyEmailAction().observeOn(AndroidSchedulers.mainThread())
+        account_info_email.setOnClickListener {
+            this.viewModel.inputs.verifyEmailPressed()
+        }
+
+        compositeDisposable.add(this.viewModel.outputs.verifyEmailAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, AccountEditEmailActivity::class.java)
                 startActivity(intent)
 
-            }
+            })
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -57,5 +64,10 @@ class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
     }
 }

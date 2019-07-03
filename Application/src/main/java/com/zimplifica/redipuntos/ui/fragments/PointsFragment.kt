@@ -23,12 +23,14 @@ import com.zimplifica.redipuntos.services.GlobalState
 import com.zimplifica.redipuntos.ui.adapters.CardAdapter
 import com.zimplifica.redipuntos.viewModels.PointsFragmentVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
 @RequiresFragmentViewModel(PointsFragmentVM.ViewModel::class)
 class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
     lateinit var recyclerView: RecyclerView
     lateinit var adapter : CardAdapter
+    private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreateView(
@@ -60,19 +62,19 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
         recyclerView.layoutManager = manager
         recyclerView.adapter = adapter
 
-        this.viewModel.outputs.showDisablePaymentMethodAlertAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showDisablePaymentMethodAlertAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
 
-            }
+            })
 
-        this.viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (it){
                     view.findViewById<LinearLayout>(R.id.loading_linear_ll).visibility = View.VISIBLE
                 }else{
                     view.findViewById<LinearLayout>(R.id.loading_linear_ll).visibility = View.GONE
                 }
-            }
+            })
 
 
 
@@ -87,26 +89,24 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
         super.onActivityCreated(savedInstanceState)
 
         this.viewModel.inputs.fetchPaymentMethods()
-        this.viewModel.outputs.paymentMethods().observeOn(AndroidSchedulers.mainThread()).subscribe {
+        compositeDisposable.add(this.viewModel.outputs.paymentMethods().observeOn(AndroidSchedulers.mainThread()).subscribe {
             adapter.setPaymentMethods(it)
             adapter.notifyDataSetChanged()
-        }
-        this.viewModel.outputs.newData().observeOn(AndroidSchedulers.mainThread())
+        })
+        compositeDisposable.add(this.viewModel.outputs.newData().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 this.viewModel.inputs.fetchPaymentMethods()
-            }
+            })
 
-        this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showError("Alerta",it)
-            }
+            })
 
-        this.viewModel.outputs.disablePaymentMethodAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.disablePaymentMethodAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showError("Alerta","Método de pago eliminado correctamente.")
-            }
-
-
+            })
     }
 
     private fun showError(title : String, message: String){
@@ -120,6 +120,11 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
             }
         }
         MyDialogFragment2().show(fragmentManager!!,"showError")
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 
 

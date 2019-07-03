@@ -1,5 +1,5 @@
 package com.zimplifica.redipuntos.libs;
-
+/*
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,9 +34,7 @@ public class ActivityViewModel2<ViewType extends ActivityLifecycleType>{
         this.activityResult.onNext(activityResult);
     }
 
-    /**
-     * Takes intent data from the view.
-     */
+
     public void intent(final @NonNull Intent intent) {
         this.intent.onNext(intent);
     }
@@ -85,9 +83,7 @@ public class ActivityViewModel2<ViewType extends ActivityLifecycleType>{
         );
     }
 
-    /**
-     * Determines from a view and lifecycle event if the view's life is over.
-     */
+
     private boolean isFinished(final @NonNull ViewType view, final @NonNull ActivityEvent event) {
 
         if (view instanceof BaseActivity) {
@@ -97,3 +93,4 @@ public class ActivityViewModel2<ViewType extends ActivityLifecycleType>{
         return event == ActivityEvent.DESTROY;
     }
 }
+*/

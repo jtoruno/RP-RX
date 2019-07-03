@@ -28,13 +28,14 @@ import android.view.View
 import android.widget.Toast
 import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.ui.fragments.PointsFragment
+import io.reactivex.disposables.CompositeDisposable
 
 import kotlinx.android.synthetic.main.nav_header_home.view.*
 
 
 @RequiresActivityViewModel(HomeViewModel.ViewModel::class)
 class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnNavigationItemSelectedListener {
-
+    private val compositeDisposable = CompositeDisposable()
     lateinit var Catalogfragment : Fragment
     lateinit var Payfragment : Fragment
     lateinit var Movementsfragment : Fragment
@@ -75,12 +76,12 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        this.viewModel.outputs.signOutAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.signOutAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
-            }
+            })
 
         home_log_out.setOnClickListener {
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -128,16 +129,16 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             val intent = Intent(this,AccountInfoActivity::class.java)
             startActivity(intent)
         }
-        this.viewModel.outputs.accountInformationResult().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.accountInformationResult().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 val name1 = (it.userFirstName?:"").toLowerCase().capitalize()
                 val name2 = (it.userLastName?:"").toLowerCase().capitalize()
                 header.home_header_name.text = ("$name1 $name2")
                 header.home_header_points.text = "₡ "+String.format("%,.2f", it.rewards?:0.0) +" RediPuntos"
-            }
+            })
 
 
-        this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.e("Home","showCompletePersonalInfoAlert")
                 val builder = AlertDialog.Builder(this)
@@ -150,20 +151,20 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 builder.setNegativeButton("Luego", null)
                 val dialog = builder.create()
                 dialog.show()
-            }
+            })
 
-        this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 /*
                 val intent = Intent(this,CompletePaymentActivity::class.java)
                 startActivity(intent)*/
                 ManagerNav.getInstance(this).initNav()
-            }
-        this.viewModel.outputs.addPaymentMethodAction().observeOn(AndroidSchedulers.mainThread())
+            })
+        compositeDisposable.add(this.viewModel.outputs.addPaymentMethodAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 val intent = Intent(this,AddPaymentMethodActivity::class.java)
                 startActivity(intent)
-            }
+            })
 
         this.viewModel.inputs.onCreate()
 
@@ -272,5 +273,9 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         return true
     }
 
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
+    }
 
 }

@@ -19,6 +19,7 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.MovementDetailVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_movement_detail.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import java.text.SimpleDateFormat
@@ -26,6 +27,8 @@ import java.util.*
 
 @RequiresActivityViewModel(MovementDetailVM.ViewModel::class)
 class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
+
+    private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,12 +39,12 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar15.visibility = View.GONE
         mov_detail_info.setOnClickListener {  this.viewModel.inputs.paymentInfoButtonPressed() }
-        this.viewModel.outputs.transactionAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.transactionAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 drawTransaction(it)
-            }
+            })
 
-        this.viewModel.outputs.paymentInfoButtonAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.paymentInfoButtonAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val creditCard = it.creditCard ?: return@subscribe
                 val list = mutableListOf <Pair<String,String>>()
@@ -57,7 +60,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
                     list.add(Pair(issuer + " **** " + it.creditCard?.cardNumber.toString(),"₡ "+String.format("%,.2f", it.creditCardCharge)))
                 }
                 openDialog(list)
-            }
+            })
     }
 
     private fun drawTransaction(transaction : Transaction){
@@ -142,5 +145,10 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

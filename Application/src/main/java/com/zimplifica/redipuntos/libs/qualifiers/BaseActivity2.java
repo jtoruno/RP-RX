@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.libs.qualifiers;
 
+/*
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
@@ -65,3 +66,4 @@ public abstract class BaseActivity2<ViewModelType extends ActivityViewModel> ext
         }
     }
 }
+*/

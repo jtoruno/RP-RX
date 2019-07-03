@@ -40,7 +40,7 @@ class CompleteEmailVMTest: RPTestCase() {
     @Test
     fun testEmailUpdated(){
         setUpEnvironment(environment()!!)
-        vm.inputs.emailChanged("dsanchez@zimplifica")
+        vm.inputs.emailChanged("dsanchez@zimplifica.com")
         vm.inputs.verifyEmailPressed()
         this.emailSuccessfullyConfirmed.assertValueCount(1)
     }

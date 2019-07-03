@@ -20,11 +20,13 @@ import kotlinx.android.synthetic.main.fragment_pay.*
 import android.widget.Toast
 import com.zimplifica.redipuntos.ui.activities.SPScanQRActivity
 import com.zimplifica.redipuntos.ui.activities.SPSelectionActivity
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.number_keyboard.*
 
 
 @RequiresFragmentViewModel(PayFragmentVM.ViewModel::class)
 class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,25 +54,30 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
         pay_fragment_btn.setOnClickListener { this.viewModel.inputs.nextButtonPressed() }
 
         super.onActivityCreated(savedInstanceState)
-        this.viewModel.outputs.nextButtonEnabled().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.nextButtonEnabled().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 pay_fragment_btn.isEnabled = it
                 pay_fragment_btn.alpha = if(it){1.0F}else{0.5F}
-            }
-        this.viewModel.outputs.changeAmountAction().observeOn(AndroidSchedulers.mainThread())
-            .subscribe { pay_fragment_amount.text = it }
+            })
+        compositeDisposable.add(this.viewModel.outputs.changeAmountAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe { pay_fragment_amount.text = it })
 
-        this.viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 //val intent = Intent(activity!!,SPSelectionActivity::class.java)
                 val intent = Intent(activity!!,SPScanQRActivity::class.java)
                 intent.putExtra("amount", it)
                 startActivity(intent)
-            }
+            })
     }
 
     private val clickAction = View.OnClickListener {
         val text = (it as Button).text
         this.viewModel.inputs.keyPressed(text.toString())
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import com.zimplifica.redipuntos.ui.adapters.MovSection
 import com.zimplifica.redipuntos.viewModels.MovementsFragmentVM
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_movements.*
 import kotlinx.android.synthetic.main.fragment_movements.view.*
 
@@ -29,6 +31,8 @@ import kotlinx.android.synthetic.main.fragment_movements.view.*
 class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
     lateinit var recyclerView: RecyclerView
     lateinit var sectionAdapter : SectionedRecyclerViewAdapter
+    private val compositeDisposable = CompositeDisposable()
+    private var isVisited = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,9 +57,9 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
 
         mov_fragment_swipe.setOnRefreshListener { viewModel.inputs.fetchTransactions(false) }
 
-        this.viewModel.inputs.fetchTransactions(false)
+        this.viewModel.inputs.fetchTransactions(true)
 
-        this.viewModel.outputs.fetchTransactionsAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.fetchTransactionsAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 mov_fragment_swipe.isRefreshing = false
                 sectionAdapter.removeAllSections()
@@ -65,23 +69,38 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
                     })
                 }
                 sectionAdapter.notifyDataSetChanged()
-            }
+            })
 
-        this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Toast.makeText(activity,it,Toast.LENGTH_SHORT).show()
-            }
+            })
 
-        this.viewModel.outputs.showMovementDetailAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showMovementDetailAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(activity,MovementDetailActivity::class.java)
                 intent.putExtra("transaction",it)
                 startActivity(intent)
-            }
-
-
-
+            })
     }
 
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        this.viewModel.inputs.fetchTransactions(true)
+    }
+
+    /*
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden){
+            Log.e("MovFragment","visible")
+            this.viewModel.inputs.fetchTransactions(true)
+        }
+    }*/
 
 }

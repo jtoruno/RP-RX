@@ -1,60 +1,51 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
+import android.widget.Toast
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
-import com.zimplifica.redipuntos.viewModels.AccountEditEmailVM
+import com.zimplifica.redipuntos.viewModels.AccountVerifyEmailVM
 import io.reactivex.android.schedulers.AndroidSchedulers
-import kotlinx.android.synthetic.main.activity_account_edit_email.*
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.activity_account_verify_email.*
 
+@RequiresActivityViewModel(AccountVerifyEmailVM.ViewModel::class)
+class AccountVerifyEmailActivity : BaseActivity<AccountVerifyEmailVM.ViewModel>() {
 
-
-@RequiresActivityViewModel(AccountEditEmailVM.ViewModel::class)
-class AccountEditEmailActivity : BaseActivity<AccountEditEmailVM.ViewModel>(){
     private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_account_edit_email)
-        supportActionBar?.title = "Editar Correo"
-        progressBar14.visibility = View.GONE
+        setContentView(R.layout.activity_account_verify_email)
+        supportActionBar?.title = "Verificar Correo"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
+        progressBar16.visibility = View.GONE
 
-        account_edit_email_input.onChange { this.viewModel.inputs.emailValueChanged(it) }
-
-        account_edit_email_btn.setOnClickListener {
-            viewModel.inputs.verifyEmailPressed()
+        account_verify_code.onChange { viewModel.inputs.codeValueChanged(it) }
+        account_verify_btn.setOnClickListener {
+            viewModel.inputs.verifyCodePressed()
         }
-        compositeDisposable.add(viewModel.outputs.emailAction().observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                account_edit_email_input.setText(it)
+        compositeDisposable.add(viewModel.outputs.validCode().observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
+                account_verify_btn.isEnabled = it
             })
-
 
         compositeDisposable.add(viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if(it){
-                    progressBar14.visibility = View.VISIBLE
-                    account_edit_email_btn.isEnabled = false
+                    progressBar16.visibility = View.VISIBLE
+                    account_verify_btn.isEnabled = false
                 }else{
-                    progressBar14.visibility = View.GONE
-                    account_edit_email_btn.isEnabled = true
+                    progressBar16.visibility = View.GONE
+                    account_verify_btn.isEnabled = true
                 }
-            })
-
-        compositeDisposable.add(viewModel.outputs.verifyButtonEnabled().observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                account_edit_email_btn.isEnabled = it
             })
 
         compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
@@ -62,15 +53,17 @@ class AccountEditEmailActivity : BaseActivity<AccountEditEmailVM.ViewModel>(){
                 showDialog("Lo sentimos", it)
             })
 
-        compositeDisposable.add(viewModel.outputs.verifyEmailAction().observeOn(AndroidSchedulers.mainThread())
-            .subscribe{
-                val intent = Intent(this,AccountVerifyEmailActivity::class.java)
-                intent.putExtra("email",it)
-                startActivity(intent)
+        compositeDisposable.add(viewModel.outputs.verifyCodeAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Toast.makeText(this,"Correo electrónico confirmado correctamente.",Toast.LENGTH_SHORT).show()
                 finish()
             })
 
-        viewModel.inputs.onCreated()
+        compositeDisposable.add(viewModel.outputs.emailAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                account_verify_email.text = it
+            })
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -92,7 +85,7 @@ class AccountEditEmailActivity : BaseActivity<AccountEditEmailVM.ViewModel>(){
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         compositeDisposable.dispose()
+        super.onDestroy()
     }
 }
