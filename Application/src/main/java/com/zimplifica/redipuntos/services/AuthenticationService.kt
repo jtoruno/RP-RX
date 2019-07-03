@@ -45,6 +45,7 @@ class AuthenticationService(private val state : GlobalState, private val authent
                     is Result.success ->{
                         val email = attributes["email"]
                         this.state.updateCurrentUser(email?:"")
+                        this.state.updateCurrentUser(false)
                     }
                     else -> return@doOnNext
                 }

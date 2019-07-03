@@ -15,6 +15,7 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.zimplifica.domain.entities.Transaction
 import com.zimplifica.domain.entities.TransactionStatus
 import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.MovementDetailVM
@@ -72,7 +73,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         mov_detail_amount.text = "₡ "+String.format("%,.2f", transaction.total)
         val firstName = viewModel.environment.currentUser().getCurrentUser()?.userFirstName ?: ""
         val lastName = viewModel.environment.currentUser().getCurrentUser()?.userLastName ?: ""
-        mov_detail_user_name.text = ("$firstName $lastName").capitalize()
+        mov_detail_user_name.text = ("$firstName $lastName").toLowerCase().capitalizeWords()
         mov_detail_date.text = transaction.date
         mov_detail_hour.text = transaction.time
         when(transaction.status){
@@ -97,17 +98,18 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
 
     private fun openDialog(list : MutableList<Pair<String,String>>){
         val builder = AlertDialog.Builder(this)
+        builder.setTitle("Forma de Pago")
         val linearLayout = LinearLayout(this)
         linearLayout.orientation = LinearLayout.VERTICAL
         val params = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        params.setMargins(10,10,10,10)
+        params.setMargins(10,50,10,10)
 
         linearLayout.layoutParams = params
         for (item in list){
             val textView = TextView(this)
             textView.text = item.first
             val paramsTxt = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            paramsTxt.setMargins(15,15,15,10)
+            paramsTxt.setMargins(30,15,30,10)
             //textView.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
             textView.layoutParams = paramsTxt
             linearLayout.addView(textView)
@@ -118,6 +120,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
             linearLayout.addView(textView2)
         }
         builder.setView(linearLayout)
+        builder.setPositiveButton("Continuar",null)
         val dialog = builder.create()
         dialog.show()
 

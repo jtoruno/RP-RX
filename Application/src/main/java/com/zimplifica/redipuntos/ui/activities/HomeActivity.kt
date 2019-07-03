@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import android.view.View
 import android.widget.Toast
+import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.ui.fragments.PointsFragment
 import io.reactivex.disposables.CompositeDisposable
@@ -98,10 +99,12 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             val dialog = builder.create()
             dialog.show()
         }
-        home_payment_methods.setOnClickListener {
+        home_about_us.setOnClickListener {
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 drawer_layout.closeDrawer(GravityCompat.START)
             }
+            val intent = Intent(this,AboutActivity::class.java)
+            startActivity(intent)
         }
         home_terms_and_conditions.setOnClickListener {
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -131,9 +134,9 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         }
         compositeDisposable.add(this.viewModel.outputs.accountInformationResult().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
-                val name1 = (it.userFirstName?:"").toLowerCase().capitalize()
-                val name2 = (it.userLastName?:"").toLowerCase().capitalize()
-                header.home_header_name.text = ("$name1 $name2")
+                val name1 = (it.userFirstName?:"").toLowerCase()
+                val name2 = (it.userLastName?:"").toLowerCase()
+                header.home_header_name.text = ("$name1 $name2").capitalizeWords()
                 header.home_header_points.text = "₡ "+String.format("%,.2f", it.rewards?:0.0) +" RediPuntos"
             })
 
