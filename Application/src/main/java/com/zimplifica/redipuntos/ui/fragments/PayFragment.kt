@@ -1,10 +1,13 @@
 package com.zimplifica.redipuntos.ui.fragments
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +21,7 @@ import com.zimplifica.redipuntos.viewModels.PayFragmentVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_pay.*
 import android.widget.Toast
+import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.ui.activities.SPScanQRActivity
 import com.zimplifica.redipuntos.ui.activities.SPSelectionActivity
 import io.reactivex.disposables.CompositeDisposable
@@ -69,6 +73,32 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
                 intent.putExtra("amount", it)
                 startActivity(intent)
             })
+
+        compositeDisposable.add(this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                class MyDialogFragment : DialogFragment() {
+                    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+                        return AlertDialog.Builder(activity!!)
+                            .setTitle("Completar Información Personal")
+                            .setMessage("RediPuntos requiere saber un poco mas de ti, ¿deseas completar tu información?")
+                            .setPositiveButton("Completar Información") { dialog, which ->
+                                this@PayFragment.viewModel.inputs.completePersonalInfoButtonPressed()
+                            }
+                            .setNegativeButton("Luego",null)
+                            .create()
+                    }
+                }
+                MyDialogFragment().show(fragmentManager!!,"personalInfo")
+
+            })
+
+        compositeDisposable.add(this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                /*
+                val intent = Intent(this,CompletePaymentActivity::class.java)
+                startActivity(intent)*/
+                ManagerNav.getInstance(activity!!).initNav()
+            })
     }
 
     private val clickAction = View.OnClickListener {
@@ -79,5 +109,10 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    override fun onResume() {
+        viewModel.inputs.resetAmount()
+        super.onResume()
     }
 }

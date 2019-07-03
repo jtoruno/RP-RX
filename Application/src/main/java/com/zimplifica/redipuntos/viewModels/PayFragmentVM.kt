@@ -1,9 +1,11 @@
 package com.zimplifica.redipuntos.viewModels
 
+import android.annotation.SuppressLint
 import android.support.annotation.NonNull
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
+import com.zimplifica.redipuntos.libs.utils.UserConfirmationStatus
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -12,11 +14,18 @@ interface PayFragmentVM {
     interface Inputs {
         fun keyPressed(key : String)
         fun nextButtonPressed()
+        fun resetAmount()
+        // Call when is required to check the personal info.
+        fun completePersonalInfoButtonPressed()
     }
     interface Outputs{
         fun nextButtonEnabled() : Observable<Boolean>
         fun changeAmountAction() : Observable<String>
         fun nextButtonAction() : Observable<Float>
+        /// Emits when is required to check the personal info.
+        fun showCompletePersonalInfoAlert() : Observable<String>
+        /// Emits to go to complete personal info.
+        fun goToCompletePersonalInfoScreen() : Observable<Unit>
     }
 
     class ViewModel (@NonNull val environment: Environment) : FragmentViewModel<PayFragmentVM>(environment), Inputs, Outputs{
@@ -31,10 +40,16 @@ interface PayFragmentVM {
         private val keyPressed = PublishSubject.create<String>()
         private val nextButtonPressed = PublishSubject.create<Unit>()
 
+        private val resetAmount = PublishSubject.create<Unit>()
+        private val completePersonalInfoButtonPressed = PublishSubject.create<Unit>()
+
         //Outputs
         private val nextButtonEnabled = BehaviorSubject.create<Boolean>()
         private val changeAmountAction = PublishSubject.create<String>()
         private val nextButtonAction = PublishSubject.create<Float>()
+        private val showCompletePersonalInfoAlert = BehaviorSubject.create<String>()
+
+        private val goToCompletePersonalInfoScreen = BehaviorSubject.create<Unit>()
 
         init {
             keyPressed
@@ -47,12 +62,34 @@ interface PayFragmentVM {
                 .map { return@map this.validAmount() }
                 .subscribe(this.nextButtonEnabled)
 
+            val nextButtonEvent = this.changeAmountAction
+                .takeWhen(this.nextButtonPressed)
+                .share()
+
+            nextButtonEvent
+                .skipWhile {environment.currentUser().userConfirmationStatus()?.confirmationStatus == UserConfirmationStatus.ConfirmationStatus.missingInfo}
+                .map { return@map this.amountFloat }
+                .subscribe(this.nextButtonAction)
+
+            nextButtonEvent
+                .filter { environment.currentUser().userConfirmationStatus()?.confirmationStatus == UserConfirmationStatus.ConfirmationStatus.missingInfo }
+                .subscribe {this.showCompletePersonalInfoAlert.onNext("nextButton")}
+
+            this.completePersonalInfoButtonPressed
+                .subscribe(this.goToCompletePersonalInfoScreen)
+
+            /*
             changeAmountAction
                 .takeWhen(nextButtonPressed)
                 .map { return@map this.amountFloat }
-                .subscribe(this.nextButtonAction)
+                .subscribe(this.nextButtonAction)*/
         }
-
+        override fun resetAmount() {
+            amountFloat = 0.0F
+            changeAmountAction.onNext("₡ "+String.format("%,.0f", amountFloat))
+            nextButtonEnabled.onNext(false)
+            resetAmount.onNext(Unit)
+        }
 
         override fun keyPressed(key: String) {
             return this.keyPressed.onNext(key)
@@ -61,6 +98,14 @@ interface PayFragmentVM {
         override fun nextButtonPressed() {
             return this.nextButtonPressed.onNext(Unit)
         }
+
+        override fun completePersonalInfoButtonPressed() {
+            return this.completePersonalInfoButtonPressed.onNext(Unit)
+        }
+
+        override fun goToCompletePersonalInfoScreen(): Observable<Unit> = this.goToCompletePersonalInfoScreen
+
+        override fun showCompletePersonalInfoAlert(): Observable<String> = this.showCompletePersonalInfoAlert
 
         override fun nextButtonAction(): Observable<Float> = this.nextButtonAction
 

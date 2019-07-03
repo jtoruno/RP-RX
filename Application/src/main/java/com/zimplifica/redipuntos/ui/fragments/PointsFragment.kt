@@ -2,6 +2,7 @@ package com.zimplifica.redipuntos.ui.fragments
 
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
@@ -43,7 +44,7 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
         adapter = CardAdapter(activity!!){
             class MyDialogFragment : DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-                    return android.support.v7.app.AlertDialog.Builder(activity!!)
+                    return AlertDialog.Builder(activity!!)
                         .setTitle("¡Alerta!")
                         .setMessage("¿Deseas realmente eliminar este método de pago?")
                         .setPositiveButton("Eliminar") { dialog, which ->
