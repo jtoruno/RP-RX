@@ -192,7 +192,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             R.id.nav_catalog->{
                 fm.beginTransaction().hide(active).show(Catalogfragment).commit()
                 active = Catalogfragment
-                toolbar.title = "Promociones"
+                toolbar.title = "Comercios"
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
@@ -220,6 +220,8 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         // Inflate the menu; this adds items to the action bar if it is present.
         when(active){
             is PointsFragment -> {menuInflater.inflate(R.menu.toolbar_points_menu, menu)}
+            is CatalogFragment -> menuInflater.inflate(R.menu.toolbar_sort_menu,menu)
+
             //else -> {menuInflater.inflate(R.menu.home, menu)}
         }
         //menuInflater.inflate(R.menu.home, menu)

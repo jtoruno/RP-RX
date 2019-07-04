@@ -13,4 +13,9 @@ interface UserUseCase{
     fun getVendorInformation(vendorId: String) : Observable<Result<Vendor>>
     fun disablePaymentMethod(owner: String, cardId: String) : Observable<Result<PaymentMethod>>
     fun getTransactionById(id: String) : Observable<Result<Transaction>>
+
+    fun getCommerces(limit: Int?, nextToken: String?) : Observable<Result<CommercesResult>>
+    fun searchCommerces(searchText: String) : Observable<Result<CommercesResult>>
+    fun fetchCategories() : Observable<Result<List<Category>>>
+    fun filterCommercesByCategory(categoryId: String) : Observable<Result<CommercesResult>>
 }

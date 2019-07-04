@@ -1,0 +1,35 @@
+package com.zimplifica.redipuntos.ui.adapters
+
+import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import com.zimplifica.domain.entities.Commerce
+import com.zimplifica.redipuntos.R
+
+class CommerceAdapter : RecyclerView.Adapter<CommerceAdapter.CommerceVH>(){
+    private var items : List<String> = listOf()
+    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CommerceVH {
+        return CommerceVH(LayoutInflater.from(p0.context).inflate(R.layout.commerce_row,p0,false))
+    }
+
+    override fun getItemCount(): Int {
+         return items.size
+    }
+
+    override fun onBindViewHolder(p0: CommerceVH, p1: Int) {
+        val commerce = items[p1]
+    }
+
+    fun setCommerces(list : List<String>){
+        this.items = list
+        notifyDataSetChanged()
+    }
+
+    class CommerceVH(itemView : View) : RecyclerView.ViewHolder(itemView){
+        val image : ImageView = itemView.findViewById(R.id.commerce_row_img)
+        val name : TextView = itemView.findViewById(R.id.commerce_row_name)
+    }
+}

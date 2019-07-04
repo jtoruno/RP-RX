@@ -21,11 +21,14 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.AboutActivity">
+        <activity android:name=".ui.activities.AboutActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.AccountVerifyEmailActivity">
+        <activity android:name=".ui.activities.AccountVerifyEmailActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.AccountEditEmailActivity">
+        <activity android:name=".ui.activities.AccountEditEmailActivity"
+                  android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.MovementDetailActivity"

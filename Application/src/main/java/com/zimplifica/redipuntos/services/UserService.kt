@@ -79,4 +79,20 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         return userUseCase.getTransactionById(id)
     }
 
+    fun getCommerces(limit: Int?, nextToken: String?) : Observable<Result<CommercesResult>> {
+        return userUseCase.getCommerces(limit,nextToken)
+    }
+
+    fun searchCommerces(searchText: String) : Observable<Result<CommercesResult>> {
+        return userUseCase.searchCommerces(searchText)
+    }
+
+    fun filterCommercesByCategory(categoryId: String) : Observable<Result<CommercesResult>> {
+        return userUseCase.filterCommercesByCategory(categoryId)
+    }
+
+    fun fetchCategories() : Observable<Result<List<Category>>> {
+        return userUseCase.fetchCategories()
+    }
+
 }

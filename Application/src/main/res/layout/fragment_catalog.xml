@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".ui.fragments.CatalogFragment">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:background="@color/colorPrimary"
+                android:layout_height="match_parent"
+                tools:context=".ui.fragments.CatalogFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-            android:textColor="@android:color/white"
+
+    <android.support.v7.widget.SearchView
+            app:searchHintIcon="@drawable/ic_search_black_24dp"
+            android:inputType="textCapWords"
+            android:id="@+id/commerce_search_view"
+            android:iconifiedByDefault="false"
+            android:layout_marginTop="8dp"
+            android:queryHint="Buscar comercio..."
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="Catalog"/>
-
-</FrameLayout>
+            android:layout_height="wrap_content" android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true" android:layout_marginStart="0dp" android:layout_alignParentEnd="true"
+            android:layout_marginEnd="0dp"/>
+    <android.support.v7.widget.RecyclerView
+            android:id="@+id/commerce_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
+            android:layout_alignParentStart="true" android:layout_marginStart="0dp"
+            android:layout_below="@+id/commerce_search_view" android:layout_alignParentBottom="true"
+            android:layout_marginBottom="0dp"/>
+</RelativeLayout>

@@ -8,9 +8,7 @@ import org.junit.runner.Request
 import java.lang.Exception
 
 class UserUseCase : UserUseCase{
-    override fun getTransactionById(id: String): Observable<Result<Transaction>> {
-        return Observable.never()
-    }
+
 
     override fun disablePaymentMethod(owner: String, cardId: String): Observable<Result<PaymentMethod>> {
         val single = Single.create<Result<PaymentMethod>> create@{ single ->
@@ -129,6 +127,41 @@ class UserUseCase : UserUseCase{
             }
         }
         return single.toObservable()
+    }
+
+    override fun getCommerces(limit: Int?, nextToken: String?): Observable<Result<CommercesResult>> {
+        val single = Single.create<Result<CommercesResult>> create@{ single ->
+            val commercesResult = CommercesResult(mutableListOf())
+            single.onSuccess(Result.success(commercesResult))
+        }
+        return single.toObservable()
+    }
+
+    override fun searchCommerces(searchText: String): Observable<Result<CommercesResult>> {
+        val single = Single.create<Result<CommercesResult>> create@{ single ->
+            val commercesResult = CommercesResult(mutableListOf())
+            single.onSuccess(Result.success(commercesResult))
+        }
+        return single.toObservable()
+    }
+
+    override fun fetchCategories(): Observable<Result<List<Category>>> {
+        val single = Single.create<Result<List<Category>>> create@{ single ->
+            single.onSuccess(Result.success(mutableListOf()))
+        }
+        return single.toObservable()
+    }
+
+    override fun filterCommercesByCategory(categoryId: String): Observable<Result<CommercesResult>> {
+        val single = Single.create<Result<CommercesResult>> create@{ single ->
+            val commercesResult = CommercesResult(mutableListOf())
+            single.onSuccess(Result.success(commercesResult))
+        }
+        return single.toObservable()
+    }
+
+    override fun getTransactionById(id: String): Observable<Result<Transaction>> {
+        return Observable.never()
     }
 
 }

@@ -408,5 +408,169 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
+    override fun getCommerces(limit: Int?, nextToken: String?): Observable<Result<CommercesResult>> {
+        val single = Single.create<Result<CommercesResult>> create@{ single ->
+            val query = GetCommercesQuery.builder().limit(null).nextToken(null).build()
+            this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getCommerces] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<GetCommercesQuery.Data>) {
+                    val data = response.data()?.commerces
+                    if(data!=null){
+                        val commerces = handleTransformCommercesInfo(data.items())
+                        val commercesResult = CommercesResult(commerces)
+                        single.onSuccess(Result.success(commercesResult))
+                    }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun searchCommerces(searchText: String): Observable<Result<CommercesResult>> {
+        val single = Single.create<Result<CommercesResult>> create@{ single ->
+            val query = GetCommercesQuery.builder().nextToken(null).limit(null).build()
+            this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [searchCommerces] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<GetCommercesQuery.Data>) {
+                    val data = response.data()?.commerces
+                    if(data!=null){
+                        var commerces = handleTransformCommercesInfo(data.items())
+                        if(searchText.isNotEmpty()){
+                            commerces = commerces.filter { commerce ->
+                                return@filter commerce.name.toLowerCase().contains(searchText.toLowerCase())
+                            }
+                        }
+                        val commercesResult = CommercesResult(commerces)
+                        single.onSuccess(Result.success(commercesResult))
+                    }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun fetchCategories(): Observable<Result<List<Category>>> {
+        val single = Single.create<Result<List<Category>>> create@{ single ->
+            val query = GetCategoriesQuery.builder().limit(null).nextToken(null).build()
+            this.appSyncClient!!.query(query).enqueue(object : GraphQLCall.Callback<GetCategoriesQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [fetchCategories] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<GetCategoriesQuery.Data>) {
+                    val data = response.data()?.categories
+                    if(data!=null){
+                        val list = data.items()
+                        val categories = list.map { category ->
+                            return@map Category(category.id(),category.name(),category.categoryImage())
+                        }
+                        single.onSuccess(Result.success(categories))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun filterCommercesByCategory(categoryId: String): Observable<Result<CommercesResult>> {
+        val single = Single.create<Result<CommercesResult>> create@{ single ->
+            val query = GetCommercesQuery.builder().limit(null).nextToken(null).build()
+            this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [filterCommercesByCategory] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<GetCommercesQuery.Data>) {
+                    val data = response.data()?.commerces
+                    if(data!=null){
+                        var commerces = handleTransformCommercesInfo(data.items())
+                        commerces = commerces.filter { commerce ->
+                            return@filter commerce.category?.equals(categoryId) ?: false
+                        }
+
+                        val commercesResult = CommercesResult(commerces)
+                        single.onSuccess(Result.success(commercesResult))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    private fun handleTransformCommercesInfo(data : MutableList<GetCommercesQuery.Item>) : List<Commerce>{
+        var commerces : List<Commerce>
+        commerces = data.map { commerce ->
+
+            //Stores
+            var commerceStores = mutableMapOf<String,Store>()
+            val storesList = commerce.stores()
+            if (!storesList.isNullOrEmpty()){
+                storesList.forEach { store ->
+                    val newStore = this.handleStoreSchedules(store)
+                    commerceStores[store.id()] = newStore
+                }
+            }
+
+            //Promotions
+            var promotions = mutableListOf<Promotion>()
+            val commercePromotions =  commerce.promotions()
+            if(!commercePromotions.isNullOrEmpty()){
+                promotions = commercePromotions.map { promotion ->
+                    var stores = mutableListOf<Store>()
+                    promotion.stores()?.forEach { storeIdentification ->
+                        if (commerceStores[storeIdentification] != null){
+                            stores.add(commerceStores[storeIdentification]!!)
+                        }
+                    }
+
+                    val offerDiscount = promotion.asOffer()?.discount()
+                    if (offerDiscount!=null){
+                        val offer = Offer(offerDiscount)
+                        return@map Promotion(promotion.id(),promotion.promotionType(),promotion.title(),promotion.description(),promotion.promotionImage(),commerce.name(),promotion.validFrom(),promotion.validTo(),promotion.restrictions(),
+                            promotion.waysToUse(),stores,null,offer,commerce.website()?:"",commerce.facebook()?:"",commerce.whatsapp()?:"",commerce.instagram()?:"")
+                    }else{
+                        val coupon = Coupon(promotion.asCoupon()?.beforeDiscount()?:0.0,promotion.asCoupon()?.afterDiscount()?:0.0)
+                        return@map Promotion(promotion.id(),promotion.promotionType(),promotion.title(),promotion.description(),promotion.promotionImage(),commerce.name(),promotion.validFrom(),promotion.validTo(),promotion.restrictions(),promotion.waysToUse(),stores,coupon,
+                            null,commerce.website()?:"",commerce.facebook()?:"",commerce.whatsapp()?:"",commerce.instagram()?:"")
+                    }
+                }.toMutableList()
+            }
+            return@map Commerce(commerce.id(),commerce.name(),commerce.posterImage(),promotions,commerce.website()?:"",commerce.facebook()?:"",commerce.whatsapp()?:"",commerce.instagram()?:"",commerce.category(),
+                mutableListOf())
+        }
+        return commerces
+
+    }
+
+    private fun handleStoreSchedules(store : GetCommercesQuery.Store) : Store{
+        val location = Location(store.name(),store.location().lat(), store.location().lon())
+        val sun = ShoppingHour(store.schedule()?.sun()?.open()?:false,store.schedule()?.sun()?.openningHour()?:"",store.schedule()?.sun()?.closingHour()?:"")
+        val mon = ShoppingHour(store.schedule()?.mon()?.open()?:false,store.schedule()?.mon()?.openningHour()?:"",store.schedule()?.mon()?.closingHour()?:"")
+        val tue = ShoppingHour(store.schedule()?.tue()?.open()?:false,store.schedule()?.tue()?.openningHour()?:"",store.schedule()?.tue()?.closingHour()?:"")
+        val wed = ShoppingHour(store.schedule()?.wed()?.open()?:false,store.schedule()?.wed()?.openningHour()?:"",store.schedule()?.wed()?.closingHour()?:"")
+        val thu = ShoppingHour(store.schedule()?.thu()?.open()?:false,store.schedule()?.thu()?.openningHour()?:"",store.schedule()?.thu()?.closingHour()?:"")
+        val fri = ShoppingHour(store.schedule()?.fri()?.open()?:false,store.schedule()?.fri()?.openningHour()?:"",store.schedule()?.fri()?.closingHour()?:"")
+        val sat = ShoppingHour(store.schedule()?.sat()?.open()?:false,store.schedule()?.sat()?.openningHour()?:"",store.schedule()?.sat()?.closingHour()?:"")
+
+        val schedule = Schedule(sun, mon, tue, wed, thu, fri, sat)
+        return Store(store.id(),store.name(),location,store.phoneNumber(),schedule)
+    }
+
 
 }
