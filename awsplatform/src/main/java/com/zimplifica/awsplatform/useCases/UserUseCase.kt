@@ -572,5 +572,4 @@ class UserUseCase : UserUseCase {
         return Store(store.id(),store.name(),location,store.phoneNumber(),schedule)
     }
 
-
 }

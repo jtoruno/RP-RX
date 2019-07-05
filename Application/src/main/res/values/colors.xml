@@ -16,4 +16,5 @@
     <color name="customGreen">#66b151</color>
     <color name="pendingColor">#EB9100</color>
     <color name="searchPlateColor">#242633</color>
+    <color name="blackTransparent">#80000000</color>
 </resources>

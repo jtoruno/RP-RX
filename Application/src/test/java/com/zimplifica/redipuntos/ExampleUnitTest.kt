@@ -3,6 +3,7 @@ package com.zimplifica.redipuntos
 import org.junit.Test
 
 import org.junit.Assert.*
+import java.text.SimpleDateFormat
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -13,6 +14,14 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
+    }
+
+    @Test
+    fun dateLong(){
+        val example = "2019-06-13T00:00-06:00"
+        val final = formatLongDate(example)
+        println(final)
+
     }
 
     @Test
@@ -58,6 +67,13 @@ class ExampleUnitTest {
             number = number.substring(0,4)+" "+number.substring(4,number.length)
         }
         return number
+    }
+
+    private fun formatLongDate(dateValue : String) : String{
+        val hourString = dateValue.split("T").last()
+        val date = dateValue.split("T").first()
+        val final = date.replace("-","/")
+        return "$final $hourString"
     }
 
 }

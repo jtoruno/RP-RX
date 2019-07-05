@@ -73,6 +73,7 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                mov_fragment_swipe.isRefreshing = false
                 Toast.makeText(activity,it,Toast.LENGTH_SHORT).show()
             })
 

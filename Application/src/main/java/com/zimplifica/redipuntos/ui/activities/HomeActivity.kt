@@ -57,7 +57,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         Movementsfragment = MovementsFragment()
         active = Payfragment
 
-        fm.beginTransaction().add(R.id.home_frame_layout,Catalogfragment, "catalog").hide(Catalogfragment).commit()
+        fm.beginTransaction().add(R.id.home_frame_layout,Catalogfragment,"commerce_fragment").hide(Catalogfragment).commit()
         fm.beginTransaction().add(R.id.home_frame_layout,Payfragment, "pay").commit()
         fm.beginTransaction().add(R.id.home_frame_layout,PointsFragment, "points").hide(PointsFragment).commit()
         fm.beginTransaction().add(R.id.home_frame_layout,Movementsfragment,"movements").hide(Movementsfragment).commit()
@@ -233,6 +233,11 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
+            R.id.filter_action -> {
+                val frag = fm.findFragmentByTag("commerce_fragment") as CatalogFragment
+                frag.filterAction()
+                return true
+            }
             R.id.action_settings -> return true
             R.id.points_action -> {
                 this.viewModel.inputs.addPaymentButtonPressed()

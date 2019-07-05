@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.squareup.picasso.Picasso
 import com.zimplifica.domain.entities.Commerce
 import com.zimplifica.redipuntos.R
 
 class CommerceAdapter : RecyclerView.Adapter<CommerceAdapter.CommerceVH>(){
-    private var items : List<String> = listOf()
+    private var items : List<Commerce> = listOf()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CommerceVH {
         return CommerceVH(LayoutInflater.from(p0.context).inflate(R.layout.commerce_row,p0,false))
     }
@@ -21,9 +22,11 @@ class CommerceAdapter : RecyclerView.Adapter<CommerceAdapter.CommerceVH>(){
 
     override fun onBindViewHolder(p0: CommerceVH, p1: Int) {
         val commerce = items[p1]
+        p0.name.text = commerce.name
+        Picasso.get().load(commerce.posterImage).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(p0.image)
     }
 
-    fun setCommerces(list : List<String>){
+    fun setCommerces(list : List<Commerce>){
         this.items = list
         notifyDataSetChanged()
     }

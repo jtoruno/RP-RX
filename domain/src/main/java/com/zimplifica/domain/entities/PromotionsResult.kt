@@ -1,5 +1,6 @@
 package com.zimplifica.domain.entities
 
+import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -15,19 +16,24 @@ class Coupon(val beforeDiscount: Double, val afterDiscount: Double)
 
 class Offer(val discount: Int)
 
-class Category(val id: String, val name: String,val posterImage: String)
+class Category(val id: String, val name: String,val posterImage: String) : Serializable
 
 class Promotion(val id: String, val promotionType: String, val title: String, val description: String,val promotionImage: String,val commerceName: String,validFrom: String,validTo: String,
                 val restrictions: String,val waysToUse: String,val stores: List<Store>,val coupon: Coupon?,val offer: Offer?,val website: String,val facebook: String,val whatsapp: String,
                 val instagram: String){
+
     var validFrom :String
     var validTo: String
     init {
-        val dateNow = Date()
-        dateNow.time = validFrom.toLong()
-        this.validFrom =  SimpleDateFormat("dd/MM/yyyy HH:mm").format(dateNow)
-        dateNow.time = validTo.toLong()
-        this.validTo = SimpleDateFormat("dd/MM/yyyy HH:mm").format(dateNow)
+        this.validFrom = formatLongDate(validFrom)
+        this.validTo = formatLongDate(validTo)
+    }
+
+    private fun formatLongDate(dateValue : String) : String{
+        val hourString = dateValue.split("T").last()
+        val date = dateValue.split("T").first()
+        val final = date.replace("-","/")
+        return "$final $hourString"
     }
 }
 
