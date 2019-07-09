@@ -5,6 +5,30 @@
                 android:background="@android:color/white"
              android:layout_height="match_parent"
              tools:context=".ui.fragments.MovementsFragment">
+    <LinearLayout
+            android:id="@+id/mov_fragment_no_transaction"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="0dp"
+            android:layout_alignEnd="@+id/mov_fragment_swipe" android:layout_marginStart="0dp"
+            android:layout_alignStart="@+id/mov_fragment_swipe" android:layout_centerInParent="true">
+        <TextView
+                android:textAlignment="center"
+                android:text="No existen pagos en proceso"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView34"/>
+        <TextView
+                android:layout_marginTop="50dp"
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:text="Podrás ver los pagos en proceso inmediatamente al realizar un pago"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView35"/>
+    </LinearLayout>
     <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                   android:id="@+id/mov_fragment_swipe"
                                                   android:layout_width="match_parent"

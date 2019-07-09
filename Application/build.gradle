@@ -103,6 +103,8 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    //implementation 'me.grantland:autofittextview:0.2.1'
+
     //implementation 'com.amazonaws:aws-android-sdk-appsync:2.9.+'
     //implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     //implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'

@@ -58,9 +58,15 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
         mov_fragment_swipe.setOnRefreshListener { viewModel.inputs.fetchTransactions(false) }
 
         this.viewModel.inputs.fetchTransactions(true)
+        mov_fragment_no_transaction.visibility = View.GONE
 
         compositeDisposable.add(this.viewModel.outputs.fetchTransactionsAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                if (it.isEmpty()){
+                    mov_fragment_no_transaction.visibility = View.VISIBLE
+                }else{
+                    mov_fragment_no_transaction.visibility = View.GONE
+                }
                 mov_fragment_swipe.isRefreshing = false
                 sectionAdapter.removeAllSections()
                 for(item in it){

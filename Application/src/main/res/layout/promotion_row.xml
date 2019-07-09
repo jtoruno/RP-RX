@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             android:layout_margin="10dp"
+                                             android:foreground="?android:attr/selectableItemBackground"
+                                             android:clickable="true"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                                             android:layout_height="wrap_content" android:focusable="true">
+
+    <android.support.constraint.ConstraintLayout
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ImageView
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                app:layout_constraintDimensionRatio="H, 100:70"
+                android:layout_width="0dp"
+                android:layout_height="0dp" app:srcCompat="@drawable/no_image"
+                android:id="@+id/promotion_row_image" app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+        <LinearLayout
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="55dp" app:layout_constraintTop_toBottomOf="@+id/promotion_row_image"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="0dp"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="0dp">
+            <TextView
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeMaxTextSize="15sp"
+                    android:autoSizeStepGranularity="1sp"
+                    android:autoSizeTextType="uniform"
+                    android:textColor="@android:color/black"
+                    android:layout_marginStart="3dp"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:text="Title"
+                    android:maxLines="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/promotion_row_title"/>
+            <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                <TextView
+                        android:autoSizeTextType="uniform"
+                        android:layout_marginStart="3dp"
+                        android:text="Description"
+                        android:textSize="10sp"
+                        android:autoSizeMinTextSize="6sp"
+                        android:autoSizeMaxTextSize="12sp"
+                        android:autoSizeStepGranularity="1sp"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.7"
+                        android:layout_height="match_parent" android:id="@+id/promotion_row_description"/>
+                <android.support.constraint.ConstraintLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="0.3">
+
+
+                    <TextView
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="6sp"
+                            android:autoSizeMaxTextSize="12sp"
+                            android:autoSizeStepGranularity="1sp"
+                            android:textColor="@android:color/black"
+                            android:textSize="10sp"
+                            android:layout_marginEnd="2dp"
+                            android:maxLines="1"
+                            android:textAlignment="textEnd"
+                            android:text="2,000.00"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:id="@+id/promotion_row_amount1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                    />
+                    <TextView
+                            android:autoSizeTextType="uniform"
+                            android:autoSizeMinTextSize="6sp"
+                            android:autoSizeMaxTextSize="12sp"
+                            android:autoSizeStepGranularity="1sp"
+                            android:textSize="10sp"
+                            android:textColor="@color/red"
+                            android:layout_marginEnd="2dp"
+                            android:textAlignment="textEnd"
+                            android:maxLines="1"
+                            android:text="1,300.00"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:id="@+id/promotion_row_amount2"
+                            app:layout_constraintTop_toBottomOf="@+id/promotion_row_amount1"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginBottom="2dp" app:layout_constraintBottom_toBottomOf="parent"/>
+                    <TextView
+                            android:textSize="20sp"
+                            android:text="10"
+                            android:textColor="@color/red"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" android:id="@+id/promotion_row_coupon"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="@+id/promotion_row_amount2"/>
+                </android.support.constraint.ConstraintLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

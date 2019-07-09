@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.support.design.chip.Chip
 import android.support.design.chip.ChipGroup
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -22,6 +23,7 @@ import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseFragment
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresFragmentViewModel
 import com.zimplifica.redipuntos.ui.activities.CategoriesActivity
+import com.zimplifica.redipuntos.ui.activities.CommercePromotionsActivity
 import com.zimplifica.redipuntos.ui.adapters.CommerceAdapter
 import com.zimplifica.redipuntos.viewModels.CommercesFragmentVM
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -34,6 +36,7 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
     lateinit var group : ChipGroup
     lateinit var adapter : CommerceAdapter
     private val compositeDisposable = CompositeDisposable()
+    lateinit var chip : Chip
     companion object {
         val REQUEST_CATEGORY = 1023
     }
@@ -50,6 +53,8 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val searchView = view.commerce_search_view
+        chip = view.commerce_chip
+        chip.visibility = View.GONE
         searchView.isIconified = false
         searchView.clearFocus()
         searchView.queryHint = "Buscar comercio..."
@@ -92,10 +97,22 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
 
         })
 
+        chip.setOnCloseIconClickListener {
+            chip.visibility = View.GONE
+            searchView.visibility = View.VISIBLE
+            viewModel.inputs.fetchCommerces()
+        }
+
+        chip.setOnClickListener {
+            viewModel.inputs.filterButtonPressed()
+        }
+
         recyclerView = view.commerce_recycler_view
         val manager = GridLayoutManager(activity,2)
         recyclerView.layoutManager = manager
-        adapter = CommerceAdapter()
+        adapter = CommerceAdapter{
+            viewModel.inputs.commerceSelected(it)
+        }
         recyclerView.adapter = adapter
         viewModel.inputs.fetchCommerces()
 
@@ -120,6 +137,20 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
             val intent = Intent(activity,CategoriesActivity::class.java)
             startActivityForResult(intent, REQUEST_CATEGORY)
         })
+
+        compositeDisposable.add(viewModel.outputs.categorySelectedAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                chip.text = it.name
+                chip.visibility = View.VISIBLE
+                searchView.visibility = View.GONE
+            })
+
+        compositeDisposable.add(viewModel.outputs.commerceSelectedAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(activity,CommercePromotionsActivity::class.java)
+                intent.putExtra("commerce", it)
+                startActivity(intent)
+            })
     }
 
     fun filterAction(){
@@ -137,6 +168,7 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
             if(resultCode == Activity.RESULT_OK){
                 val category = data?.getSerializableExtra("category") as? Category
                 if(category != null){
+                    viewModel.inputs.categorySelected(category)
                     viewModel.inputs.filterByCategory(category)
                 }
             }

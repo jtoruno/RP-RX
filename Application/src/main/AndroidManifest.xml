@@ -21,6 +21,10 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".ui.activities.PromotionDetailActivity">
+        </activity>
+        <activity android:name=".ui.activities.CommercePromotionsActivity">
+        </activity>
         <activity android:name=".ui.activities.CategoriesActivity">
         </activity>
         <activity
