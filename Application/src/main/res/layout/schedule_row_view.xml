@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_marginTop="5dp"
+              android:layout_marginStart="5dp"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content">
+    <LinearLayout android:layout_width="match_parent"
+                  android:orientation="horizontal"
+                  android:layout_height="wrap_content">
+        <TextView
+                android:text="Lunes"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView46" android:layout_weight="1"/>
+        <TextView
+                android:text="8:00"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView52" android:layout_weight="1"/>
+        <TextView
+                android:text="HASTA"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView54" android:layout_weight="1"/>
+        <TextView
+                android:text="17:00"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView56" android:layout_weight="1"/>
+
+    </LinearLayout>
+    <View
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="@color/navDisableColor"
+            android:layout_height="1dp"/>
+
+
+
+</LinearLayout>

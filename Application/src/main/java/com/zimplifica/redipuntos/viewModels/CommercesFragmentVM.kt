@@ -79,11 +79,11 @@ interface CommercesFragmentVM {
                 .share()
 
             val searchEvent = this.searchButtonPressed
-                .flatMap { return@flatMap this.searchCommerces(it) }
+                .flatMap { return@flatMap this.searchCommerces(null,null,it) }
                 .share()
 
             val categoryFilterEvent = this.filterByCategory
-                .flatMap { return@flatMap this.filterCommercesByCategory(it) }
+                .flatMap { return@flatMap this.filterCommercesByCategory(null,null,it) }
                 .share()
 
             Observable.merge(commerceEvent,searchEvent,categoryFilterEvent)
@@ -133,20 +133,20 @@ interface CommercesFragmentVM {
 
         override fun loadingActive(): Observable<Boolean> = this.loadingActive
 
-        private fun fetchCommercesResult(limit: Int?, nextToken: String?) : Observable<Result<CommercesResult>>{
-           return environment.userUseCase().getCommerces(limit,nextToken)
+        private fun fetchCommercesResult(limit: Int?, skip: Int?) : Observable<Result<CommercesResult>>{
+           return environment.userUseCase().getCommerces(limit,skip,null,null)
                .doOnComplete { this.loadingActive.onNext(false) }
                .doOnSubscribe { this.loadingActive.onNext(true) }
         }
 
-        private fun searchCommerces(searchText: String) : Observable<Result<CommercesResult>>{
-            return environment.userUseCase().searchCommerces(searchText)
+        private fun searchCommerces(limit: Int?, skip: Int?,searchText: String) : Observable<Result<CommercesResult>>{
+            return environment.userUseCase().getCommerces(limit,skip,null,searchText)
                 .doOnComplete { this.loadingActive.onNext(false) }
                 .doOnSubscribe { this.loadingActive.onNext(true) }
         }
 
-        private fun filterCommercesByCategory(category : Category) : Observable<Result<CommercesResult>>{
-            return environment.userUseCase().filterCommercesByCategory(category.id)
+        private fun filterCommercesByCategory(limit: Int?, skip: Int?,category : Category) : Observable<Result<CommercesResult>>{
+            return environment.userUseCase().getCommerces(limit,skip,category.id,null)
                 .doOnComplete { this.loadingActive.onNext(false) }
                 .doOnSubscribe { this.loadingActive.onNext(true) }
         }

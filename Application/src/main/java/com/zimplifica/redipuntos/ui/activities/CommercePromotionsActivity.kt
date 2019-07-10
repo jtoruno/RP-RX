@@ -39,6 +39,7 @@ class CommercePromotionsActivity : BaseActivity<CommercePromotionsVM.ViewModel>(
         compositeDisposable.add(viewModel.outputs.promotionSelectedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, PromotionDetailActivity::class.java)
+                intent.putExtra("promotion",it)
                 startActivity(intent)
             })
 

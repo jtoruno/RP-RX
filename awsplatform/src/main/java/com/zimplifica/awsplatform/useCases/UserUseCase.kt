@@ -5,6 +5,7 @@ import android.util.Log
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers
 import com.amazonaws.rediPuntosAPI.*
 import com.amazonaws.rediPuntosAPI.type.CheckoutPayloadSitePayInput
+import com.amazonaws.rediPuntosAPI.type.CommercesInput
 import com.amazonaws.rediPuntosAPI.type.WayToPayInput
 import com.apollographql.apollo.GraphQLCall
 import com.apollographql.apollo.api.Response
@@ -161,10 +162,11 @@ class UserUseCase : UserUseCase {
     override fun addPaymentMethod(paymentMethod: PaymentMethodInput): Observable<Result<PaymentMethod>> {
         val single = Single.create<Result<PaymentMethod>> create@{ single ->
             val input = com.amazonaws.rediPuntosAPI.type.PaymentMethodInput.builder()
-                .cardNumber(paymentMethod.cardNumber)
-                .cardHolderName(paymentMethod.cardHolderName)
-                .expirationDate(paymentMethod.expirationDate)
-                .cvv(paymentMethod.cvv)
+                //.cardNumber(paymentMethod.cardNumber)
+                //.cardHolderName(paymentMethod.cardHolderName)
+                //.expirationDate(paymentMethod.expirationDate)
+                .data("")
+                //.cvv(paymentMethod.cvv)
                 .build()
             val mutation = AddPaymentMethodMutation.builder()
                 .paymentMethod(input)
@@ -196,6 +198,8 @@ class UserUseCase : UserUseCase {
         val single = Single.create<Result<TransactionsResult>> create@{ single ->
             val query = GetTransactionsByUserQuery.builder()
                 //.username(username)
+                .limit(null)
+                .nextToken(null)
                 .build()
             val cachePolicy =  if(useCache){
                 AppSyncResponseFetchers.CACHE_FIRST
@@ -408,9 +412,10 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
-    override fun getCommerces(limit: Int?, nextToken: String?): Observable<Result<CommercesResult>> {
+    override fun getCommerces(limit: Int?, skip: Int?, categoryId: String?, textSearch: String?): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
-            val query = GetCommercesQuery.builder().limit(null).nextToken(null).build()
+            val input = CommercesInput.builder().limit(limit).skip(skip) .categoryId(categoryId).textSearch(textSearch).build()
+            val query = GetCommercesQuery.builder().input(input).build()
             this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getCommerces] Error.",e)
@@ -433,6 +438,7 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
+    /*
     override fun searchCommerces(searchText: String): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
             val query = GetCommercesQuery.builder().nextToken(null).limit(null).build()
@@ -460,7 +466,7 @@ class UserUseCase : UserUseCase {
             })
         }
         return single.toObservable()
-    }
+    }*/
 
     override fun fetchCategories(): Observable<Result<List<Category>>> {
         val single = Single.create<Result<List<Category>>> create@{ single ->
@@ -487,7 +493,7 @@ class UserUseCase : UserUseCase {
         }
         return single.toObservable()
     }
-
+    /*
     override fun filterCommercesByCategory(categoryId: String): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
             val query = GetCommercesQuery.builder().limit(null).nextToken(null).build()
@@ -511,7 +517,7 @@ class UserUseCase : UserUseCase {
             })
         }
         return single.toObservable()
-    }
+    }*/
 
     private fun handleTransformCommercesInfo(data : MutableList<GetCommercesQuery.Item>) : List<Commerce>{
         var commerces : List<Commerce>

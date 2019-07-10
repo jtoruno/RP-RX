@@ -21,11 +21,14 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.PromotionDetailActivity">
+        <activity android:name=".ui.activities.PromotionDetailActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.CommercePromotionsActivity">
+        <activity android:name=".ui.activities.CommercePromotionsActivity"
+                  android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".ui.activities.CategoriesActivity">
+        <activity android:name=".ui.activities.CategoriesActivity"
+                  android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.AboutActivity"

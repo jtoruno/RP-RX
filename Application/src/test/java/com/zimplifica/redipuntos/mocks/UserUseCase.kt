@@ -129,21 +129,21 @@ class UserUseCase : UserUseCase{
         return single.toObservable()
     }
 
-    override fun getCommerces(limit: Int?, nextToken: String?): Observable<Result<CommercesResult>> {
+    override fun getCommerces(limit: Int?, skip: Int?, categoryId: String?, textSearch: String?): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
             val commercesResult = CommercesResult(mutableListOf())
             single.onSuccess(Result.success(commercesResult))
         }
         return single.toObservable()
     }
-
+    /*
     override fun searchCommerces(searchText: String): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
             val commercesResult = CommercesResult(mutableListOf())
             single.onSuccess(Result.success(commercesResult))
         }
         return single.toObservable()
-    }
+    }*/
 
     override fun fetchCategories(): Observable<Result<List<Category>>> {
         val single = Single.create<Result<List<Category>>> create@{ single ->
@@ -151,14 +151,14 @@ class UserUseCase : UserUseCase{
         }
         return single.toObservable()
     }
-
+    /*
     override fun filterCommercesByCategory(categoryId: String): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
             val commercesResult = CommercesResult(mutableListOf())
             single.onSuccess(Result.success(commercesResult))
         }
         return single.toObservable()
-    }
+    }*/
 
     override fun getTransactionById(id: String): Observable<Result<Transaction>> {
         return Observable.never()

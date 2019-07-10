@@ -10,6 +10,7 @@
         tools:context=".ui.activities.PromotionDetailActivity">
 
     <LinearLayout
+            android:descendantFocusability="blocksDescendants"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -18,7 +19,7 @@
                 android:adjustViewBounds="true"
                 android:layout_height="wrap_content"
                 app:srcCompat="@drawable/no_image"
-                android:id="@+id/imageView8"/>
+                android:id="@+id/promotion_detail_img"/>
         <TextView
                 android:text="Title"
                 android:layout_marginStart="4dp"
@@ -27,7 +28,7 @@
                 android:textSize="22sp"
                 android:textColor="@android:color/white"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/textView37"/>
+                android:layout_height="wrap_content" android:id="@+id/promotion_detail_title"/>
 
         <View
                 android:layout_width="match_parent"
@@ -57,7 +58,7 @@
                 android:layout_marginTop="10dp"
                 android:text="Description"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/textView44"/>
+                android:layout_height="wrap_content" android:id="@+id/promotion_detail_description"/>
         <TextView
                 android:textStyle="bold"
                 android:textSize="22sp"
@@ -80,7 +81,7 @@
                 android:textSize="16sp"
                 android:textColor="@android:color/white"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/textView46"/>
+                android:layout_height="wrap_content" android:id="@+id/promotion_detail_date1"/>
         <TextView
                 android:layout_marginTop="6dp"
                 android:layout_marginStart="4dp"
@@ -88,7 +89,7 @@
                 android:text="TextView"
                 android:textColor="@android:color/white"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:id="@+id/textView48"/>
+                android:layout_height="wrap_content" android:id="@+id/promotion_detail_date2"/>
         <TextView
                 android:textColor="@android:color/white"
                 android:textSize="22sp"
@@ -98,6 +99,117 @@
                 android:text="Localización"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/textView50"/>
+        <View
+                android:layout_width="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/navDisableColor"
+                android:layout_height="1dp"/>
+        <android.support.v7.widget.RecyclerView
+                android:id="@+id/promotion_detail_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"/>
+
+        <View
+                android:layout_marginTop="5dp"
+                android:layout_width="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/navDisableColor"
+                android:layout_height="1dp"/>
+        <TextView
+                android:textSize="22sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="4dp"
+                android:text="Contactos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView37"/>
+        <View
+                android:layout_width="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/navDisableColor"
+                android:layout_height="1dp"/>
+        <LinearLayout
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="4dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <ImageView
+                    android:adjustViewBounds="true"
+                    android:layout_width="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_height="40dp" app:srcCompat="@drawable/f_logo_blue"
+                    android:id="@+id/promotion_detail_fb"/>
+            <ImageView
+                    android:adjustViewBounds="true"
+                    android:layout_width="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_height="40dp" app:srcCompat="@drawable/ic_language_black_24dp"
+                    android:id="@+id/promotion_detail_web" />
+            <ImageView
+                    android:adjustViewBounds="true"
+                    android:layout_width="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_height="40dp" app:srcCompat="@drawable/instagram_logo"
+                    android:id="@+id/promotion_detail_instagram"/>
+            <ImageView
+                    android:adjustViewBounds="true"
+                    android:layout_width="40dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_height="40dp" app:srcCompat="@drawable/whats_app_logo"
+                    android:id="@+id/promotion_detail_wtapp" />
+        </LinearLayout>
+        <TextView
+                android:textSize="22sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="4dp"
+                android:text="Restricciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView44"/>
+        <View
+                android:layout_width="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/navDisableColor"
+                android:layout_height="1dp"/>
+        <TextView
+                android:layout_marginStart="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:text="TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/promotion_detail_restrictions"/>
+        <TextView
+                android:textSize="22sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="4dp"
+                android:text="Formas de Uso"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView48"/>
+        <View
+                android:layout_width="match_parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/navDisableColor"
+                android:layout_height="1dp"/>
+        <TextView
+                android:layout_marginStart="4dp"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:text="TextView"
+                android:layout_marginBottom="30dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/promotion_detail_forms_to_use"/>
+
 
     </LinearLayout>
 </ScrollView>

@@ -120,7 +120,7 @@ class CacheOperations{
 
     fun updateTransactions(withExistingTransaction : Transaction){
 
-        val query = GetTransactionsByUserQuery.builder().build()
+        val query = GetTransactionsByUserQuery.builder().limit(null).nextToken(null).build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -149,14 +149,14 @@ class CacheOperations{
                             return@map oldValue
                         } }
 
-                        val data = query.wrapData(GetTransactionsByUserQuery.Data(GetTransactionsByUserQuery.GetTransactionsByUser("PaginatedTransactions",items)))
+                        val data = query.wrapData(GetTransactionsByUserQuery.Data(GetTransactionsByUserQuery.GetTransactionsByUser("PaginatedTransactions",items,null)))
                         appSyncClient!!.store.write(query,data).enqueue(null)
                         Log.i("🔵", "Cache updated at [CacheOperations] [updateTransactions]")
                     }
                 } })
     }
     fun updateNewTransactions(newTransaction: Transaction){
-        val query = GetTransactionsByUserQuery.builder().build()
+        val query = GetTransactionsByUserQuery.builder().nextToken(null).limit(null).build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -175,7 +175,7 @@ class CacheOperations{
                             newTransaction.tax,newTransaction.subtotal,newTransaction.total,newTransaction.rewards,newTransaction.status.name,wtp,newTransaction.description)
                         items.add(0,transaction)
                         Log.i("🔵", "Cache updated at [CacheOperations] [updateTransactions]")
-                        val data = query.wrapData(GetTransactionsByUserQuery.Data(GetTransactionsByUserQuery.GetTransactionsByUser("PaginatedTransactions",items)))
+                        val data = query.wrapData(GetTransactionsByUserQuery.Data(GetTransactionsByUserQuery.GetTransactionsByUser("PaginatedTransactions",items,null)))
                         appSyncClient!!.store.write(query,data).enqueue(null)
                     }
                 }

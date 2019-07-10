@@ -15,6 +15,7 @@
             android:layout_height="wrap_content">
 
         <com.zimplifica.redipuntos.extensions.SquareImageView
+                android:scaleType="fitXY"
                 android:adjustViewBounds="true"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" app:srcCompat="@drawable/no_image" android:id="@+id/commerce_row_img"
