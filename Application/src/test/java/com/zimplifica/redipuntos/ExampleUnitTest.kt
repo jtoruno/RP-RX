@@ -25,6 +25,13 @@ class ExampleUnitTest {
     }
 
     @Test
+    fun testPartition(){
+        val hour = "20:30"
+        val partition = hour.split(":")
+        assertEquals("20",partition.first())
+    }
+
+    @Test
     fun n(){
         print(transformUserId("116500454"))
         print("\n")

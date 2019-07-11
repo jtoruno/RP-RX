@@ -12,6 +12,7 @@ import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.zimplifica.awsplatform.AppSync.AppSyncClient
 import com.zimplifica.awsplatform.AppSync.CacheOperations
+import com.zimplifica.awsplatform.Utils.PlatformUtils
 import com.zimplifica.domain.entities.*
 import com.zimplifica.domain.useCases.UserUseCase
 import io.reactivex.Observable
@@ -161,6 +162,7 @@ class UserUseCase : UserUseCase {
 
     override fun addPaymentMethod(paymentMethod: PaymentMethodInput): Observable<Result<PaymentMethod>> {
         val single = Single.create<Result<PaymentMethod>> create@{ single ->
+            Log.e("NNNN",PlatformUtils.encrypt(""))
             val input = com.amazonaws.rediPuntosAPI.type.PaymentMethodInput.builder()
                 //.cardNumber(paymentMethod.cardNumber)
                 //.cardHolderName(paymentMethod.cardHolderName)
@@ -566,15 +568,18 @@ class UserUseCase : UserUseCase {
 
     private fun handleStoreSchedules(store : GetCommercesQuery.Store) : Store{
         val location = Location(store.name(),store.location().lat(), store.location().lon())
-        val sun = ShoppingHour(store.schedule()?.sun()?.open()?:false,store.schedule()?.sun()?.openningHour()?:"",store.schedule()?.sun()?.closingHour()?:"")
-        val mon = ShoppingHour(store.schedule()?.mon()?.open()?:false,store.schedule()?.mon()?.openningHour()?:"",store.schedule()?.mon()?.closingHour()?:"")
-        val tue = ShoppingHour(store.schedule()?.tue()?.open()?:false,store.schedule()?.tue()?.openningHour()?:"",store.schedule()?.tue()?.closingHour()?:"")
-        val wed = ShoppingHour(store.schedule()?.wed()?.open()?:false,store.schedule()?.wed()?.openningHour()?:"",store.schedule()?.wed()?.closingHour()?:"")
-        val thu = ShoppingHour(store.schedule()?.thu()?.open()?:false,store.schedule()?.thu()?.openningHour()?:"",store.schedule()?.thu()?.closingHour()?:"")
-        val fri = ShoppingHour(store.schedule()?.fri()?.open()?:false,store.schedule()?.fri()?.openningHour()?:"",store.schedule()?.fri()?.closingHour()?:"")
-        val sat = ShoppingHour(store.schedule()?.sat()?.open()?:false,store.schedule()?.sat()?.openningHour()?:"",store.schedule()?.sat()?.closingHour()?:"")
+        var schedule : Schedule ? = null
+        if(store.schedule()!=null){
+            val sun = ShoppingHour(1,store.schedule()?.sun()?.open()?:false,store.schedule()?.sun()?.openningHour()?:"",store.schedule()?.sun()?.closingHour()?:"")
+            val mon = ShoppingHour(2,store.schedule()?.mon()?.open()?:false,store.schedule()?.mon()?.openningHour()?:"",store.schedule()?.mon()?.closingHour()?:"")
+            val tue = ShoppingHour(3,store.schedule()?.tue()?.open()?:false,store.schedule()?.tue()?.openningHour()?:"",store.schedule()?.tue()?.closingHour()?:"")
+            val wed = ShoppingHour(4,store.schedule()?.wed()?.open()?:false,store.schedule()?.wed()?.openningHour()?:"",store.schedule()?.wed()?.closingHour()?:"")
+            val thu = ShoppingHour(5,store.schedule()?.thu()?.open()?:false,store.schedule()?.thu()?.openningHour()?:"",store.schedule()?.thu()?.closingHour()?:"")
+            val fri = ShoppingHour(6,store.schedule()?.fri()?.open()?:false,store.schedule()?.fri()?.openningHour()?:"",store.schedule()?.fri()?.closingHour()?:"")
+            val sat = ShoppingHour(7,store.schedule()?.sat()?.open()?:false,store.schedule()?.sat()?.openningHour()?:"",store.schedule()?.sat()?.closingHour()?:"")
+            schedule = Schedule(sun, mon, tue, wed, thu, fri, sat)
 
-        val schedule = Schedule(sun, mon, tue, wed, thu, fri, sat)
+        }
         return Store(store.id(),store.name(),location,store.phoneNumber(),schedule)
     }
 

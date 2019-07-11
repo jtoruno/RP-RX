@@ -22,9 +22,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //manifestPlaceholders = [ key : System.getEnv("PUBLIC_KEY")]
         }
     }
-
 }
 
 dependencies {

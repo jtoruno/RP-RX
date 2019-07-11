@@ -6,7 +6,7 @@ import java.util.*
 
 class Location(val name: String, val latitude: Double, val longitude: Double) : Serializable
 
-class ShoppingHour(val open: Boolean, val openningHour: String,val closingHour: String) : Serializable
+class ShoppingHour(val weekday : Int,val open: Boolean, val openningHour: String,val closingHour: String) : Serializable
 
 class Schedule(val sun: ShoppingHour, val mon: ShoppingHour,val tue: ShoppingHour,val wed: ShoppingHour,val thu: ShoppingHour,val fri: ShoppingHour,val sat: ShoppingHour) : Serializable
 

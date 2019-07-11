@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.ui.activities
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -22,10 +23,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_promotion_detail.*
 import android.content.Context.LAYOUT_INFLATER_SERVICE
+import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import com.zimplifica.domain.entities.Schedule
 import com.zimplifica.domain.entities.ShoppingHour
+import java.util.*
 
 
 @RequiresActivityViewModel(PromotionDetailVM.ViewModel::class)
@@ -46,8 +50,8 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
         promotion_detail_instagram.visibility = View.GONE
 
         recyclerView = promotion_detail_recycler_view
-        adapter = LocationAdapter{
-            viewModel.inputs.locationPressed(it)
+        adapter = LocationAdapter({viewModel.inputs.locationPressed(it)}){
+            showDialog(it)
         }
         recyclerView.adapter = adapter
         val manager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false)
@@ -128,19 +132,58 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
     }
 
     private fun showDialog(schedule : Schedule){
-        val dialog = Dialog(this)
+        val dialog = AlertDialog.Builder(this)
         dialog.setTitle("Horario")
         val linearLayout = LinearLayout(this)
         linearLayout.orientation = LinearLayout.VERTICAL
         val params = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        params.setMargins(0,30,0,0)
         linearLayout.layoutParams = params
+        showSchedule(linearLayout,schedule.mon, "Lunes")
+        showSchedule(linearLayout,schedule.tue, "Martes")
+        showSchedule(linearLayout,schedule.wed,"Miércoles")
+        showSchedule(linearLayout,schedule.thu,"Jueves")
+        showSchedule(linearLayout,schedule.fri,"Viernes")
+        showSchedule(linearLayout,schedule.sat,"Sábado")
+        showSchedule(linearLayout,schedule.sun,"Domingo")
+        dialog.setView(linearLayout)
+        dialog.setPositiveButton("Cerrar",null)
+        val view = dialog.create()
+        val window = view.window
+        val wlp = window?.attributes
+        wlp?.gravity = Gravity.BOTTOM
+        window?.attributes = wlp
+        view.show()
+
     }
 
-    private fun showSchedule(view : LinearLayout, obj : ShoppingHour){
+    private fun showSchedule(view : LinearLayout, obj : ShoppingHour, date : String){
+        val calendar = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val rowView = inflater.inflate(R.layout.schedule_row_view, null)
+        val hour1 = rowView.findViewById<TextView>(R.id.schedule_row_hour1)
+        val hour2 = rowView.findViewById<TextView>(R.id.schedule_row_hour2)
+        val day = rowView.findViewById<TextView>(R.id.schedule_row_date)
+        val middleDescription = rowView.findViewById<TextView>(R.id.schedule_row_until)
+        if(obj.open){
+            hour1.text = obj.openningHour
+
+            hour2.text = obj.closingHour
+        }else{
+            hour1.text = "Cerrado"
+            hour2.visibility = View.INVISIBLE
+            middleDescription.visibility = View.INVISIBLE
+        }
+        day.text = date
+
+        if(obj.weekday == calendar){
+            hour1.setTextColor(getColor(android.R.color.black))
+            hour2.setTextColor(getColor(android.R.color.black))
+            day.setTextColor(getColor(android.R.color.black))
+            middleDescription.setTextColor(getColor(android.R.color.black))
+        }
         // Add the new row before the add field button.
-       view.addView(rowView, view.childCount - 1)
+        view.addView(rowView)
     }
 
     override fun onSupportNavigateUp(): Boolean {

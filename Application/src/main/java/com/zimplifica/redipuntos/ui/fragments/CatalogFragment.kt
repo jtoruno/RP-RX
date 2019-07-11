@@ -99,7 +99,7 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
 
         chip.setOnCloseIconClickListener {
             chip.visibility = View.GONE
-            searchView.visibility = View.VISIBLE
+            //searchView.visibility = View.VISIBLE
             viewModel.inputs.fetchCommerces()
         }
 
@@ -142,7 +142,7 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
             .subscribe {
                 chip.text = it.name
                 chip.visibility = View.VISIBLE
-                searchView.visibility = View.GONE
+                //searchView.visibility = View.GONE
             })
 
         compositeDisposable.add(viewModel.outputs.commerceSelectedAction().observeOn(AndroidSchedulers.mainThread())
