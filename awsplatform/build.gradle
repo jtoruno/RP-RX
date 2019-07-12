@@ -20,9 +20,13 @@ android {
 
     buildTypes {
         release {
+            buildConfigField "String", "PUBLIC_KEY", "\"${System.getenv("PUBLIC_KEY")}\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            //manifestPlaceholders = [ key : System.getEnv("PUBLIC_KEY")]
+            //manifestPlaceholders = [ key : System.getenv("PUBLIC_KEY")]
+        }
+        debug{
+            buildConfigField "String", "PUBLIC_KEY", "\"${System.getenv("PUBLIC_KEY")}\""
         }
     }
 }
@@ -48,6 +52,9 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-appsync:2.9.+'
     implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
     implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+
+    implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.62'
+
 }
 repositories {
     mavenCentral()

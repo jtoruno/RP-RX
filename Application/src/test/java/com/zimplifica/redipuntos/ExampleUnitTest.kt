@@ -1,9 +1,19 @@
 package com.zimplifica.redipuntos
 
+import android.util.Base64
+import org.bouncycastle.asn1.pkcs.RSAPublicKey
 import org.junit.Test
 
 import org.junit.Assert.*
-import java.text.SimpleDateFormat
+import java.nio.charset.StandardCharsets
+import java.security.Key
+import java.security.KeyFactory
+import java.security.NoSuchAlgorithmException
+import java.security.PublicKey
+import java.security.spec.InvalidKeySpecException
+import java.security.spec.RSAPublicKeySpec
+import java.security.spec.X509EncodedKeySpec
+
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -11,6 +21,13 @@ import java.text.SimpleDateFormat
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+    @Test
+    fun rsaKey(){
+        val originalKey = "MIICCgKCAgEAot1iRTuueRnWRsMVjwbcmrsjnHTmc/miER4Wbr6+fSXynQ2jdyzZEyn6UW+Co6r9QL6W09rJZV6t5beYzslekPIh6UxbdLWKocQm3vjRbuKXJLZWVgaPwgJjwHjeTQvR2s0S6b5xql2tbBhSB0kKErllvGh+gR3t/GMH4t9hP6NbBBDhcBd/0l5/fhC5P9BCaXDpJvCBX0RaspUYMjO0Pn0k1yQv6IwaQZ5q8fGtToT33+8shh/5F12QJzp0UZnqeauBqWcaFeps2Z+2NFeEGjKKYFvArxTAVHDV040RaS8bybNo55xNpU5rbmM8DQOGiVbBRpaSqqil8I36Gp8ISDop18cjcnthfIjdqkjTIfoVzX/xmwKOyrLDDqgkyCJbO5ZtAu8n+irwY5eq38fONX8Fo6YSuX6004TMj8JbRP6ytm7yHizG6CEojF/hAjhSxdiuHhSzV2tuuJbpqOgpXEAp3+HoMsmKchsBmep87LKM/8rndZGZ16h+JaFVvUeiX6yNItiICeLkTsDhp5PObXQG1qui65mVe/QOx4M0FGRdiwiDb67nVP8naxvwRgwavZPPT/sMH9My/A/WuUH6cfQz0BzPhEBwQVr4FsN7AOFL16L58RmLtyCKyiKA9C/9X04bkflT1brLP6/uPqNMjVYOjVRGEe00F9TSTrZnLhUCAwEAAQ=="
+        println(n(originalKey))
+        println(getKey(originalKey))
+    }
+
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
@@ -81,6 +98,22 @@ class ExampleUnitTest {
         val date = dateValue.split("T").first()
         val final = date.replace("-","/")
         return "$final $hourString"
+    }
+
+    fun getKey(key: String): RSAPublicKey {
+        return RSAPublicKey.getInstance(java.util.Base64.getDecoder().decode(key))
+    }
+
+
+    fun n(data : String): Key{
+        val decoded = java.util.Base64.getDecoder().decode(data)
+        val pkcs1PublicKey = RSAPublicKey.getInstance(decoded)
+        val modulus = pkcs1PublicKey.modulus
+        val publicExponent = pkcs1PublicKey.publicExponent
+        val keySpec = RSAPublicKeySpec(modulus,publicExponent)
+        val kf = KeyFactory.getInstance("RSA")
+        val generatedPublic = kf.generatePublic(keySpec)
+        return generatedPublic
     }
 
 }

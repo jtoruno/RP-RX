@@ -162,13 +162,9 @@ class UserUseCase : UserUseCase {
 
     override fun addPaymentMethod(paymentMethod: PaymentMethodInput): Observable<Result<PaymentMethod>> {
         val single = Single.create<Result<PaymentMethod>> create@{ single ->
-            Log.e("NNNN",PlatformUtils.encrypt(""))
+            val inputValue = PlatformUtils.encrypt(paymentMethod.toJson())?.replace("\n","")
             val input = com.amazonaws.rediPuntosAPI.type.PaymentMethodInput.builder()
-                //.cardNumber(paymentMethod.cardNumber)
-                //.cardHolderName(paymentMethod.cardHolderName)
-                //.expirationDate(paymentMethod.expirationDate)
-                .data("")
-                //.cvv(paymentMethod.cvv)
+                .data(inputValue?:"")
                 .build()
             val mutation = AddPaymentMethodMutation.builder()
                 .paymentMethod(input)
@@ -180,6 +176,8 @@ class UserUseCase : UserUseCase {
                 }
 
                 override fun onResponse(response: Response<AddPaymentMethodMutation.Data>) {
+                    Log.e("addPaymentMth",response.data().toString())
+                    Log.e("addPaymentMth",response.errors().toString())
                     val result = response.data()?.addPaymentMethod()
                     if(result!=null){
                         val paymentMethod = PaymentMethod(result.id(),result.cardNumber(),result.expirationDate(),
