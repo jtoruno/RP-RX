@@ -15,9 +15,11 @@ import com.zimplifica.redipuntos.extensions.text
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.TakePhoneViewModel
+import io.reactivex.disposables.CompositeDisposable
 
 @RequiresActivityViewModel(TakePhoneViewModel.ViewModel::class)
 class TakePhoneActivity : BaseActivity<TakePhoneViewModel.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
     lateinit var nextBtn : Button
     lateinit var phoneEditText: EditText
 
@@ -32,14 +34,14 @@ class TakePhoneActivity : BaseActivity<TakePhoneViewModel.ViewModel>() {
         phoneEditText.onChange { this.viewModel.inputs.phone(it) }
 
         nextBtn.setOnClickListener { this.viewModel.inputs.nextButtonClicked() }
-        this.viewModel.outputs.startNextActivity().subscribe {
+        compositeDisposable.add(this.viewModel.outputs.startNextActivity().subscribe {
             val intent = Intent(this, PasswordActivity::class.java)
             intent.putExtra("phone",phoneEditText.text())
             startActivity(intent)
-        }
-        this.viewModel.outputs.nextButtonIsEnabled().subscribe {
+        })
+        compositeDisposable.add(this.viewModel.outputs.nextButtonIsEnabled().subscribe {
             nextBtn.isEnabled = it
-        }
+        })
 
     }
 
@@ -62,5 +64,10 @@ class TakePhoneActivity : BaseActivity<TakePhoneViewModel.ViewModel>() {
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

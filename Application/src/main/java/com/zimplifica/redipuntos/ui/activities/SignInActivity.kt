@@ -18,9 +18,11 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.SignInViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 
 @RequiresActivityViewModel(SignInViewModel.ViewModel::class)
 class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
     //lateinit var  vm : SignInViewModel.ViewModel
     lateinit var signInBtn : Button
     lateinit var userEditText: EditText
@@ -47,7 +49,7 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
         this.viewModel.outputs.print().subscribe {
             Log.e("PBA",it)
         }
-        this.viewModel.outputs.loadingEnabled()
+        compositeDisposable.add(this.viewModel.outputs.loadingEnabled()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
             if (it){
@@ -57,22 +59,20 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
                 signInBtn.isEnabled = true
                 progressBar.visibility = View.GONE
             }
-        }
-        this.viewModel.outputs.showError().subscribe {
+        })
+        compositeDisposable.add(this.viewModel.outputs.showError().subscribe {
             Log.e("Error Message Activity"+it.friendlyMessage, it.friendlyMessage)
             val intent = Intent(this, SignInFailureActivity::class.java)
             startActivity(intent)
-        }
+        })
 
-        this.viewModel.outputs.signedInAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.signedInAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 //val intent = Intent(this, HomeActivity::class.java)
                 val intent = Intent(this, LaunchActivity::class.java)
                 startActivity(intent)
                 finish()
-            }
-
-
+            })
     }
 
     private fun setBtnEnabled(enabled : Boolean){
@@ -98,5 +98,10 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

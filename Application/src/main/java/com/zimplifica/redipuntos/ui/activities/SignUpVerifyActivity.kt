@@ -18,10 +18,12 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.SignUpVerifyViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 
 
 @RequiresActivityViewModel(SignUpVerifyViewModel.ViewModel::class)
 class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     private var userName = ""
     //private var password = ""
@@ -49,10 +51,10 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
         verifyBtn.setOnClickListener { this.viewModel.inputs.verificationButtonPressed() }
         resendTxt.setOnClickListener { this.viewModel.inputs.resendVerificationCodePressed() }
 
-        this.viewModel.outputs.verificationButtonEnabled().observeOn(AndroidSchedulers.mainThread())
-            .subscribe { verifyBtn.isEnabled = it }
+        compositeDisposable.add(this.viewModel.outputs.verificationButtonEnabled().observeOn(AndroidSchedulers.mainThread())
+            .subscribe { verifyBtn.isEnabled = it })
 
-        this.viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if(it){
                     verifyBtn.isEnabled = false
@@ -61,31 +63,31 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
                     verifyBtn.isEnabled = true
                     progressBar.visibility = View.GONE
                 }
-            }
+            })
 
-        this.viewModel.outputs.resendAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.resendAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 this.showDialog("Confirmación","El código de verificación de 6 dígitos fue reenviado a: ${this.viewModel.username}")
-            }
+            })
 
-        this.viewModel.outputs.showError()
+        compositeDisposable.add(this.viewModel.outputs.showError()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 verifyBtn.isEnabled = true
                 progressBar.visibility = View.GONE
                 showDialog("Lo sentimos",it.friendlyMessage)
-            }
+            })
 
 
         //Cambiar con la pantalla
-        this.viewModel.outputs.verifiedAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.verifiedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 //val intent = Intent(this, HomeActivity::class.java)
                 val intent = Intent(this, LaunchActivity::class.java)
                 startActivity(intent)
                 finish()
                 //showDialog("SIgnIn","Inicio de Sesión correcto")
-            }
+            })
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -116,5 +118,10 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

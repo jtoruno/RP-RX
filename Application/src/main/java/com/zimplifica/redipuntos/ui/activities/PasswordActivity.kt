@@ -22,10 +22,12 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.PasswordViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import java.util.*
 
 @RequiresActivityViewModel(PasswordViewModel.ViewModel::class)
 class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     lateinit var termnsTxt : TextView
     lateinit var passwordEditText: EditText
@@ -93,38 +95,38 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         /////////////////////////////
 
 
-        this.viewModel.outputs.startTermsActivity().subscribe {
+        compositeDisposable.add(this.viewModel.outputs.startTermsActivity().subscribe {
             val intent = Intent(this,TermsActivity::class.java)
             startActivity(intent)
-        }
+        })
 
-        this.viewModel.outputs.startPolicyActivity().subscribe {
+        compositeDisposable.add(this.viewModel.outputs.startPolicyActivity().subscribe {
             val intent = Intent(this,PrivacyActivity::class.java)
             startActivity(intent)
-        }
+        })
 
-        this.viewModel.outputs.signUpButtonEnabled().subscribe {
+        compositeDisposable.add(this.viewModel.outputs.signUpButtonEnabled().subscribe {
             this.buttonEnabled(it)
-        }
+        })
 
-        this.viewModel.outputs.validPasswordCapitalLowerLetters().subscribe {
+        compositeDisposable.add(this.viewModel.outputs.validPasswordCapitalLowerLetters().subscribe {
             this.passOption(img1,it)
-        }
-        this.viewModel.outputs.validPasswordNumbers().subscribe{
+        })
+        compositeDisposable.add(this.viewModel.outputs.validPasswordNumbers().subscribe{
             this.passOption(img2,it)
-        }
-        this.viewModel.outputs.validPasswordSpecialCharacters().subscribe {
+        })
+        compositeDisposable.add(this.viewModel.outputs.validPasswordSpecialCharacters().subscribe {
             this.passOption(img3,it)
-        }
-        this.viewModel.outputs.validPasswordLenght().subscribe {
+        })
+        compositeDisposable.add(this.viewModel.outputs.validPasswordLenght().subscribe {
             this.passOption(img4,it)
-        }
+        })
 
         createAccountBtn.setOnClickListener {
             Log.e("PSVM","CLicked")
             this.viewModel.inputs.signUpButtonPressed()
         }
-        this.viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (it){
                     createAccountBtn.isEnabled = false
@@ -133,20 +135,20 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
                     createAccountBtn.isEnabled = true
                     progressBar.visibility = View.GONE
                 }
-            }
-        this.viewModel.outputs.showError()
+            })
+        compositeDisposable.add(this.viewModel.outputs.showError()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showDialog("Lo sentimos",it.friendlyMessage)
-            }
+            })
 
-        this.viewModel.outputs.verifyPhoneNumberAction()
+        compositeDisposable.add(this.viewModel.outputs.verifyPhoneNumberAction()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this,SignUpVerifyActivity::class.java)
                 //intent.putExtra("password",it.password)
                 startActivity(intent)
-            }
+            })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -189,5 +191,10 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

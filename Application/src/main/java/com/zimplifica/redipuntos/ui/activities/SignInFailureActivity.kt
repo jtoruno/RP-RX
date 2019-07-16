@@ -10,9 +10,11 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.SignInFailureViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 
 @RequiresActivityViewModel(SignInFailureViewModel.ViewModel::class)
 class SignInFailureActivity : BaseActivity<SignInFailureViewModel.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     lateinit var forgotBtn : Button
     lateinit var signUpBtn : Button
@@ -31,20 +33,18 @@ class SignInFailureActivity : BaseActivity<SignInFailureViewModel.ViewModel>() {
         forgotBtn.setOnClickListener { this.viewModel.inputs.forgotPasswordButtonPressed() }
         signUpBtn.setOnClickListener { this.viewModel.inputs.signUpButtonPressed() }
 
-        this.viewModel.outputs.signUpButton().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.signUpButton().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, TakePhoneActivity::class.java)
                 startActivity(intent)
                 finish()
-            }
-        this.viewModel.outputs.forgotPasswordButton().observeOn(AndroidSchedulers.mainThread())
+            })
+        compositeDisposable.add(this.viewModel.outputs.forgotPasswordButton().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, ForgotPasswordActivity::class.java)
                 startActivity(intent)
                 finish()
-            }
-
-
+            })
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -54,5 +54,10 @@ class SignInFailureActivity : BaseActivity<SignInFailureViewModel.ViewModel>() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

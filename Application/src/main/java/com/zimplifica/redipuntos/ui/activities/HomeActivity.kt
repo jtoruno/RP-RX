@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.app_bar_home.*
 import android.view.View
 import android.widget.Toast
 import com.zimplifica.redipuntos.extensions.capitalizeWords
+import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
 import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.ui.fragments.PointsFragment
 import io.reactivex.disposables.CompositeDisposable
@@ -44,6 +46,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
     private val fm = supportFragmentManager
     lateinit var active : Fragment
     private var menuActionBar : Menu ? = null
+    lateinit var bottomNav : BottomNavigationView
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +65,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         fm.beginTransaction().add(R.id.home_frame_layout,PointsFragment, "points").hide(PointsFragment).commit()
         fm.beginTransaction().add(R.id.home_frame_layout,Movementsfragment,"movements").hide(Movementsfragment).commit()
 
-        val bottomNav : BottomNavigationView = findViewById(R.id.home_nav_bottom)
+        bottomNav = findViewById(R.id.home_nav_bottom)
         bottomNav.setOnNavigationItemSelectedListener(navItemListener)
         bottomNav.selectedItemId = R.id.nav_pay
 
@@ -81,7 +84,8 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             .subscribe {
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
-                finish()
+                finishAffinity()
+                //finish()
             })
 
         home_log_out.setOnClickListener {
@@ -211,7 +215,17 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
+            //super.onBackPressed()
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Cerrar Sesión")
+            builder.setMessage("¿Desea salir de la aplicación?")
+            builder.setPositiveButton("Aceptar"){
+                    _,_ ->
+                this.viewModel.inputs.signOutButtonPressed()
+            }
+            builder.setNegativeButton("Cancelar", null)
+            val dialog = builder.create()
+            dialog.show()
         }
     }
 
@@ -286,6 +300,16 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val navigation = SharedPreferencesUtils.getBooleanInSp(this,"nav_to_mov")
+        if (navigation){
+            bottomNav.selectedItemId = R.id.nav_movements
+            val settings = this.getSharedPreferences("SP", Activity.MODE_PRIVATE)
+            settings.edit().remove("nav_to_mov").apply()
+        }
     }
 
 }

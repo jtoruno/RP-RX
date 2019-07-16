@@ -20,10 +20,12 @@ import kotlinx.android.synthetic.main.activity_add_payment.*
 import android.text.InputFilter
 import android.view.View
 import com.zimplifica.redipuntos.models.ManagerNav
+import io.reactivex.disposables.CompositeDisposable
 
 
 @RequiresActivityViewModel(AddPaymentVM.ViewModel::class)
 class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +51,7 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
         }
 
 
-        viewModel.outputs.cardNumber().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.cardNumber().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
 
                 //Log.e("CardNumber", it.valueFormatted)
@@ -96,9 +98,9 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
                         textInputLayout12.error = null
                     }
                 }
-            }
+            })
 
-        viewModel.outputs.cardExpirationDate().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.cardExpirationDate().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 //add_payment_exp_date.setText(it.valueFormatted)
                 when(it.isValid){
@@ -109,19 +111,19 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
                         input_layout_exp_date.error = null
                     }
                 }
-            }
+            })
 
-        viewModel.outputs.isFormValid().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.isFormValid().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 add_payment_btn.isEnabled = it
-            }
+            })
 
-        viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showDialog("Lo sentimos", it)
-            }
+            })
 
-        viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if(it){
                     add_payment_btn.isEnabled = false
@@ -130,13 +132,13 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
                     add_payment_btn.isEnabled = true
                     progressBar9.visibility = View.GONE
                 }
-            }
+            })
 
-        viewModel.outputs.paymentMethodSaved().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.paymentMethodSaved().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 finish()
                 ManagerNav.getInstance(this).initNav()
-            }
+            })
 
     }
 
@@ -181,5 +183,10 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

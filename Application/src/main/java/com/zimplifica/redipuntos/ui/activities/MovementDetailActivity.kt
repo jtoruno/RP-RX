@@ -18,6 +18,7 @@ import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
+import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
 import com.zimplifica.redipuntos.viewModels.MovementDetailVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -147,11 +148,16 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
     }
 
     override fun onBackPressed() {
+        navigateToMovements()
         finish()
     }
 
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    private fun navigateToMovements(){
+        SharedPreferencesUtils.saveBooleanInSp(this,"nav_to_mov",true)
     }
 }

@@ -16,10 +16,12 @@ import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
 import com.zimplifica.redipuntos.ui.adapters.SliderAdapter
 import com.zimplifica.redipuntos.viewModels.WalkThroughViewModel
+import io.reactivex.disposables.CompositeDisposable
 
 
 @RequiresActivityViewModel(WalkThroughViewModel.ViewModel::class)
 class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
     lateinit var mDots: Array<TextView>
     lateinit var mSlideViewPager: ViewPager
     lateinit var mDotLayout: LinearLayout
@@ -65,13 +67,13 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
         mNextBtn.setOnClickListener { this.viewModel.inputs.nextButtonClicked() }
         mBackBtn.setOnClickListener { this.viewModel.inputs.backButtonClicked() }
 
-        this.viewModel.outputs.startBackActivity()
-            .subscribe { mSlideViewPager.currentItem = mcurrentPage -1 }
-        this.viewModel.outputs.startNextActivity()
-            .subscribe { mSlideViewPager.currentItem = mcurrentPage +1 }
+        compositeDisposable.add(this.viewModel.outputs.startBackActivity()
+            .subscribe { mSlideViewPager.currentItem = mcurrentPage -1 })
+        compositeDisposable.add(this.viewModel.outputs.startNextActivity()
+            .subscribe { mSlideViewPager.currentItem = mcurrentPage +1 })
 
-        this.viewModel.outputs.startMainActivity()
-            .subscribe { navigate() }
+        compositeDisposable.add(this.viewModel.outputs.startMainActivity()
+            .subscribe { navigate() })
 
     }
 
@@ -143,9 +145,11 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
                 mNextBtn.text = "Siguiente"
                 mBackBtn.text = "Anterior"
             }
-
-
         }
+    }
 
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

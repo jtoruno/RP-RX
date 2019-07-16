@@ -10,10 +10,12 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.SplashViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import java.util.concurrent.TimeUnit
 
 @RequiresActivityViewModel(SplashViewModel.ViewModel::class)
 class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,17 +23,23 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
         setContentView(R.layout.activity_splash)
         this.viewModel.inputs.onCreate()
 
-        this.viewModel.outputs.signedInAction().delay(1,TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.signedInAction().delay(1,TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
-                finish()
-            }
-        this.viewModel.outputs.signedOutAction().delay(1,TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
+                //finish()
+                finishAffinity()
+            })
+        compositeDisposable.add(this.viewModel.outputs.signedOutAction().delay(1,TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, WalkThrough::class.java)
                 startActivity(intent)
                 finish()
-            }
+            })
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

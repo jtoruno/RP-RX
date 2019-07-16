@@ -14,11 +14,13 @@ import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.viewModels.ConfirmEmailVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_confirm_email.*
 
 @RequiresActivityViewModel(ConfirmEmailVM.ViewModel::class)
 
 class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,17 +38,17 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
         confirm_email_resend.setOnClickListener {
             this.viewModel.inputs.resendCodeButtonPressed()
         }
-        this.viewModel.outputs.email().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.email().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 confirm_email_txt.text = "correo: $it"
-            }
+            })
 
-        this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showDialog("Lo sentimos", it)
-            }
+            })
 
-        this.viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (it){
                     confirm_email_btn.isEnabled = false
@@ -55,12 +57,12 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
                     confirm_email_btn.isEnabled = true
                     progressBar8.visibility = View.GONE
                 }
-            }
+            })
 
-        this.viewModel.outputs.isButtonEnabled().observeOn(AndroidSchedulers.mainThread())
-            .subscribe { confirm_email_btn.isEnabled = it }
+        compositeDisposable.add(this.viewModel.outputs.isButtonEnabled().observeOn(AndroidSchedulers.mainThread())
+            .subscribe { confirm_email_btn.isEnabled = it })
 
-        this.viewModel.outputs.showResendAlert().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showResendAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("Alerta")
@@ -72,18 +74,17 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
                 builder.setNegativeButton("Cancelar", null)
                 val dialog = builder.create()
                 dialog.show()
-            }
+            })
 
-        this.viewModel.outputs.codeResent().observeOn(AndroidSchedulers.mainThread())
-            .subscribe { Toast.makeText(this,"Código reenviado", Toast.LENGTH_SHORT).show() }
+        compositeDisposable.add(this.viewModel.outputs.codeResent().observeOn(AndroidSchedulers.mainThread())
+            .subscribe { Toast.makeText(this,"Código reenviado", Toast.LENGTH_SHORT).show() })
 
-        this.viewModel.outputs.confirmedEmail().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.confirmedEmail().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Toast.makeText(this,"Correo Confirmado", Toast.LENGTH_SHORT).show()
                 finish()
                 ManagerNav.getInstance(this).initNav()
-            }
-
+            })
     }
 
     private fun showDialog(title : String, message : String){
@@ -102,5 +103,10 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

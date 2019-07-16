@@ -17,10 +17,12 @@ import com.zimplifica.redipuntos.models.CreditCardExpirationDate
 import com.zimplifica.redipuntos.models.CreditCardNumber
 import com.zimplifica.redipuntos.viewModels.AddPaymentMethodVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_add_payment_method.*
 
 @RequiresActivityViewModel(AddPaymentMethodVM.ViewModel::class)
 class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +45,7 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
             this.viewModel.inputs.addPaymentMethodButtonPressed()
         }
 
-        viewModel.outputs.cardNumber().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.cardNumber().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 when(it.issuer){
                     CreditCardNumber.Issuer.AMEX -> {
@@ -86,9 +88,9 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
                         textInputLayout14.error = null
                     }
                 }
-            }
+            })
 
-        viewModel.outputs.cardExpirationDate().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.cardExpirationDate().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 //add_payment_exp_date.setText(it.valueFormatted)
                 when(it.isValid){
@@ -99,19 +101,19 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
                         input_layout_exp_date2.error = null
                     }
                 }
-            }
+            })
 
-        viewModel.outputs.isFormValid().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.isFormValid().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 add_payment_method_btn.isEnabled = it
-            }
+            })
 
-        viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showDialog("Lo sentimos", it)
-            }
+            })
 
-        viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if(it){
                     add_payment_method_btn.isEnabled = false
@@ -120,13 +122,13 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
                     add_payment_method_btn.isEnabled = true
                     progressBar10.visibility = View.GONE
                 }
-            }
+            })
 
-        viewModel.outputs.paymentMethodSaved().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.paymentMethodSaved().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Toast.makeText(this,"Método de pago guardado correctamente",Toast.LENGTH_SHORT).show()
                 finish()
-            }
+            })
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -170,5 +172,10 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

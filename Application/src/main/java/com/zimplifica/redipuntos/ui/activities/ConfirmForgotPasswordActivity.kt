@@ -14,9 +14,12 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.ConfirmForgotPsswordVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 
 @RequiresActivityViewModel(ConfirmForgotPsswordVM.ViewModel::class)
 class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
+
 
     lateinit var img1 : ImageView
     lateinit var img2 : ImageView
@@ -47,9 +50,10 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
         nextBtn = findViewById(R.id.forgot_change_btn)
         nextBtn.setOnClickListener { this.viewModel.inputs.nextButtonPressed() }
 
-        this.viewModel.outputs.nextButtonEnabled().observeOn(AndroidSchedulers.mainThread())
-            .subscribe { nextBtn.isEnabled = it }
-        this.viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.nextButtonEnabled().observeOn(AndroidSchedulers.mainThread())
+            .subscribe { nextBtn.isEnabled = it })
+
+        compositeDisposable.add(this.viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (it){
                     nextBtn.isEnabled = false
@@ -58,29 +62,31 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
                     nextBtn.isEnabled = true
                     progressBar.visibility = View.GONE
                 }
-            }
-        this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+            })
+
+        compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showDialog("Lo sentimos",it.friendlyMessage)
-            }
-        this.viewModel.outputs.validPasswordCapitalLowerLetters().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            this.passOption(img1,it)
-        }
-        this.viewModel.outputs.validPasswordNumbers().observeOn(AndroidSchedulers.mainThread()).subscribe{
-            this.passOption(img2,it)
-        }
-        this.viewModel.outputs.validPasswordSpecialCharacters().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            this.passOption(img3,it)
-        }
-        this.viewModel.outputs.validPasswordLenght().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            this.passOption(img4,it)
-        }
+            })
 
-        this.viewModel.outputs.passwordChangedAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.validPasswordCapitalLowerLetters().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            this.passOption(img1,it)
+        })
+        compositeDisposable.add(this.viewModel.outputs.validPasswordNumbers().observeOn(AndroidSchedulers.mainThread()).subscribe{
+            this.passOption(img2,it)
+        })
+        compositeDisposable.add(this.viewModel.outputs.validPasswordSpecialCharacters().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            this.passOption(img3,it)
+        })
+        compositeDisposable.add(this.viewModel.outputs.validPasswordLenght().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            this.passOption(img4,it)
+        })
+
+        compositeDisposable.add(this.viewModel.outputs.passwordChangedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Toast.makeText(this, "Modificación Exitosa \n Contraseña modificada correctamente. Por favor intente iniciar sesión nuevamente.", Toast.LENGTH_LONG).show()
                 finish()
-            }
+            })
 
     }
 
@@ -120,5 +126,10 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

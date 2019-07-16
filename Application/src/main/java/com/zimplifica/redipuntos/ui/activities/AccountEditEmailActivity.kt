@@ -92,7 +92,7 @@ class AccountEditEmailActivity : BaseActivity<AccountEditEmailVM.ViewModel>(){
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

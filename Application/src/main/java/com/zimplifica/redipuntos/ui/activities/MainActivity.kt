@@ -9,9 +9,11 @@ import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.MainViewModel
+import io.reactivex.disposables.CompositeDisposable
 
 @RequiresActivityViewModel(MainViewModel.ViewModel::class)
 class MainActivity : BaseActivity<MainViewModel.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     lateinit var singInBtn : Button
     lateinit var signUpBtn : Button
@@ -32,17 +34,22 @@ class MainActivity : BaseActivity<MainViewModel.ViewModel>() {
         helpBtn = findViewById(R.id.imageButton)
         helpBtn.setOnClickListener { this.viewModel.inputs.helpButtonClicked() }
 
-        this.viewModel.outputs.startSignUpActivity().subscribe {
+        compositeDisposable.add(this.viewModel.outputs.startSignUpActivity().subscribe {
             val intent = Intent(this, TakePhoneActivity::class.java)
             startActivity(intent)
-        }
-        this.viewModel.outputs.startSignInActivity().subscribe {
+        })
+        compositeDisposable.add(this.viewModel.outputs.startSignInActivity().subscribe {
             val intent = Intent(this, SignInActivity::class.java)
             startActivity(intent)
-        }
-        this.viewModel.outputs.startHelpActivity().subscribe{
+        })
+        compositeDisposable.add(this.viewModel.outputs.startHelpActivity().subscribe{
             val intent = Intent(this, HelpActivity::class.java)
             startActivity(intent)
-        }
+        })
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

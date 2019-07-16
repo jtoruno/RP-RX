@@ -19,11 +19,13 @@ import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.ui.adapters.RecyclerCardPoints
 import com.zimplifica.redipuntos.viewModels.PaymentSelectionVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_payment_selection.*
 import kotlinx.android.synthetic.main.dialog_custom_card_picker.view.*
 
 @RequiresActivityViewModel(PaymentSelectionVM.ViewModel::class)
 class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
     lateinit var adapter : RecyclerCardPoints
     private var applyAwards = false
 
@@ -46,11 +48,11 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         this.viewModel.inputs.paymentMethodChanged(viewModel.getPaymentMethods().first())
 
 
-        this.viewModel.outputs.showVendor().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showVendor().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 payment_selection_vendor_name.text = it.name
                 payment_selection_vendor_place.text = it.address
-            }
+            })
 
         payment_selection_amount.text = "₡ "+String.format("%,.2f", viewModel.getAmount())
         payment_s_subtotal.text = "₡ "+String.format("%,.2f", viewModel.getAmount())
@@ -59,28 +61,28 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
             openCardPicker()
         }
 
-        this.viewModel.outputs.paymentInformationChangedAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.paymentInformationChangedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 this.paymentInformation = it
                 updateData()
-            }
+            })
 
-        this.viewModel.outputs.applyRewards().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.applyRewards().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 this.applyAwards = it
                 updateData()
-            }
+            })
 
-        this.viewModel.outputs.paymentMethodChangedAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.paymentMethodChangedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val cardIdentifier = it.issuer.toUpperCase() + " **** " + it.cardNumberWithMask
                 ps_card_id_text.text = cardIdentifier
-            }
+            })
 
-        viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showDialog("Lo sentimos", it)
-            }
+            })
 
         payment_selection_order.text = ""
 
@@ -88,17 +90,17 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
             this.viewModel.inputs.applyRewardsRowPressed(isChecked)
         }
 
-        viewModel.outputs.finishPaymentProcessingAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.finishPaymentProcessingAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this,MovementDetailActivity::class.java)
                 intent.putExtra("transaction",it)
                 startActivity(intent)
                 finish()
-            }
+            })
 
         payment_selection_btn.setOnClickListener {  viewModel.inputs.nextButtonPressed() }
 
-        viewModel.outputs.nextButtonLoadingIndicator().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.nextButtonLoadingIndicator().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if(it){
                     progressBar13.visibility = View.VISIBLE
@@ -109,7 +111,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
                     payment_selection_btn.isEnabled = true
                     payment_selection_btn.alpha = 1F
                 }
-            }
+            })
 
         payment_s_description.onChange {
             viewModel.inputs.descriptionTextFieldChanged(it)
@@ -200,5 +202,10 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

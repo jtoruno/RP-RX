@@ -24,13 +24,14 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.SPScanQRVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_spscan_qr.*
 import me.dm7.barcodescanner.zxing.ZXingScannerView
 import java.util.*
 
 @RequiresActivityViewModel(SPScanQRVM.ViewModel::class)
 class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.ResultHandler {
-
+    private val compositeDisposable = CompositeDisposable()
     private  var ScannerVIew : ZXingScannerView ? = null
     private val PERMISSIONS_REQUEST_CAMERA = 100
     private var qrResult = ""
@@ -49,7 +50,7 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
             finish()
         }
 
-        this.viewModel.outputs.nextScreenAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.nextScreenAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 /*
                 val returnIntent = Intent()
@@ -61,9 +62,9 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
                 intent.putExtra("amount",it.payload.order.subtotal.toFloat())
                 startActivity(intent)
                 finish()
-            }
+            })
 
-        this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.e("PBA",it)
                 qrResult = ""
@@ -76,7 +77,7 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
                     spscan_qr_txt.text = "Escanear código del comercio"
                 },2500)
 
-            }
+            })
 
         spscan_qr_lottie.addAnimatorListener(object: Animator.AnimatorListener{
             override fun onAnimationRepeat(animation: Animator?) {
@@ -154,5 +155,10 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
                 finish()
             }
         }
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

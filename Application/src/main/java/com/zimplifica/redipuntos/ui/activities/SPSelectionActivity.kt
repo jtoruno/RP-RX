@@ -17,12 +17,14 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.SPSelectionVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_spselection.*
 
 
 @RequiresActivityViewModel(SPSelectionVM.ViewModel::class)
 class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
     private val REQUEST_CODE = 300
+    private val compositeDisposable = CompositeDisposable()
 
 
     @SuppressLint("CheckResult")
@@ -45,13 +47,13 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
             val intent = Intent(this, SPScanQRActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE)
         }*/
-        viewModel.outputs.vendorInformationAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.vendorInformationAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 sp_selection_chip.visibility = View.VISIBLE
                 sp_selection_chip.text = it.name
-            }
+            })
 
-        viewModel.outputs.nextButtonLoadingIndicator().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.nextButtonLoadingIndicator().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if(it){
                     progressBar12.visibility = View.VISIBLE
@@ -62,9 +64,9 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
                     sp_selection_btn.isEnabled = true
                     sp_selection_btn.alpha = 1F
                 }
-            }
+            })
 
-        viewModel.outputs.nextButtonEnabled().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.nextButtonEnabled().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 if(!it){
                     sp_selection_btn.isEnabled = false
@@ -73,31 +75,29 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
                     sp_selection_btn.isEnabled = true
                     sp_selection_btn.alpha = 1F
                 }
+            })
 
-            }
-
-        viewModel.outputs.qrCameraButtonAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.qrCameraButtonAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 val intent = Intent(this, SPScanQRActivity::class.java)
                 startActivityForResult(intent, REQUEST_CODE)
-            }
+            })
 
         supportActionBar?.title = "₡ "+String.format("%,.0f", viewModel.getAmount())
 
-        viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 val intent = Intent(this,PaymentSelectionActivity::class.java)
                 intent.putExtra("SPSelectionObject",it)
                 intent.putExtra("amount",viewModel.getAmount())
                 startActivity(intent)
                 finish()
-            }
+            })
 
-        viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showDialog("Lo sentimos", it)
-            }
-
+            })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -126,5 +126,10 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
         builder.setPositiveButton("Cerrar",null)
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

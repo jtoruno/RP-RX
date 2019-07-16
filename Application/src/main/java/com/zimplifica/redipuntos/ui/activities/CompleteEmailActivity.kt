@@ -12,10 +12,12 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.CompleteEmailVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_complete_email.*
 
 @RequiresActivityViewModel(CompleteEmailVM.ViewModel::class)
 class CompleteEmailActivity : BaseActivity<CompleteEmailVM.ViewModel>() {
+    private val compositeDisposable = CompositeDisposable()
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,15 +31,15 @@ class CompleteEmailActivity : BaseActivity<CompleteEmailVM.ViewModel>() {
         complete_emain_btn.setOnClickListener {
             this.viewModel.inputs.verifyEmailPressed()
         }
-        this.viewModel.outputs.isEmailValid().observeOn(AndroidSchedulers.mainThread())
-            .subscribe { complete_emain_btn.isEnabled = it }
+        compositeDisposable.add(this.viewModel.outputs.isEmailValid().observeOn(AndroidSchedulers.mainThread())
+            .subscribe { complete_emain_btn.isEnabled = it })
 
-        this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 showDialog("Lo sentimos", it)
-            }
+            })
 
-        this.viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 if (it){
                     complete_emain_btn.isEnabled = false
@@ -46,15 +48,15 @@ class CompleteEmailActivity : BaseActivity<CompleteEmailVM.ViewModel>() {
                     complete_emain_btn.isEnabled = true
                     progressBar7.visibility = View.GONE
                 }
-            }
+            })
 
-        this.viewModel.outputs.emailSuccessfullyConfirmed().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.emailSuccessfullyConfirmed().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, ConfirmEmailActivity::class.java)
                 intent.putExtra("email",it)
                 startActivity(intent)
                 finish()
-            }
+            })
     }
 
     private fun showDialog(title : String, message : String){
@@ -73,5 +75,10 @@ class CompleteEmailActivity : BaseActivity<CompleteEmailVM.ViewModel>() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 }

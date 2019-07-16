@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.support.annotation.NonNull
+import android.util.Log
 import com.zimplifica.domain.entities.Category
 import com.zimplifica.domain.entities.Commerce
 import com.zimplifica.domain.entities.CommercesResult
@@ -8,6 +9,7 @@ import com.zimplifica.domain.entities.Result
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
@@ -54,9 +56,9 @@ interface CommercesFragmentVM {
         private val fetchCommerces = PublishSubject.create<Unit>()
         private val commerceSelected = PublishSubject.create<Commerce>()
         private val filterButtonPressed = PublishSubject.create<Unit>()
-        private val filterByCategory = PublishSubject.create<Category>()
+        private val filterByCategory = BehaviorSubject.create<Category>()
         private val categorySelected = PublishSubject.create<Category>()
-        private val searchButtonPressed = PublishSubject.create<String>()
+        private val searchButtonPressed = BehaviorSubject.create<String>()
 
         //Outputs
         private val commerces = BehaviorSubject.create<CommercesResult>()
@@ -75,15 +77,35 @@ interface CommercesFragmentVM {
                 .subscribe(this.categorySelectedAction)
 
             val commerceEvent = this.fetchCommerces
-                .flatMap { return@flatMap this.fetchCommercesResult(null,null) }
+                .flatMap {
+                    return@flatMap this.fetchCommercesResult(null,null)
+                }
                 .share()
 
+            /*
+            val form = Observables.zip(this.searchButtonPressed,this.filterByCategory)
+
+            val event = form
+                .flatMap {
+                    Log.e("SearchEvent",it.first + "Text")
+                    Log.e("SearchEvent",it.second.name + "Category")
+                    return@flatMap this.generalSearch(null,null,it.first,it.second)
+                }.share()*/
+
+
             val searchEvent = this.searchButtonPressed
-                .flatMap { return@flatMap this.searchCommerces(null,null,it) }
+                .flatMap {
+                    Log.e("SearchEvent", "Category" + this.filterByCategory.value )
+                    return@flatMap this.generalSearch(null,null,it,this.filterByCategory.value)
+                }
                 .share()
 
             val categoryFilterEvent = this.filterByCategory
-                .flatMap { return@flatMap this.filterCommercesByCategory(null,null,it) }
+                .flatMap {
+                    Log.e("SearchEvent",this.searchButtonPressed.value + "search")
+                    return@flatMap this.generalSearch(null,null,this.searchButtonPressed.value,it)
+
+                }
                 .share()
 
             Observable.merge(commerceEvent,searchEvent,categoryFilterEvent)
@@ -147,6 +169,12 @@ interface CommercesFragmentVM {
 
         private fun filterCommercesByCategory(limit: Int?, skip: Int?,category : Category) : Observable<Result<CommercesResult>>{
             return environment.userUseCase().getCommerces(limit,skip,category.id,null)
+                .doOnComplete { this.loadingActive.onNext(false) }
+                .doOnSubscribe { this.loadingActive.onNext(true) }
+        }
+
+        private fun generalSearch(limit: Int?, skip: Int?,searchText: String?,category : Category?) : Observable<Result<CommercesResult>>{
+            return environment.userUseCase().getCommerces(limit,skip,category?.id,searchText)
                 .doOnComplete { this.loadingActive.onNext(false) }
                 .doOnSubscribe { this.loadingActive.onNext(true) }
         }

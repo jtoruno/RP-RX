@@ -8,6 +8,7 @@ import android.util.AndroidException
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.google.zxing.BarcodeFormat
 import com.google.zxing.integration.android.IntentIntegrator
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
@@ -16,13 +17,14 @@ import com.zimplifica.redipuntos.models.IdCardCR
 import com.zimplifica.redipuntos.models.Person
 import com.zimplifica.redipuntos.viewModels.CitizenInfoVM
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_citizen_info.*
 import java.util.*
 
 @RequiresActivityViewModel(CitizenInfoVM.ViewModel::class)
 class CitizenInfoActivity : BaseActivity<CitizenInfoVM.ViewModel>() {
-
-    private var TYPES: Collection<String> = Arrays.asList("PDF417")
+    private val compositeDisposable = CompositeDisposable()
+    private var TYPES: Collection<String> = Arrays.asList("PDF417",BarcodeFormat.PDF_417.name)
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,26 +37,36 @@ class CitizenInfoActivity : BaseActivity<CitizenInfoVM.ViewModel>() {
             this.viewModel.inputs.nextButtonPressed()
         }
 
-        this.viewModel.outputs.startScanActivity().observeOn(AndroidSchedulers.mainThread())
-            .subscribe { scanBarcode() }
+        compositeDisposable.add(this.viewModel.outputs.startScanActivity().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                scanBarcode()
+                //scanCode2()
+            })
 
-        this.viewModel.outputs.startNextActivity().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.startNextActivity().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 //Toast.makeText(this, it.toString(), Toast.LENGTH_LONG).show()
                 val intent = Intent(this,ConfirmCitizenInfoActivity::class.java)
                 intent.putExtra("citizen",it)
                 startActivity(intent)
                 finish()
-            }
+            })
     }
 
     private fun scanBarcode() {
         IntentIntegrator(this)
             .setOrientationLocked(false)
             //.addExtra("", Intents.Scan.INVERTED_SCAN)
+            .setBarcodeImageEnabled(false)
+            .setBeepEnabled(false)
             .setCaptureActivity(ScannerIdActivity::class.java)
-            .setDesiredBarcodeFormats(TYPES)
+            .setDesiredBarcodeFormats(IntentIntegrator.PDF_417)
             .initiateScan()
+    }
+
+    private fun scanCode2(){
+        val intent = Intent(this,ScannerPbaActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -64,6 +76,11 @@ class CitizenInfoActivity : BaseActivity<CitizenInfoVM.ViewModel>() {
 
     override fun onBackPressed() {
         finish()
+    }
+
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

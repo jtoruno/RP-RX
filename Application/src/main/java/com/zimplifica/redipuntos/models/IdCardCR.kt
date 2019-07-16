@@ -1,11 +1,14 @@
 package com.zimplifica.redipuntos.models
 
+import android.util.Log
 import kotlin.experimental.xor
 
 object IdCardCR {
     private val keysArray = byteArrayOf(0x27.toByte(), 0x30.toByte(), 0x04.toByte(), 0xA0.toByte(), 0x00.toByte(), 0x0F.toByte(), 0x93.toByte(), 0x12.toByte(), 0xA0.toByte(), 0xD1.toByte(), 0x33.toByte(), 0xE0.toByte(), 0x03.toByte(), 0xD0.toByte(), 0x00.toByte(), 0xDf.toByte(), 0x00.toByte())
 
     fun parse(raw: ByteArray): Person? {
+        Log.e("ced",raw.toString())
+        Log.e("cedLenght",raw.size.toString())
         var d = ""
         var j = 0
         for (i in raw.indices) {
@@ -26,13 +29,14 @@ object IdCardCR {
         }
         var p: Person? = Person()
         try {
+            Log.e("Ced",d)
             p?.cedula =(d.substring(0, 9).trim { it <= ' ' })
             p?.apellido1= (d.substring(9, 35).trim { it <= ' ' })
             p?.apellido2= (d.substring(35, 61).trim { it <= ' ' })
             p?.nombre= (d.substring(61, 91).trim { it <= ' ' })
-            p?.genero= (d[91])
+            //p?.genero= (d[91])
             p?.fechaNacimiento = (d.substring(98, 100)  + "/" + d.substring(96, 98) + "/" +d.substring(92, 96) )
-            p?.fechaVencimiento = (d.substring(106, 108)  + "/" + d.substring(104, 106) + "/" + d.substring(100, 104))
+            //p?.fechaVencimiento = (d.substring(106, 108)  + "/" + d.substring(104, 106) + "/" + d.substring(100, 104))
         } catch (e: Exception) {
             p = null
         }

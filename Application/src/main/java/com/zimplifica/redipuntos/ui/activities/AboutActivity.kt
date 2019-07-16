@@ -3,6 +3,7 @@ package com.zimplifica.redipuntos.ui.activities
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
 import kotlinx.android.synthetic.main.activity_about.*
 
 class AboutActivity : AppCompatActivity() {
@@ -23,6 +24,11 @@ class AboutActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
+        //navigateToMovements()
         finish()
     }
+    /*
+    private fun navigateToMovements(){
+        SharedPreferencesUtils.saveBooleanInSp(this,"nav_to_mov",true)
+    }*/
 }
