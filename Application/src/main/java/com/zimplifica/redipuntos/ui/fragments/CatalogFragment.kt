@@ -82,7 +82,8 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
 
             override fun onQueryTextChange(p0: String?): Boolean {
                 if (p0!= null && p0.isEmpty()){
-                    viewModel.inputs.fetchCommerces()
+                    //viewModel.inputs.fetchCommerces()
+                    viewModel.inputs.searchButtonPressed("")
                 }
                 return true
             }
@@ -99,6 +100,7 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
 
         chip.setOnCloseIconClickListener {
             chip.visibility = View.GONE
+            val category = Category("","","")
             //searchView.visibility = View.VISIBLE
             viewModel.inputs.fetchCommerces()
         }
