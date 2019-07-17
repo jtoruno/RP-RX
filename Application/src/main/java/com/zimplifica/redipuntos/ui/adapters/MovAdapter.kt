@@ -31,9 +31,9 @@ class MovSection internal constructor( internal val title: String, internal val 
             .reduce { acc, s -> acc + s }
         val drawable = TextDrawable.builder()
             .beginConfig()
-            .width(80)
+            .width(70)
+            .height(70)
             .bold()
-            .height(80)
             .endConfig()
             .buildRound(initials,context.getColor(R.color.colorPrimaryLight))
         itemHolder.image.setImageDrawable(drawable)

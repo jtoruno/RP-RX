@@ -9,7 +9,7 @@
         tools:context=".ui.activities.MovementDetailActivity">
 
     <android.support.v7.widget.CardView android:layout_width="match_parent"
-                                        android:layout_height="match_parent" android:layout_marginTop="30dp"
+                                        android:layout_height="match_parent" android:layout_marginTop="20dp"
                                         app:layout_constraintTop_toTopOf="parent"
                                         app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="40dp"
                                         app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="40dp"
@@ -54,13 +54,12 @@
                         android:text="Transacción exitosa"
                         android:textColor="@android:color/white"
                         android:textAlignment="center"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="5dp"
                         android:textSize="20sp"
                         android:textStyle="bold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" android:id="@+id/mov_detail_status"/>
                 <TextView
-                        android:layout_marginTop="6dp"
                         android:layout_marginBottom="10dp"
                         android:text="Pago aprobado y completado con éxito"
                         android:textColor="@android:color/white"
@@ -74,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="20dp" android:textSize="14sp"
+                    android:layout_marginEnd="20dp" android:textSize="12sp"
                     android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
                     android:id="@+id/mov_detail_hour"/>
             <TextView
@@ -83,7 +82,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="20dp"
-                    android:textSize="14sp" android:layout_marginBottom="8dp"
+                    android:textSize="12sp" android:layout_marginBottom="8dp"
                     app:layout_constraintBottom_toBottomOf="parent" android:id="@+id/mov_detail_date"/>
             <TextView
                     android:text="Josue Toruno Hernandez"
@@ -99,13 +98,13 @@
 
             <TextView
                     android:text="₡ 85,668.00"
-                    android:textSize="22sp"
+                    android:textSize="26sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:textAlignment="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/mov_detail_amount" android:layout_weight="1"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="10dp"
                     app:layout_constraintBottom_toTopOf="@+id/mov_detail_user_name" android:layout_marginStart="8dp"
                     app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="8dp"
                     app:layout_constraintEnd_toEndOf="parent"/>
@@ -131,6 +130,7 @@
                     app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.495"/>
             <TextView
                     android:text="Transacción"
+                    android:textStyle="bold"
                     android:layout_width="match_parent"
                     android:textAlignment="center"
                     android:textSize="16sp"
@@ -142,7 +142,7 @@
             <TextView
                     android:text="f23e9b5a-dfc8-4437-ad4d-801c9a5969e1"
                     android:textAlignment="center"
-                    android:textStyle="bold"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/mov_detail_id" android:layout_marginTop="8dp"
@@ -151,6 +151,7 @@
                     android:layout_marginStart="0dp"/>
             <TextView
                     android:text="Detalle"
+                    android:textStyle="bold"
                     android:textSize="16sp"
                     android:textAlignment="center"
                     android:layout_width="match_parent"
@@ -162,7 +163,6 @@
             <TextView
                     android:text="Cena"
                     android:textAlignment="center"
-                    android:textStyle="bold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/mov_detail_description" android:layout_marginTop="8dp"
@@ -174,7 +174,8 @@
                     android:layout_height="wrap_content" app:srcCompat="@drawable/ic_info_outline_black_24dp"
                     android:id="@+id/mov_detail_info" app:layout_constraintStart_toEndOf="@+id/mov_detail_amount"
                     android:layout_marginStart="8dp"
-                    android:layout_marginBottom="20dp" app:layout_constraintBottom_toTopOf="@+id/mov_detail_user_name"/>
+                    android:layout_marginBottom="10dp" app:layout_constraintBottom_toTopOf="@+id/mov_detail_user_name"
+                    android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/mov_detail_commerce"/>
 
 
         </android.support.constraint.ConstraintLayout>

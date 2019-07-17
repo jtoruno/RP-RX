@@ -5,6 +5,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.AccountInfoVM
@@ -28,8 +29,10 @@ class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.userInformationAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                account_info_name.setText(it?.userFirstName?:"")
-                account_info_last_name.setText(it?.userLastName?:"")
+                val firstName = (it?.userFirstName?:"").toLowerCase()
+                val lastName = (it?.userLastName?:"").toLowerCase()
+                account_info_name.setText(firstName.capitalizeWords())
+                account_info_last_name.setText(lastName.capitalizeWords())
                 account_info_id_card.setText(it?.citizenId?:"")
                 account_info_date.setText(it?.userBirthDate?:"")
                 account_info_email.setText(it?.userEmail?:"")
