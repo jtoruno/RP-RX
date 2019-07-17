@@ -24,4 +24,9 @@ open class RPApplication: Application() {
     fun component(): ApplicationComponent? {
         return this.component
     }
+
+    open fun isInUnitTests(): Boolean {
+        return false
+    }
+
 }

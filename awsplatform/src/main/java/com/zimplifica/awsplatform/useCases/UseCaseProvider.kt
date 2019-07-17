@@ -1,5 +1,6 @@
 package com.zimplifica.awsplatform.useCases
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import com.amazonaws.mobile.client.AWSMobileClient
@@ -23,7 +24,6 @@ class UseCaseProvider(context: Context) : UseCaseProvider{
                 Log.e("INIT", "Initialization error.", e)
             }
         })
-        //Probar
         AppSyncClient.initClients(context)
     }
     override fun makeAuthenticationUseCase(): AuthenticationUseCase {
