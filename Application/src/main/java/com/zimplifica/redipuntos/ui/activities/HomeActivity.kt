@@ -140,7 +140,12 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             .subscribe{
                 val name1 = (it.userFirstName?:"").toLowerCase()
                 val name2 = (it.userLastName?:"").toLowerCase()
-                header.home_header_name.text = ("$name1 $name2").capitalizeWords()
+                val completeName = ("$name1 $name2").capitalizeWords()
+                if(completeName.isEmpty() || completeName == " "){
+                    header.home_header_name.text = "Usuario Invitado"
+                }else{
+                    header.home_header_name.text = completeName
+                }
                 header.home_header_points.text = "₡ "+String.format("%,.2f", it.rewards?:0.0) +" RediPuntos"
             })
 
@@ -189,7 +194,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             R.id.nav_movements->{
                 fm.beginTransaction().hide(active).show(Movementsfragment).commit()
                 active = Movementsfragment
-                toolbar.title = "Movimientos"
+                toolbar.title = "Historial"
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }

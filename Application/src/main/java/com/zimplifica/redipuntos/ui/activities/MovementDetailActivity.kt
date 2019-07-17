@@ -1,9 +1,11 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -103,10 +105,18 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         val linearLayout = LinearLayout(this)
         linearLayout.orientation = LinearLayout.VERTICAL
         val params = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        params.setMargins(10,50,10,10)
+        params.setMargins(10,80,10,10)
 
         linearLayout.layoutParams = params
         for (item in list){
+            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val rowView = inflater.inflate(R.layout.payment_details_row, null)
+            val method = rowView.findViewById<TextView>(R.id.payment_details_method)
+            val amount = rowView.findViewById<TextView>(R.id.payment_details_amount)
+            method.text = item.first
+            amount.text = item.second
+            linearLayout.addView(rowView)
+            /*
             val textView = TextView(this)
             textView.text = item.first
             val paramsTxt = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -118,7 +128,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
             textView2.text = item.second
             textView2.textAlignment = TextView.TEXT_ALIGNMENT_VIEW_END
             textView2.layoutParams = paramsTxt
-            linearLayout.addView(textView2)
+            linearLayout.addView(textView2)*/
         }
         builder.setView(linearLayout)
         builder.setPositiveButton("Continuar",null)

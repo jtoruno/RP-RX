@@ -96,15 +96,23 @@ interface CommercesFragmentVM {
             val searchEvent = this.searchButtonPressed
                 .flatMap {
                     Log.e("SearchEvent", "Category" + this.filterByCategory.value )
-                    return@flatMap this.generalSearch(null,null,it,this.filterByCategory.value)
+                    if(it.isEmpty()){
+                        return@flatMap this.generalSearch(null,null,null,this.filterByCategory.value)
+                    }else{
+                        return@flatMap this.generalSearch(null,null,it,this.filterByCategory.value)
+                    }
+
                 }
                 .share()
 
             val categoryFilterEvent = this.filterByCategory
                 .flatMap {
                     Log.e("SearchEvent",this.searchButtonPressed.value + "search")
-                    return@flatMap this.generalSearch(null,null,this.searchButtonPressed.value,it)
-
+                    if(it.id == ""){
+                        return@flatMap this.generalSearch(null,null,this.searchButtonPressed.value,null)
+                    }else{
+                        return@flatMap this.generalSearch(null,null,this.searchButtonPressed.value,it)
+                    }
                 }
                 .share()
 

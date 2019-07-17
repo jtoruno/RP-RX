@@ -11,6 +11,6 @@
           android:id="@+id/nav_points"
           android:title="Puntos"/>
     <item android:icon="@drawable/ic_swap_horiz_black_24dp"
-        android:title="Movimientos"
+        android:title="Historial"
         android:id="@+id/nav_movements"/>
 </menu>

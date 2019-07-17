@@ -102,7 +102,7 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
             chip.visibility = View.GONE
             val category = Category("","","")
             //searchView.visibility = View.VISIBLE
-            viewModel.inputs.fetchCommerces()
+            viewModel.inputs.filterByCategory(category)
         }
 
         chip.setOnClickListener {
