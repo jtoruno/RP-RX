@@ -87,7 +87,6 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.openUrlAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                //Log.e("Example",it.image)
                 val intent = Intent(Intent.ACTION_VIEW)
                 intent.data = Uri.parse(it.url)
                 startActivity(intent)
@@ -97,7 +96,6 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
             .subscribe {
                 val uri = Uri.parse("geo:"+it.latitude+","+it.longitude)
                 val intent = Intent(Intent.ACTION_VIEW,uri)
-                //intent.`package` = "com.google.android.apps.maps"
                 startActivity(intent)
             })
     }

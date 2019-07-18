@@ -85,7 +85,6 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finishAffinity()
-                //finish()
             })
 
         home_log_out.setOnClickListener {
@@ -167,9 +166,6 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
 
         compositeDisposable.add(this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                /*
-                val intent = Intent(this,CompletePaymentActivity::class.java)
-                startActivity(intent)*/
                 ManagerNav.getInstance(this).initNav()
             })
         compositeDisposable.add(this.viewModel.outputs.addPaymentMethodAction().observeOn(AndroidSchedulers.mainThread())

@@ -26,7 +26,6 @@ class LaunchActivity : BaseActivity<LaunchViewModel.ViewModel>() {
             .subscribe {
                 val intent = Intent(this@LaunchActivity,HomeActivity::class.java)
                 startActivity(intent)
-                //finish()
                 finishAffinity()
             })
     }

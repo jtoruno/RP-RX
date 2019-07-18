@@ -50,7 +50,6 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.paymentInfoButtonAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val creditCard = it.creditCard ?: return@subscribe
                 val list = mutableListOf <Pair<String,String>>()
                 val issuer = (it.creditCard?.issuer?:"").toUpperCase()
                 if(it.rediPuntos > 0.0){
@@ -116,19 +115,6 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
             method.text = item.first
             amount.text = item.second
             linearLayout.addView(rowView)
-            /*
-            val textView = TextView(this)
-            textView.text = item.first
-            val paramsTxt = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            paramsTxt.setMargins(30,15,30,10)
-            //textView.textAlignment = TextView.TEXT_ALIGNMENT_CENTER
-            textView.layoutParams = paramsTxt
-            linearLayout.addView(textView)
-            val textView2 = TextView(this)
-            textView2.text = item.second
-            textView2.textAlignment = TextView.TEXT_ALIGNMENT_VIEW_END
-            textView2.layoutParams = paramsTxt
-            linearLayout.addView(textView2)*/
         }
         builder.setView(linearLayout)
         builder.setPositiveButton("Continuar",null)

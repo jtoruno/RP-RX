@@ -27,7 +27,6 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
             .subscribe {
                 val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
-                //finish()
                 finishAffinity()
             })
         compositeDisposable.add(this.viewModel.outputs.signedOutAction().delay(1,TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread())

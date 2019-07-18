@@ -54,10 +54,6 @@ class ConfirmCitizenInfoActivity : BaseActivity<ConfirmCitizenInfoVM.ViewModel>(
                 Toast.makeText(this,"Completada la información personal correctamente", Toast.LENGTH_LONG).show()
                 finish()
                 ManagerNav.getInstance(this).initNav()
-                /*
-                val intent = Intent(this, CompleteEmailActivity::class.java)
-                startActivity(intent)
-                finish()*/
             })
     }
 
