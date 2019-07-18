@@ -40,6 +40,9 @@ class MovSection internal constructor( internal val title: String, internal val 
         itemHolder.type.text = "Pago en Sitio"
         itemHolder.hour.text = transaction.time
         itemHolder.amount.text = "₡ "+String.format("%,.2f", transaction.total)
+
+        itemHolder.rewards.text = "+ ₡ "+String.format("%,.2f", transaction.rewards)
+
         when(transaction.status){
             TransactionStatus.success -> {
                 itemHolder.state.text = "Pago exitoso"
@@ -48,10 +51,12 @@ class MovSection internal constructor( internal val title: String, internal val 
             TransactionStatus.pending -> {
                 itemHolder.state.text = "Pago pendiente"
                 itemHolder.state.setTextColor(context.resources.getColor(R.color.pendingColor,null))
+                itemHolder.rewards.visibility = View.GONE
             }
             else -> {
                 itemHolder.state.text = "Pago erroneo"
                 itemHolder.state.setTextColor(context.resources.getColor(R.color.red,null))
+                itemHolder.rewards.visibility = View.GONE
             }
         }
         itemHolder.itemView.setOnClickListener {
@@ -80,6 +85,7 @@ class MovSection internal constructor( internal val title: String, internal val 
         val state : TextView = rootView.findViewById(R.id.mov_row_state)
         val amount : TextView = rootView.findViewById(R.id.mov_row_amount)
         val hour : TextView = rootView.findViewById(R.id.mov_row_hour)
+        val rewards : TextView = rootView.findViewById(R.id.mov_row_rewards)
     }
     private class HeaderViewHolder(rootView: View) : RecyclerView.ViewHolder(rootView){
         var header : TextView = rootView.findViewById(R.id.mov_header_date)

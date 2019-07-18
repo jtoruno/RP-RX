@@ -24,11 +24,11 @@ class PaymentInformation(rediPoints: Double, cardPoints: Double, subtotal : Doub
 
 
         //RedPuntos
-        val auxRedipuntos = this.subtotal - this.rediPoints
+        val auxRedipuntos = this.total - this.rediPoints
         if(auxRedipuntos > 0){
             this.usedRediPoints = this.total - auxRedipuntos
         }else{
-            this.usedRediPoints = this.total
+            this.usedRediPoints = this.rediPoints
         }
 
         //CardPoints

@@ -56,4 +56,12 @@
             android:id="@+id/mov_row_hour" app:layout_constraintStart_toEndOf="@+id/mov_row_img"
             android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
+    <TextView
+            android:textStyle="bold"
+            android:textColor="@color/customGreen"
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mov_row_rewards" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>

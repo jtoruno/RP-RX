@@ -78,11 +78,13 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         mov_detail_user_name.text = ("$firstName $lastName").toLowerCase().capitalizeWords()
         mov_detail_date.text = transaction.date
         mov_detail_hour.text = transaction.time
+        mov_detail_rewards.text = "+ ₡ "+String.format("%,.2f", transaction.rewards)
         when(transaction.status){
             TransactionStatus.fail -> {
                 mov_detail_status.text = "Transacción erronea"
                 mov_detail_ll.setBackgroundColor(getColor(R.color.red))
                 mov_detail_msj.text = "Pago erroneo, intente de nuevo"
+                mov_detail_rewards.visibility = View.GONE
             }
             TransactionStatus.pending -> {
                 progressBar15.visibility = View.VISIBLE

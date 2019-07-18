@@ -138,6 +138,7 @@ class UserUseCase : UserUseCase {
 
                 override fun onResponse(response: Response<GetCheckoutPayloadSitePayQuery.Data>) {
                     val result = response.data()?.checkoutPayloadSitePay
+                    Log.e("Order",result.toString())
                     if(result!=null){
                         val item = Item(result.order().item().type(), result.order().item().amount())
                         val order = Order(result.order().id(), item,result.order().fee(),result.order().tax(),result.order().subtotal(),result.order().total(),result.order().rewards())
