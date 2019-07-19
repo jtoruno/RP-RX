@@ -64,11 +64,6 @@ class CitizenInfoActivity : BaseActivity<CitizenInfoVM.ViewModel>() {
             .initiateScan()
     }
 
-    private fun scanCode2(){
-        val intent = Intent(this,ScannerPbaActivity::class.java)
-        startActivity(intent)
-    }
-
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
