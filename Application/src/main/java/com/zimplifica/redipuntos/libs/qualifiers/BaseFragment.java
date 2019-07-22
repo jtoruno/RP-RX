@@ -1,8 +1,8 @@
 package com.zimplifica.redipuntos.libs.qualifiers;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import com.zimplifica.redipuntos.libs.FragmentViewModel;
 import com.zimplifica.redipuntos.libs.FragmentViewModelManager;
 import com.zimplifica.redipuntos.libs.utils.BundleUtils;

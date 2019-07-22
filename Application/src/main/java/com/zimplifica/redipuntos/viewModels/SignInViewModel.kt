@@ -1,7 +1,7 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.content.Context
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import android.util.Log
 import com.zimplifica.domain.entities.SignInError
 import com.zimplifica.domain.entities.SignInResult

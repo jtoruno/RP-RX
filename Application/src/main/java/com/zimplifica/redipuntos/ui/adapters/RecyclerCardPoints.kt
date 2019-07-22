@@ -1,6 +1,6 @@
 package com.zimplifica.redipuntos.ui.adapters
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +9,7 @@ import android.widget.TextView
 import com.zimplifica.domain.entities.PaymentMethod
 import com.zimplifica.redipuntos.R
 
-class RecyclerCardPoints: RecyclerView.Adapter<RecyclerCardPoints.CardViewHolder>(){
+class RecyclerCardPoints: androidx.recyclerview.widget.RecyclerView.Adapter<RecyclerCardPoints.CardViewHolder>(){
     private var paymentMethods = mutableListOf<PaymentMethod>()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CardViewHolder {
        val view = LayoutInflater.from(p0.context).inflate(R.layout.card_row_picker,p0,false)
@@ -39,7 +39,7 @@ class RecyclerCardPoints: RecyclerView.Adapter<RecyclerCardPoints.CardViewHolder
         }*/
     }
 
-    class CardViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
+    class CardViewHolder(itemView : View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
         val cardNumber : TextView = itemView.findViewById(R.id.cardNumtxtRecycler)
         val cardImage : ImageView = itemView.findViewById(R.id.cardImageImgrecycler)
         val cardIssuer : TextView = itemView.findViewById(R.id.cardTypetxtrecycler)

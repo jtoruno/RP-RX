@@ -1,6 +1,6 @@
 package com.zimplifica.redipuntos.viewModels
 
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment

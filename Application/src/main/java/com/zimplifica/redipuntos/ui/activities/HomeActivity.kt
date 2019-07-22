@@ -4,14 +4,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.Snackbar
-import android.support.design.widget.NavigationView
-import android.support.v4.app.Fragment
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.navigation.NavigationView
+import androidx.fragment.app.Fragment
+import androidx.core.view.GravityCompat
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -39,12 +39,12 @@ import kotlinx.android.synthetic.main.nav_header_home.view.*
 @RequiresActivityViewModel(HomeViewModel.ViewModel::class)
 class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnNavigationItemSelectedListener {
     private val compositeDisposable = CompositeDisposable()
-    lateinit var Catalogfragment : Fragment
-    lateinit var Payfragment : Fragment
-    lateinit var Movementsfragment : Fragment
-    lateinit var PointsFragment : Fragment
+    lateinit var Catalogfragment : androidx.fragment.app.Fragment
+    lateinit var Payfragment : androidx.fragment.app.Fragment
+    lateinit var Movementsfragment : androidx.fragment.app.Fragment
+    lateinit var PointsFragment : androidx.fragment.app.Fragment
     private val fm = supportFragmentManager
-    lateinit var active : Fragment
+    lateinit var active : androidx.fragment.app.Fragment
     private var menuActionBar : Menu ? = null
     lateinit var bottomNav : BottomNavigationView
 

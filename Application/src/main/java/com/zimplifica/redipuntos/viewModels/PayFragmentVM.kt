@@ -1,7 +1,7 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.annotation.SuppressLint
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel

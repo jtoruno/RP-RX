@@ -2,10 +2,10 @@ package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AlertDialog
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -164,7 +164,11 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         val alertDialog = AlertDialog.Builder(this,R.style.CustomDialogTheme)
         val row = layoutInflater.inflate(R.layout.dialog_custom_card_picker,null)
         val recyclerView = row.recyclerCardRow
-        val manager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        val manager = androidx.recyclerview.widget.LinearLayoutManager(
+            this,
+            androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL,
+            false
+        )
         recyclerView.layoutManager = manager
         recyclerView.adapter = adapter
         alertDialog.setView(row)

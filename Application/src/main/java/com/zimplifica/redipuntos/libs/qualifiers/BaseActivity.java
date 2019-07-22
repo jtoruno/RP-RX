@@ -2,12 +2,11 @@ package com.zimplifica.redipuntos.libs.qualifiers;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.AnimRes;
-import android.support.annotation.CallSuper;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.AnimRes;
+import androidx.annotation.CallSuper;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import com.zimplifica.redipuntos.libs.ActivityViewModel;
 import com.zimplifica.redipuntos.libs.ActivityViewModelManager;
 import com.zimplifica.redipuntos.libs.utils.BundleUtils;

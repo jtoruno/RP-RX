@@ -5,12 +5,12 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.chip.Chip
-import android.support.design.chip.ChipGroup
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.appcompat.widget.SearchView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -32,7 +32,7 @@ import kotlinx.android.synthetic.main.fragment_catalog.view.*
 
 @RequiresFragmentViewModel(CommercesFragmentVM.ViewModel::class)
 class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
-    lateinit var recyclerView : RecyclerView
+    lateinit var recyclerView : androidx.recyclerview.widget.RecyclerView
     lateinit var group : ChipGroup
     lateinit var adapter : CommerceAdapter
     private val compositeDisposable = CompositeDisposable()
@@ -110,7 +110,7 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
         }
 
         recyclerView = view.commerce_recycler_view
-        val manager = GridLayoutManager(activity,2)
+        val manager = GridLayoutManager(activity, 2)
         recyclerView.layoutManager = manager
         adapter = CommerceAdapter{
             viewModel.inputs.commerceSelected(it)

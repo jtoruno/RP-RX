@@ -29,20 +29,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/textView35"/>
     </LinearLayout>
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                  android:id="@+id/mov_fragment_swipe"
-                                                  android:layout_width="match_parent"
-                                                  android:layout_height="match_parent" android:layout_marginTop="0dp"
-                                                  android:layout_alignParentTop="true"
-                                                  android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
-                                                  android:layout_alignParentStart="true"
-                                                  android:layout_marginStart="0dp"
-                                                  android:layout_alignParentBottom="true"
-                                                  android:layout_marginBottom="0dp">
-        <android.support.v7.widget.RecyclerView
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+               android:id="@+id/mov_fragment_swipe"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent" android:layout_marginTop="0dp"
+               android:layout_alignParentTop="true"
+               android:layout_alignParentEnd="true" android:layout_marginEnd="0dp"
+               android:layout_alignParentStart="true"
+               android:layout_marginStart="0dp"
+               android:layout_alignParentBottom="true"
+               android:layout_marginBottom="0dp">
+        <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/mov_fragment_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

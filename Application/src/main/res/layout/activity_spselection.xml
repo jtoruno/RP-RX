@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
         android:background="@color/colorPrimary"
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -21,8 +21,8 @@
 
                       android:layout_height="wrap_content">
 
-            <android.support.constraint.ConstraintLayout android:layout_width="match_parent"
-                                                         android:layout_height="wrap_content">
+            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                               android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content"
                           app:layout_constraintStart_toStartOf="parent"
                           app:layout_constraintTop_toTopOf="parent"
@@ -35,19 +35,19 @@
                           android:textStyle="bold"
                           android:textSize="18sp"
                           android:layout_height="wrap_content" android:id="@+id/textView24"/>
-                <android.support.design.chip.Chip android:layout_width="wrap_content"
-                                                  android:id="@+id/sp_selection_chip"
-                                                  android:text="Chip"
-                                                  app:closeIconVisible="false"
-                                                  app:chipBackgroundColor="@android:color/white"
-                                                  style="@style/Widget.MaterialComponents.Chip.Action"
-                                                  android:layout_height="wrap_content" android:layout_marginEnd="28dp"
-                                                  app:layout_constraintEnd_toStartOf="@+id/sp_take_qr_code"
-                                                  android:layout_marginTop="8dp"
-                                                  android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-                                                  app:layout_constraintTop_toTopOf="parent"
-                                                  android:layout_marginBottom="8dp"
-                                                  app:layout_constraintBottom_toBottomOf="parent"/>
+                <com.google.android.material.chip.Chip android:layout_width="wrap_content"
+                                                       android:id="@+id/sp_selection_chip"
+                                                       android:text="Chip"
+                                                       app:closeIconVisible="false"
+                                                       app:chipBackgroundColor="@android:color/white"
+                                                       style="@style/Widget.MaterialComponents.Chip.Action"
+                                                       android:layout_height="wrap_content" android:layout_marginEnd="28dp"
+                                                       app:layout_constraintEnd_toStartOf="@+id/sp_take_qr_code"
+                                                       android:layout_marginTop="8dp"
+                                                       android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                                                       app:layout_constraintTop_toTopOf="parent"
+                                                       android:layout_marginBottom="8dp"
+                                                       app:layout_constraintBottom_toBottomOf="parent"/>
                 <ImageView android:layout_width="wrap_content"
                            android:layout_height="fill_parent"
                            android:layout_marginEnd="18dp"
@@ -56,7 +56,7 @@
                            app:layout_constraintBottom_toBottomOf="parent"
                            app:layout_constraintEnd_toEndOf="parent"
                            app:layout_constraintTop_toTopOf="parent"/>
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
@@ -133,4 +133,4 @@
             android:layout_marginStart="8dp" app:layout_constraintHorizontal_bias="0.498"/>
 
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

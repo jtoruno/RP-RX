@@ -1,7 +1,7 @@
 package com.zimplifica.redipuntos.viewModels
 
 import android.annotation.SuppressLint
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import android.util.Log
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult

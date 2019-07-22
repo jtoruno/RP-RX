@@ -2,9 +2,9 @@ package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.ViewPager
 import android.text.Html
 import android.view.View
 import android.widget.Button
@@ -23,7 +23,7 @@ import io.reactivex.disposables.CompositeDisposable
 class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
     lateinit var mDots: Array<TextView>
-    lateinit var mSlideViewPager: ViewPager
+    lateinit var mSlideViewPager: androidx.viewpager.widget.ViewPager
     lateinit var mDotLayout: LinearLayout
     var mcurrentPage: Int = 0
     lateinit var mNextBtn : Button
@@ -103,7 +103,7 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
         }
     }
 
-    val viewListener = object : ViewPager.OnPageChangeListener{
+    val viewListener = object : androidx.viewpager.widget.ViewPager.OnPageChangeListener{
         override fun onPageScrollStateChanged(p0: Int) {}
 
         override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}

@@ -1,6 +1,6 @@
 package com.zimplifica.redipuntos.viewModels
 
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import android.util.Log
 import com.zimplifica.domain.entities.Category
 import com.zimplifica.domain.entities.Commerce

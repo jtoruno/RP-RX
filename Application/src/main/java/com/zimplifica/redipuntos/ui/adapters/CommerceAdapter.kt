@@ -1,6 +1,6 @@
 package com.zimplifica.redipuntos.ui.adapters
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 import com.zimplifica.domain.entities.Commerce
 import com.zimplifica.redipuntos.R
 
-class CommerceAdapter(val callback : (Commerce) -> Unit ) : RecyclerView.Adapter<CommerceAdapter.CommerceVH>(){
+class CommerceAdapter(val callback : (Commerce) -> Unit ) : androidx.recyclerview.widget.RecyclerView.Adapter<CommerceAdapter.CommerceVH>(){
     private var items : List<Commerce> = listOf()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CommerceVH {
         return CommerceVH(LayoutInflater.from(p0.context).inflate(R.layout.commerce_row,p0,false))
@@ -35,7 +35,7 @@ class CommerceAdapter(val callback : (Commerce) -> Unit ) : RecyclerView.Adapter
         notifyDataSetChanged()
     }
 
-    class CommerceVH(itemView : View) : RecyclerView.ViewHolder(itemView){
+    class CommerceVH(itemView : View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
         val image : ImageView = itemView.findViewById(R.id.commerce_row_img)
         val name : TextView = itemView.findViewById(R.id.commerce_row_name)
     }

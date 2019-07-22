@@ -5,27 +5,19 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
-import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.widget.LinearLayout
-import android.widget.Toast
-
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseFragment
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresFragmentViewModel
-import com.zimplifica.redipuntos.services.GlobalState
 import com.zimplifica.redipuntos.ui.adapters.CardAdapter
 import com.zimplifica.redipuntos.viewModels.PointsFragmentVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import java.util.concurrent.TimeUnit
 
 @RequiresFragmentViewModel(PointsFragmentVM.ViewModel::class)
 class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
@@ -42,7 +34,7 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
         recyclerView = view.findViewById(R.id.points_recycler_view)
 
         adapter = CardAdapter(activity!!){
-            class MyDialogFragment : DialogFragment() {
+            class MyDialogFragment : androidx.fragment.app.DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
                     return AlertDialog.Builder(activity!!)
                         .setTitle("¡Alerta!")
@@ -59,7 +51,7 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
 
             //Toast.makeText(activity!!,"Click",Toast.LENGTH_SHORT).show()
         }
-        val manager = GridLayoutManager(activity,2)
+        val manager = GridLayoutManager(activity, 2)
         recyclerView.layoutManager = manager
         recyclerView.adapter = adapter
 
@@ -111,9 +103,9 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
     }
 
     private fun showError(title : String, message: String){
-        class MyDialogFragment2 : DialogFragment() {
+        class MyDialogFragment2 : androidx.fragment.app.DialogFragment() {
             override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-                return android.support.v7.app.AlertDialog.Builder(activity!!)
+                return androidx.appcompat.app.AlertDialog.Builder(activity!!)
                     .setTitle(title)
                     .setMessage(message)
                     .setPositiveButton("Cerrar",null)

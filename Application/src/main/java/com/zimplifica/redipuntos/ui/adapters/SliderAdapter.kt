@@ -1,7 +1,7 @@
 package com.zimplifica.redipuntos.ui.adapters
 
 import android.content.Context
-import android.support.v4.view.PagerAdapter
+import androidx.viewpager.widget.PagerAdapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.airbnb.lottie.LottieAnimationView
 import com.zimplifica.redipuntos.R
 
-class SliderAdapter(val context: Context) : PagerAdapter() {
+class SliderAdapter(val context: Context) : androidx.viewpager.widget.PagerAdapter() {
     var array = arrayListOf(R.string.walk1, R.string.walk2, R.string.walk3, R.string.walk4)
     var arraytext = arrayListOf(R.string.description1,R.string.description2, R.string.description3, R.string.description4)
     var animations = arrayListOf(R.raw.confetti,R.raw.securitycheck, R.raw.servicespayment,R.raw.ballons)

@@ -8,8 +8,8 @@
         android:fillViewport="true"
         android:layout_height="match_parent"
         tools:context=".ui.activities.SignInFailureActivity">
-    <android.support.constraint.ConstraintLayout android:layout_width="match_parent"
-                                                 android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="match_parent">
         <TextView
                 android:textColor="@color/colorAccent"
                 android:textSize="18sp"
@@ -113,6 +113,6 @@
                     android:layout_height="wrap_content"/>
         </LinearLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

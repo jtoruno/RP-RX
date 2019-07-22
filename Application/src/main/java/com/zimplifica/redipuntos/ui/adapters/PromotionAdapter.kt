@@ -1,7 +1,7 @@
 package com.zimplifica.redipuntos.ui.adapters
 
 import android.graphics.Paint
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import com.zimplifica.redipuntos.R
 
 
 
-class PromotionAdapter(val callback: (Promotion) -> Unit) : RecyclerView.Adapter<PromotionAdapter.PromotionVH>() {
+class PromotionAdapter(val callback: (Promotion) -> Unit) : androidx.recyclerview.widget.RecyclerView.Adapter<PromotionAdapter.PromotionVH>() {
 
     private var items : List<Promotion> = listOf()
 
@@ -64,7 +64,7 @@ class PromotionAdapter(val callback: (Promotion) -> Unit) : RecyclerView.Adapter
         notifyDataSetChanged()
     }
 
-    class PromotionVH(itemView : View) : RecyclerView.ViewHolder(itemView){
+    class PromotionVH(itemView : View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
         val image : ImageView = itemView.findViewById(R.id.promotion_row_image)
         val title : TextView = itemView.findViewById(R.id.promotion_row_title)
         val description : TextView = itemView.findViewById(R.id.promotion_row_description)

@@ -1,5 +1,5 @@
-<android.support.constraint.ConstraintLayout android:layout_width="match_parent"
-                                             android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content" xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -156,4 +156,4 @@
         </LinearLayout>
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

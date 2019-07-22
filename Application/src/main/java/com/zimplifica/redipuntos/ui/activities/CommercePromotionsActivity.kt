@@ -1,10 +1,10 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.activity_commerce_promotions.*
 
 @RequiresActivityViewModel(CommercePromotionsVM.ViewModel::class)
 class CommercePromotionsActivity : BaseActivity<CommercePromotionsVM.ViewModel>() {
-    lateinit var recyclerView : RecyclerView
+    lateinit var recyclerView : androidx.recyclerview.widget.RecyclerView
     lateinit var adapter : PromotionAdapter
     private val compositeDisposable = CompositeDisposable()
 
@@ -28,7 +28,7 @@ class CommercePromotionsActivity : BaseActivity<CommercePromotionsVM.ViewModel>(
         recyclerView = commerce_promotions_recycler_view
         adapter = PromotionAdapter { viewModel.inputs.promotionSelected(it) }
         recyclerView.adapter = adapter
-        val manager = GridLayoutManager(this,2)
+        val manager = androidx.recyclerview.widget.GridLayoutManager(this, 2)
         recyclerView.layoutManager = manager
         compositeDisposable.add(viewModel.outputs.commerceResult().observeOn(AndroidSchedulers.mainThread())
             .subscribe {

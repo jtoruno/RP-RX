@@ -4,17 +4,12 @@ package com.zimplifica.redipuntos.ui.fragments
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseFragment
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresFragmentViewModel
@@ -32,7 +27,6 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
     lateinit var recyclerView: RecyclerView
     lateinit var sectionAdapter : SectionedRecyclerViewAdapter
     private val compositeDisposable = CompositeDisposable()
-    private var isVisited = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,10 +34,10 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
     ): View? {
         val view =inflater.inflate(R.layout.fragment_movements, container, false)
         recyclerView = view.mov_fragment_recycler_view
-        val manager = LinearLayoutManager(activity,LinearLayoutManager.VERTICAL,false)
+        val manager = LinearLayoutManager(activity, RecyclerView.VERTICAL, false)
         recyclerView.layoutManager = manager
         recyclerView.setHasFixedSize(true)
-        val divider = DividerItemDecoration(activity,manager.orientation)
+        val divider = androidx.recyclerview.widget.DividerItemDecoration(activity, manager.orientation)
         recyclerView.addItemDecoration(divider)
         sectionAdapter = SectionedRecyclerViewAdapter()
         recyclerView.adapter = sectionAdapter
@@ -100,14 +94,4 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
         super.onResume()
         this.viewModel.inputs.fetchTransactions(true)
     }
-
-    /*
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (!hidden){
-            Log.e("MovFragment","visible")
-            this.viewModel.inputs.fetchTransactions(true)
-        }
-    }*/
-
 }

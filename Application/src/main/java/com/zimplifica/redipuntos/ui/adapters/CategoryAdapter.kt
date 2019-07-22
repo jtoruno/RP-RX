@@ -1,6 +1,6 @@
 package com.zimplifica.redipuntos.ui.adapters
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +10,7 @@ import com.squareup.picasso.Picasso
 import com.zimplifica.domain.entities.Category
 import com.zimplifica.redipuntos.R
 
-class CategoryAdapter(val callback : (Category) -> Unit) : RecyclerView.Adapter<CategoryAdapter.CategoryVH>() {
+class CategoryAdapter(val callback : (Category) -> Unit) : androidx.recyclerview.widget.RecyclerView.Adapter<CategoryAdapter.CategoryVH>() {
     private var items : List<Category> = listOf()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CategoryVH {
         return CategoryVH(LayoutInflater.from(p0.context).inflate(R.layout.category_row,p0,false))
@@ -34,7 +34,7 @@ class CategoryAdapter(val callback : (Category) -> Unit) : RecyclerView.Adapter<
         notifyDataSetChanged()
     }
 
-    class CategoryVH(itemView : View) : RecyclerView.ViewHolder(itemView){
+    class CategoryVH(itemView : View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
         val image : ImageView = itemView.findViewById(R.id.category_row_img)
         val name : TextView = itemView.findViewById(R.id.category_row_name)
     }

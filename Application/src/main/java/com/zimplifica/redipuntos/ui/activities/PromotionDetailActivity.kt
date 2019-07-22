@@ -6,9 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -35,7 +35,7 @@ import java.util.*
 @RequiresActivityViewModel(PromotionDetailVM.ViewModel::class)
 class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
-    lateinit var recyclerView : RecyclerView
+    lateinit var recyclerView : androidx.recyclerview.widget.RecyclerView
     lateinit var adapter : LocationAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,10 +54,14 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
             showDialog(it)
         }
         recyclerView.adapter = adapter
-        val manager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false)
+        val manager = androidx.recyclerview.widget.LinearLayoutManager(
+            this,
+            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+            false
+        )
         recyclerView.layoutManager = manager
         recyclerView.setHasFixedSize(true)
-        val divider = DividerItemDecoration(this,manager.orientation)
+        val divider = androidx.recyclerview.widget.DividerItemDecoration(this, manager.orientation)
         recyclerView.addItemDecoration(divider)
 
         compositeDisposable.add(viewModel.outputs.promotionAction().observeOn(AndroidSchedulers.mainThread())

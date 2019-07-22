@@ -1,20 +1,11 @@
 package com.zimplifica.redipuntos.libs;
 
-import android.app.Instrumentation;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.CallSuper;
-import android.support.annotation.Nullable;
-import android.util.Pair;
-import com.trello.rxlifecycle.ActivityEvent;
-import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity;
-import com.zimplifica.redipuntos.ui.data.ActivityResult;
+import androidx.annotation.CallSuper;
+import androidx.annotation.Nullable;
 import io.reactivex.Observable;
-import io.reactivex.ObservableTransformer;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.subjects.PublishSubject;
-import rx.subscriptions.CompositeSubscription;
 
 public class ActivityViewModel<ViewType> {
 

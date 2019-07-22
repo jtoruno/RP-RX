@@ -1,7 +1,7 @@
 package com.zimplifica.redipuntos.ui.adapters
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +39,6 @@ class CardAdapter(val context : Context, val callBack : (PaymentMethod) -> Unit)
         }
         if(item.issuer.toLowerCase() == "redipuntos"){
             p0.cardCloseBtn.visibility = View.GONE
-            //p0.cardImage.background =  context.resources.getDrawable(android.R.color.black)
             p0.cardImage.setImageResource(R.drawable.cutmypic)
             p0.cardNumber.text = item.rewards.toString()
         }

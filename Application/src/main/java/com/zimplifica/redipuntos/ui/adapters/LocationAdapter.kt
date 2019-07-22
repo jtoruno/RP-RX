@@ -2,7 +2,7 @@ package com.zimplifica.redipuntos.ui.adapters
 
 import android.content.Intent
 import android.net.Uri
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +16,7 @@ import com.zimplifica.domain.entities.Store
 import com.zimplifica.redipuntos.R
 import java.util.*
 
-class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedule)-> Unit) : RecyclerView.Adapter<LocationAdapter.LocationVH>(){
+class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedule)-> Unit) : androidx.recyclerview.widget.RecyclerView.Adapter<LocationAdapter.LocationVH>(){
     var items : List<Store> = listOf()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): LocationVH {
         return LocationVH(LayoutInflater.from(p0.context).inflate(R.layout.location_row,p0,false))
@@ -105,7 +105,7 @@ class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedu
     }
 
 
-    class LocationVH(itemView : View): RecyclerView.ViewHolder(itemView){
+    class LocationVH(itemView : View): androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
         val place : TextView = itemView.findViewById(R.id.location_row_place)
         val phone : TextView = itemView.findViewById(R.id.location_row_phone)
         val schedule : TextView = itemView.findViewById(R.id.location_row_schedule)

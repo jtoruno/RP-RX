@@ -1,13 +1,12 @@
 package com.zimplifica.redipuntos.viewModels
 
-import android.support.annotation.NonNull
+import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.*
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.SitePaySellerSelectionObject
 import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
