@@ -50,7 +50,7 @@ interface MovementDetailVM {
                 .map { this.transactionObserver.value.wayToPay }
                 .subscribe(this.paymentInfoButtonAction)
 
-
+            /*
              val event = transactionIntent
                 .filter { it.status == TransactionStatus.pending }
                  .flatMap { return@flatMap Observable.interval(2,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
@@ -66,6 +66,7 @@ interface MovementDetailVM {
                         this.transactionObserver.onNext(trx)
                     }
                 }
+                */
 
         }
 

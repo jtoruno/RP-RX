@@ -8,10 +8,11 @@ import com.zimplifica.redipuntos.R
 import io.github.luizgrp.sectionedrecyclerviewadapter.StatelessSection
 import com.amulyakhare.textdrawable.TextDrawable
 import com.zimplifica.domain.entities.TransactionStatus
+import io.github.luizgrp.sectionedrecyclerviewadapter.SectionParameters
 
 
 class MovSection internal constructor( internal val title: String, internal val list : List<Transaction>,internal val callback : (Transaction) -> Unit) :
-    StatelessSection(R.layout.movement_header,R.layout.movement_row) {
+    StatelessSection(SectionParameters.builder().itemResourceId(R.layout.movement_row).headerResourceId(R.layout.movement_header).build()) {
     override fun getContentItemsTotal(): Int {
         return list.size
     }
