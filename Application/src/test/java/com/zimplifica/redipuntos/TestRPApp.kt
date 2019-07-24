@@ -1,9 +1,8 @@
 package com.zimplifica.redipuntos
 
-class TestRPApp : RPApplication(){
-    override fun isInUnitTests(): Boolean {
-        return true
-    }
+import android.app.Application
+
+class TestRPApp : Application(){
 }
 
 

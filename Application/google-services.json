@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "559905242065",
+    "firebase_url": "https://redipuntos-ebffd.firebaseio.com",
+    "project_id": "redipuntos-ebffd",
+    "storage_bucket": "redipuntos-ebffd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:559905242065:android:13dd3926ee538778",
+        "android_client_info": {
+          "package_name": "com.zimplifica.redipuntos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "559905242065-ir3mcqkot5j300l72dpphktmfeeiqlec.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiyBDsWIbjh9CbRUFz6EA8CB7YmvHkln8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "559905242065-ir3mcqkot5j300l72dpphktmfeeiqlec.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "559905242065-tkbmhk0i2avsn3g2984mpv7iqi38jth5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.zimplifica.redipuntos"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

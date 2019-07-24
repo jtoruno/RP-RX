@@ -96,4 +96,8 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         return userUseCase.fetchCategories()
     }
 
+    fun registPushNotificationToken(token : String) : Observable<Result<String>>{
+        return userUseCase.registPushNotificationToken(token)
+    }
+
 }

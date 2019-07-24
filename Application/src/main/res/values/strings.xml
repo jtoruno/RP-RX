@@ -28,4 +28,6 @@
         su cédula de identidad
     </string>
     <string name="title_activity_add_payment">AddPaymentActivity</string>
+
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 </resources>

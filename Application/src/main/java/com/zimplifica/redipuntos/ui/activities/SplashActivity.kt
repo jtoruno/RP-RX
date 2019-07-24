@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.zimplifica.domain.entities.UserStateResult
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
@@ -34,6 +36,18 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
                 val intent = Intent(this, WalkThrough::class.java)
                 startActivity(intent)
                 finish()
+            })
+
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("SplashActivity", "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+                // Get new Instance ID token
+                val token = task.result?.token
+                Log.e("SplashActivity", token)
+                this.viewModel.inputs.token(token?:"")
             })
     }
 

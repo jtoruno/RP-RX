@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.zimplifica.redipuntos.libs.Environment
@@ -15,40 +16,52 @@ import org.junit.runner.RunWith
 import org.junit.Before
 import junit.framework.TestCase
 import org.junit.Ignore
+import org.junit.Rule
 import org.robolectric.annotation.Config
 import org.robolectric.RuntimeEnvironment
 
 
 @RunWith(RPGraddleTestRunner::class)
-@Config(manifest = Config.NONE, sdk = [RPGraddleTestRunner.DEFAULT_SDK],application = TestRPApp::class)
+@Config(manifest = Config.NONE, sdk = [RPGraddleTestRunner.DEFAULT_SDK]/*,application = TestRPApp::class*/,application = TestRPApp::class)
 abstract class RPTestCase : TestCase(){
-    private var application : TestRPApp? = null
+    //private var application : TestRPApp? = null
+    private var application : Application? = null
     private var environment: Environment? = null
     @Before
     @Throws(Exception::class)
     public override fun setUp() {
         super.setUp()
 
+        /*
         this.environment = application()!!.component()!!.environment().toBuilder()
             .webEndpoint("nnnnn")
             .sharedPreferences(sharedPref())
             .authenticationUseCase(authenticationService())
             .currentUser(CurrentUser)
             .userUseCase(userUseCaseService())
+            .build()*/
+
+        val environment = Environment.builder()
+            .webEndpoint("nnnnn")
+            .sharedPreferences(sharedPref())
+            .authenticationUseCase(authenticationService())
+            .currentUser(CurrentUser)
+            .userUseCase(userUseCaseService())
             .build()
+        this.environment = environment
     }
 
     @NonNull
-    protected fun application(): RPApplication? {
+    protected fun application(): Application? {
         if (this.application != null) {
             return this.application
         }
-
-        this.application = RuntimeEnvironment.application as TestRPApp
+        this.application = RuntimeEnvironment.application
+        //this.application = RuntimeEnvironment.application as TestRPApp
         return this.application
     }
     private fun sharedPref(): SharedPreferences{
-        return application!!.getSharedPreferences("SP",Activity.MODE_PRIVATE)
+        return application()?.applicationContext?.getSharedPreferences("SP",Activity.MODE_PRIVATE)!!
     }
 
     private fun authenticationService(): AuthenticationService{

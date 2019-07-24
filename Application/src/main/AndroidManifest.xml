@@ -104,6 +104,7 @@
         </activity>
 
         <service android:name="org.eclipse.paho.android.service.MqttService"/>
+        <service android:name=".services.notifications.PushListenerService"/>
 
         <activity
                 android:name=".ui.activities.SPSelectionActivity"

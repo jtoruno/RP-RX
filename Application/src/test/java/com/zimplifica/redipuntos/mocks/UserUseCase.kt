@@ -8,6 +8,16 @@ import org.junit.runner.Request
 import java.lang.Exception
 
 class UserUseCase : UserUseCase{
+    override fun registPushNotificationToken(token: String): Observable<Result<String>> {
+        val single = Single.create<Result<String>> create@{ single ->
+            if(token.isNotEmpty()){
+                single.onSuccess(Result.success(token))
+            }else{
+                single.onSuccess(Result.failure(Exception()))
+            }
+        }
+        return single.toObservable()
+    }
 
 
     override fun disablePaymentMethod(owner: String, cardId: String): Observable<Result<PaymentMethod>> {

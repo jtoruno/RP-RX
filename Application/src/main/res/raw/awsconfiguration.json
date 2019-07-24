@@ -30,5 +30,16 @@
       "AuthMode": "AWS_IAM",
       "ClientDatabasePrefix": "publicdb"
     }
+  },
+  "PinpointAnalytics": {
+    "Default": {
+      "AppId": "f0b280c485e1490da325dbaaab370058",
+      "Region": "us-east-1"
+    }
+  },
+  "PinpointTargeting": {
+    "Default": {
+      "Region": "us-east-1"
+    }
   }
 }

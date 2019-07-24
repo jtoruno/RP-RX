@@ -12,6 +12,7 @@ import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.zimplifica.awsplatform.AppSync.AppSyncClient
 import com.zimplifica.awsplatform.AppSync.CacheOperations
+import com.zimplifica.awsplatform.Pinpoint.PinpointClient
 import com.zimplifica.awsplatform.Utils.PlatformUtils
 import com.zimplifica.domain.entities.*
 import com.zimplifica.domain.useCases.UserUseCase
@@ -494,6 +495,19 @@ class UserUseCase : UserUseCase {
         }
         return single.toObservable()
     }
+
+    override fun registPushNotificationToken(token: String): Observable<Result<String>> {
+        val single = Single.create<Result<String>> create@{ single ->
+            val tokenResponse = PinpointClient.setTokenDevice(token)
+            if (tokenResponse.isEmpty()){
+                single.onSuccess(Result.failure(Exception()))
+            }else{
+                single.onSuccess(Result.success(tokenResponse))
+            }
+        }
+        return single.toObservable()
+    }
+
     /*
     override fun filterCommercesByCategory(categoryId: String): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->

@@ -121,12 +121,12 @@ class AddPaymentVMTest : RPTestCase() {
         vm.inputs.cardExpirationChanged( "10/22")
         isFormValid.assertValues(false)
         vm.inputs.cardSecurityCodeChanged("301")
-        isFormValid.assertValues(false)
+        isFormValid.assertValues(false, false)
         vm.inputs.cardNumberChanged("4539169425022428")
-        isFormValid.assertValues(false,  true)
+        isFormValid.assertValues(false, false, false,true)
 
         vm.inputs.cardNumberChanged("45391694250224")
-        isFormValid.assertValues(false,  true, false)
+        isFormValid.assertValues(false, false, false, true, true, false)
     }
 
     @Test

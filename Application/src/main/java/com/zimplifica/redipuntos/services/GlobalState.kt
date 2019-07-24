@@ -16,8 +16,8 @@ import io.reactivex.subjects.ReplaySubject
 @SuppressLint("CheckResult")
 class GlobalState(val context: Context){
     private var userInformationSubscription  = BehaviorSubject.create<UserInformationResult>()
-    private val app = context.applicationContext as RPApplication
-    private val environment = app.component()?.environment()
+    //private val app = context.applicationContext as RPApplication
+    //private val environment = app.component()?.environment()
     //private val environment = Environment.builder().build()
 
      init {

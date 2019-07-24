@@ -7,6 +7,7 @@ import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.UserStateDetails
 import com.zimplifica.awsplatform.AppSync.AppSyncClient
+import com.zimplifica.awsplatform.Pinpoint.PinpointClient
 import com.zimplifica.domain.useCases.AuthenticationUseCase
 import com.zimplifica.domain.useCases.UseCaseProvider
 import com.zimplifica.domain.useCases.UserUseCase
@@ -25,6 +26,7 @@ class UseCaseProvider(context: Context) : UseCaseProvider{
             }
         })
         AppSyncClient.initClients(context)
+        PinpointClient.initClient(context)
     }
     override fun makeAuthenticationUseCase(): AuthenticationUseCase {
         return com.zimplifica.awsplatform.useCases.AuthenticationUseCase()

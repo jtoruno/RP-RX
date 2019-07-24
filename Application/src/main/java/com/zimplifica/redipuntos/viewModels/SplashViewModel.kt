@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.viewModels
 
+import android.annotation.SuppressLint
 import androidx.annotation.NonNull
 import android.util.Log
 import com.zimplifica.domain.entities.Result
@@ -14,25 +15,46 @@ import io.reactivex.subjects.PublishSubject
 interface SplashViewModel {
     interface Inputs {
         fun onCreate()
+        fun token(token : String)
     }
     interface Outputs{
         //fun splashAction() : Observable<UserStateResult>
         fun signedInAction(): Observable<Unit>
         fun signedOutAction(): Observable<Unit>
+        fun tokenAction() : Observable<String>
     }
+
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<SplashViewModel>(environment), Inputs, Outputs{
+
+
 
         val inputs : Inputs = this
         val outputs : Outputs = this
 
         //Inputs
         private val onCreate = PublishSubject.create<Unit>()
+        private val token = PublishSubject.create<String>()
 
         //Outputs
         private val signedInAction = BehaviorSubject.create<Unit>()
         private val signedOutAction = BehaviorSubject.create<Unit>()
+        private val tokenAction = BehaviorSubject.create<String>()
 
         init {
+
+            val registDeviceEvent = token
+                .flatMap { this.registDeviceToken(it) }
+                .share()
+
+            registDeviceEvent
+                .filter { it.isFail() }
+                .subscribe { Log.e("Error","Error with the token device") }
+
+            registDeviceEvent
+                .filter { !it.isFail() }
+                .map { it.successValue() }
+                .subscribe(this.tokenAction)
+
 
             val getSession = onCreate
                 .flatMap { this.submit() }
@@ -68,6 +90,10 @@ interface SplashViewModel {
             this.onCreate.onNext(Unit)
         }
 
+        override fun token(token: String) {
+            return this.token.onNext(token)
+        }
+
         override fun signedInAction(): Observable<Unit> = this.signedInAction
 
         override fun signedOutAction(): Observable<Unit> = this.signedOutAction
@@ -75,6 +101,9 @@ interface SplashViewModel {
         override fun splashAction(): Observable<UserStateResult> {
             return this.splashAction
         }*/
+
+        override fun tokenAction(): Observable<String> = this.tokenAction
+
         private fun submit() : Observable<UserStateResult>{
             Log.e("Print",environment.currentUser().getCurrentUser().toString())
             return environment.authenticationUseCase().getCurrentUserState()
@@ -82,6 +111,10 @@ interface SplashViewModel {
 
         private fun finishLoadingUserInfo() : Observable<Result<UserInformationResult>>{
             return environment.userUseCase().getUserInformation(false)
+        }
+
+        private fun registDeviceToken(token : String) : Observable<Result<String>>{
+            return environment.userUseCase().registPushNotificationToken(token)
         }
 
     }
