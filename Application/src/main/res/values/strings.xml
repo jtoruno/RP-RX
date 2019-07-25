@@ -1,28 +1,30 @@
 <resources>
     <string name="app_name">RediPuntos</string>
-    <string name="signUpTermsText">Al presionar \'Crear Cuenta\' aceptas los Términos y Condiciones y las Políticas de
-        Privacidad.
+    <string name="signUpTermsText">By clicking \'Create Account\' you are indicating that you have read and agree to our Terms and Conditions and Privacy Policy.
     </string>
-    <string name="walk1">¡Explota tus puntos!</string>
-    <string name="walk2">Fácil y Segura</string>
-    <string name="walk3">Explora tus posibilidades con RediPuntos</string>
-    <string name="walk4">¿Y por qué no?</string>
+    <string name="walk1">Points explotion!</string>
+    <string name="walk2">Easy and Safe</string>
+    <string name="walk3">Explore new posibilities with RediPuntos</string>
+    <string name="walk4">Why not?</string>
+
     <string name="description1">Viví una experiencia innovadora de redención de puntos</string>
     <string name="description2">Utiliza tus puntos en lo que más necesites de la manera más fácil y segura</string>
     <string name="description3">Sabemos que la manera convencional no es la mejor. Creemos que podemos mejorarla,
         facilitando tu vida mediante una plataforma innovadora, fácil y segura
     </string>
     <string name="description4">Proba RediPuntos para pagar tus servicios porque, ¿por que no?</string>
-    <string name="title_activity_home">HomeActivity</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+
+
+    <string name="title_activity_home" translatable="false">HomeActivity</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">Android Studio</string>
+    <string name="nav_header_subtitle" translatable="false">android.studio@android.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+    <string name="action_settings" translatable="false">Settings</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 
     <string name="barcodeinfo">Por favor enfoque en el recuadro el código de barras \n ubicado en la parte posterior de
         su cédula de identidad
@@ -30,4 +32,13 @@
     <string name="title_activity_add_payment">AddPaymentActivity</string>
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+
+
+    <string name="About_redipuntos">About RediPuntos</string>
+    <string name="About_zimplifica">About Zimplifica</string>
+    <string name="Account">Account</string>
+    <string name="Account_information">Account Information</string>
+    <string name="Add_payment_method_securiy_description">RediPuntos complies all the security protocols for the secure management of the information.</string>
+    <string name="Alert">Alert</string>
+    <string name="App_version">App version %1$s</string>
 </resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RediPuntos</string>
+    <string name="signUpTermsText">Al presionar \'Crear Cuenta\' aceptas los Términos y Condiciones y las Políticas de
+        Privacidad.</string>
+    <string name="walk1">¡Explota tus puntos!</string>
+    <string name="walk2">Fácil y Segura</string>
+    <string name="walk3">Explora tus posibilidades con RediPuntos</string>
+    <string name="walk4">¿Y por qué no?</string>
+    <string name="About_redipuntos">Sobre RediPuntos</string>
+    <string name="About_zimplifica">Sobre Zimplifica</string>
+    <string name="Account">Cuenta</string>
+    <string name="Account_information">Información de la Cuenta</string>
+    <string name="Add_payment_method_securiy_description">RediPuntos cumple con todos los protocolos de seguridad
+        establecidos para administrar de forma segura la información de sus tarjetas de crédito/débito
+    </string>
+    <string name="Alert">Alerta</string>
+</resources>
