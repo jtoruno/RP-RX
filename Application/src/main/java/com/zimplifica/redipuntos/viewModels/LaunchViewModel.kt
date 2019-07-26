@@ -6,12 +6,14 @@ import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 interface LaunchViewModel {
     interface Inputs{
         fun onCreate()
+        fun finishAnimation()
     }
     interface Outputs{
         fun nextScreen() : Observable<UserInformationResult>
@@ -24,6 +26,7 @@ interface LaunchViewModel {
 
         //Inputs
         private val onCreate = PublishSubject.create<Unit>()
+        private val finishAnimation = PublishSubject.create<Unit>()
 
         //Outputs
         private val nextScreen = BehaviorSubject.create<UserInformationResult>()
@@ -37,11 +40,17 @@ interface LaunchViewModel {
                 .map {
                     return@map it.successValue()
                 }
+                .zipWith(this.finishAnimation)
+                .map { it.first }
                 .subscribe(this.nextScreen)
         }
 
         override fun onCreate() {
              this.onCreate.onNext(Unit)
+        }
+
+        override fun finishAnimation() {
+            this.finishAnimation.onNext(Unit)
         }
 
         override fun nextScreen(): Observable<UserInformationResult> = this.nextScreen

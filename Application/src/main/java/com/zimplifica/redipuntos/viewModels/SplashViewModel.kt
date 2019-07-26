@@ -11,19 +11,19 @@ import com.zimplifica.domain.entities.UserStateResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 interface SplashViewModel {
     interface Inputs {
         fun onCreate()
-        fun token(token : String)
+        fun finishAnimation()
     }
     interface Outputs{
         //fun splashAction() : Observable<UserStateResult>
         fun signedInAction(): Observable<Unit>
         fun signedOutAction(): Observable<Unit>
-        fun tokenAction() : Observable<String>
     }
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<SplashViewModel>(environment), Inputs, Outputs{
@@ -35,29 +35,13 @@ interface SplashViewModel {
 
         //Inputs
         private val onCreate = PublishSubject.create<Unit>()
-        private val token = PublishSubject.create<String>()
+        private val finishAnimation = PublishSubject.create<Unit>()
 
         //Outputs
         private val signedInAction = BehaviorSubject.create<Unit>()
         private val signedOutAction = BehaviorSubject.create<Unit>()
-        private val tokenAction = BehaviorSubject.create<String>()
 
         init {
-
-            val registDeviceEvent = token
-                .flatMap { this.registDeviceToken(it) }
-                .share()
-
-            registDeviceEvent
-                .filter { it.isFail() }
-                .subscribe { Log.e("Error","Error with the token device") }
-
-            registDeviceEvent
-                .filter { !it.isFail() }
-                .map { it.successValue() }
-                .subscribe(this.tokenAction)
-
-
             val getSession = onCreate
                 .flatMap { this.submit() }
                 .share()
@@ -67,7 +51,8 @@ interface SplashViewModel {
 
             getSession
                 .filter { it == UserStateResult.signedOut }
-                .map { it -> Unit }
+                .zipWith(this.finishAnimation)
+                .map { Unit }
                 .subscribe(this.signedOutAction)
 
             val signedIn = getSession
@@ -75,13 +60,15 @@ interface SplashViewModel {
                 .flatMap { this.finishLoadingUserInfo() }
                 .share()
 
+
             signedIn
                 .filter { !it.isFail() }
                 .map {
                     return@map it.successValue()
                 }
+                .zipWith(this.finishAnimation)
                 .map {
-                    Log.i("UserInfo","nnnn"+it.userPhoneNumber)
+                    Log.i("UserInfo","nnnn"+it.first?.userPhoneNumber)
                     return@map Unit
                 }
                 .subscribe(this.signedInAction)
@@ -92,8 +79,8 @@ interface SplashViewModel {
             this.onCreate.onNext(Unit)
         }
 
-        override fun token(token: String) {
-            return this.token.onNext(token)
+        override fun finishAnimation() {
+            this.finishAnimation.onNext(Unit)
         }
 
         override fun signedInAction(): Observable<Unit> = this.signedInAction
@@ -103,8 +90,6 @@ interface SplashViewModel {
         override fun splashAction(): Observable<UserStateResult> {
             return this.splashAction
         }*/
-
-        override fun tokenAction(): Observable<String> = this.tokenAction
 
         private fun submit() : Observable<UserStateResult>{
             Log.e("Print",environment.currentUser().getCurrentUser().toString())
