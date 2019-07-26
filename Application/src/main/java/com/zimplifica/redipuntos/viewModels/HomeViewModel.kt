@@ -3,6 +3,8 @@ package com.zimplifica.redipuntos.viewModels
 import android.annotation.SuppressLint
 import androidx.annotation.NonNull
 import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.UserStateResult
@@ -20,6 +22,7 @@ interface HomeViewModel {
         fun completePersonalInfoButtonPressed()
         fun signOutButtonPressed()
         fun addPaymentButtonPressed()
+        fun token(token: String)
     }
     interface Outputs {
         fun showCompletePersonalInfoAlert() : Observable<Unit>
@@ -36,7 +39,6 @@ interface HomeViewModel {
     @SuppressLint("CheckResult")
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<HomeViewModel>(environment), Inputs, Outputs{
 
-
         val inputs : Inputs = this
         val outputs : Outputs = this
 
@@ -45,6 +47,7 @@ interface HomeViewModel {
         private val signOutButtonPressed = PublishSubject.create<Unit>()
         private val completePersonalInfoButtonPressed = PublishSubject.create<Unit>()
         private val addPaymentButtonPressed = PublishSubject.create<Unit>()
+        private val tokenInput = PublishSubject.create<String>()
 
 
         //Outputs
@@ -56,6 +59,22 @@ interface HomeViewModel {
         private val accountInformationResult = BehaviorSubject.create<UserInformationResult>()
 
         init {
+
+            val event = tokenInput
+                .flatMap { return@flatMap this.registDeviceToken(it) }
+                .share()
+
+            event
+                .filter { it.isFail() }
+                .subscribe { Log.e("Error","Error with the token device") }
+
+            event
+                .filter { !it.isFail() }
+                .map { it.successValue() }
+                .subscribe {
+                    Log.e("TokenCorrect",it)
+                }
+
             onCreate
                 .map { return@map environment.currentUser().userConfirmationStatus() }
                 .subscribe {
@@ -87,6 +106,7 @@ interface HomeViewModel {
             this.addPaymentMethodAction = this.addPaymentButtonPressed
 
 
+
         }
 
         override fun onCreate() {
@@ -98,6 +118,10 @@ interface HomeViewModel {
             if (paymentMethods < maxCardsAllowed){
                 return addPaymentButtonPressed.onNext(Unit)
             }
+        }
+
+        override fun token(token: String) {
+            this.tokenInput.onNext(token)
         }
 
         override fun addPaymentMethodAction(): Observable<Unit> = this.addPaymentMethodAction
@@ -120,12 +144,22 @@ interface HomeViewModel {
 
         override fun accountInformationResult(): Observable<UserInformationResult> = this.accountInformationResult
 
+
         private fun signOut() : Observable<Result<UserStateResult>>{
             return environment.authenticationUseCase().signOut()
         }
 
         private fun formatFloatToString(mFloat : Float): String{
             return "₡"+String.format("%,.1f", mFloat)
+        }
+
+        private fun registDevice(){
+
+
+        }
+        private fun registDeviceToken(token : String) : Observable<Result<String>>{
+            val userId = environment.currentUser().getCurrentUser()?.userId
+            return environment.userUseCase().registPushNotificationToken(token, userId ?: "")
         }
     }
 }

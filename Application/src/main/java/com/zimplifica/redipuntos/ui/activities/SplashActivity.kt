@@ -37,18 +37,6 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
                 startActivity(intent)
                 finish()
             })
-
-        FirebaseInstanceId.getInstance().instanceId
-            .addOnCompleteListener(OnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Log.w("SplashActivity", "getInstanceId failed", task.exception)
-                    return@OnCompleteListener
-                }
-                // Get new Instance ID token
-                val token = task.result?.token
-                Log.e("SplashActivity", token)
-                this.viewModel.inputs.token(token?:"")
-            })
     }
 
     override fun onDestroy() {

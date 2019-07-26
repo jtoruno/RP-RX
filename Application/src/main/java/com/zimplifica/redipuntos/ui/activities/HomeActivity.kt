@@ -27,6 +27,8 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import android.view.View
 import android.widget.Toast
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
 import com.zimplifica.redipuntos.models.ManagerNav
@@ -172,6 +174,17 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             .subscribe{
                 val intent = Intent(this,AddPaymentMethodActivity::class.java)
                 startActivity(intent)
+            })
+
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("SplashActivity", "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+                // Get new Instance ID token
+                val token = task.result?.token
+                this.viewModel.inputs.token(token?:"")
             })
 
         this.viewModel.inputs.onCreate()

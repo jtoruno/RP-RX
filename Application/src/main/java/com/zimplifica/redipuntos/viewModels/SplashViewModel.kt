@@ -3,6 +3,8 @@ package com.zimplifica.redipuntos.viewModels
 import android.annotation.SuppressLint
 import androidx.annotation.NonNull
 import android.util.Log
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.UserStateResult
@@ -111,10 +113,34 @@ interface SplashViewModel {
 
         private fun finishLoadingUserInfo() : Observable<Result<UserInformationResult>>{
             return environment.userUseCase().getUserInformation(false)
+                    /*
+                .doAfterNext{
+                    Log.e("doAfterNext", "Log")
+                    when(it){
+                        is Result.success -> {
+                            Log.e("doAfterNext", "sucesss")
+                            FirebaseInstanceId.getInstance().instanceId
+                                .addOnCompleteListener(OnCompleteListener { task ->
+                                    if (!task.isSuccessful) {
+                                        Log.w("SplashActivity", "getInstanceId failed", task.exception)
+                                        return@OnCompleteListener
+                                    }
+                                    // Get new Instance ID token
+                                    val token = task.result?.token
+                                    this.registDeviceToken(token?:"")
+                                })
+                        }
+                        is Result.failure -> {
+                            Log.e("SplashVM", "Error, set token device")
+                        }
+                    }
+                }*/
         }
 
         private fun registDeviceToken(token : String) : Observable<Result<String>>{
-            return environment.userUseCase().registPushNotificationToken(token)
+            val userId = environment.currentUser().getCurrentUser()?.userId
+            return environment.userUseCase().registPushNotificationToken(token, userId ?: "")
+
         }
 
     }

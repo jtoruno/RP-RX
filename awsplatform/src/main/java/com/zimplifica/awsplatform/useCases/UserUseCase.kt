@@ -496,12 +496,13 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
-    override fun registPushNotificationToken(token: String): Observable<Result<String>> {
+    override fun registPushNotificationToken(token: String, userId : String): Observable<Result<String>> {
         val single = Single.create<Result<String>> create@{ single ->
-            val tokenResponse = PinpointClient.setTokenDevice(token)
-            if (tokenResponse.isEmpty()){
+            Log.e("UserUseCase", "sucesss " + userId + "token "+ token)
+            if (token.isEmpty() || userId.isEmpty()){
                 single.onSuccess(Result.failure(Exception()))
             }else{
+                val tokenResponse = PinpointClient.setTokenDevice(token, userId)
                 single.onSuccess(Result.success(tokenResponse))
             }
         }

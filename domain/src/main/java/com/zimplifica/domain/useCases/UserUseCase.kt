@@ -18,5 +18,5 @@ interface UserUseCase{
     //fun searchCommerces(searchText: String) : Observable<Result<CommercesResult>>
     fun fetchCategories() : Observable<Result<List<Category>>>
     //fun filterCommercesByCategory(categoryId: String) : Observable<Result<CommercesResult>>
-    fun registPushNotificationToken(token : String) : Observable<Result<String>>
+    fun registPushNotificationToken(token : String, userId : String) : Observable<Result<String>>
 }

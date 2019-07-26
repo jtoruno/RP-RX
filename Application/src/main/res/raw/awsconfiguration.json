@@ -14,7 +14,8 @@
     "Default": {
       "PoolId": "us-east-1_UhlRRY8rQ",
       "AppClientId": "f26bvsg6asg9rgr56mmqctrub",
-      "Region": "us-east-1"
+      "Region": "us-east-1",
+      "PinpointAppId": "f0b280c485e1490da325dbaaab370058"
     }
   },
   "AppSync": {
@@ -33,7 +34,7 @@
   },
   "PinpointAnalytics": {
     "Default": {
-      "AppId": "f0b280c485e1490da325dbaaab370058",
+      "AppId" : "f0b280c485e1490da325dbaaab370058",
       "Region": "us-east-1"
     }
   },

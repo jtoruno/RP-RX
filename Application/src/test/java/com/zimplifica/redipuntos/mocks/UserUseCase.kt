@@ -8,7 +8,7 @@ import org.junit.runner.Request
 import java.lang.Exception
 
 class UserUseCase : UserUseCase{
-    override fun registPushNotificationToken(token: String): Observable<Result<String>> {
+    override fun registPushNotificationToken(token: String, userId : String): Observable<Result<String>> {
         val single = Single.create<Result<String>> create@{ single ->
             if(token.isNotEmpty()){
                 single.onSuccess(Result.success(token))

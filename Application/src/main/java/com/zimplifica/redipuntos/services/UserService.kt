@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.services
 
+import android.util.Log
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.useCases.UserUseCase
 import com.zimplifica.domain.entities.*
@@ -96,8 +97,9 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         return userUseCase.fetchCategories()
     }
 
-    fun registPushNotificationToken(token : String) : Observable<Result<String>>{
-        return userUseCase.registPushNotificationToken(token)
+    fun registPushNotificationToken(token : String, userId : String) : Observable<Result<String>>{
+        Log.e("Service","token" + token)
+        return userUseCase.registPushNotificationToken(token, userId)
     }
 
 }

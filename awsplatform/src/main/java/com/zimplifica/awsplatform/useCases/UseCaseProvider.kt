@@ -19,6 +19,8 @@ class UseCaseProvider(context: Context) : UseCaseProvider{
         AWSMobileClient.getInstance().initialize(context, object : Callback<UserStateDetails>{
             override fun onResult(result: UserStateDetails?) {
                 Log.i("INIT", "onResult: " + result?.userState)
+                PinpointClient.initClient(context)
+
             }
 
             override fun onError(e: Exception?) {
@@ -26,7 +28,7 @@ class UseCaseProvider(context: Context) : UseCaseProvider{
             }
         })
         AppSyncClient.initClients(context)
-        PinpointClient.initClient(context)
+
     }
     override fun makeAuthenticationUseCase(): AuthenticationUseCase {
         return com.zimplifica.awsplatform.useCases.AuthenticationUseCase()
