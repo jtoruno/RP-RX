@@ -412,36 +412,6 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
-    /*
-    override fun searchCommerces(searchText: String): Observable<Result<CommercesResult>> {
-        val single = Single.create<Result<CommercesResult>> create@{ single ->
-            val query = GetCommercesQuery.builder().nextToken(null).limit(null).build()
-            this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
-                override fun onFailure(e: ApolloException) {
-                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [searchCommerces] Error.",e)
-                    single.onSuccess(Result.failure(e))                }
-
-                override fun onResponse(response: Response<GetCommercesQuery.Data>) {
-                    val data = response.data()?.commerces
-                    if(data!=null){
-                        var commerces = handleTransformCommercesInfo(data.items())
-                        if(searchText.isNotEmpty()){
-                            commerces = commerces.filter { commerce ->
-                                return@filter commerce.name.toLowerCase().contains(searchText.toLowerCase())
-                            }
-                        }
-                        val commercesResult = CommercesResult(commerces)
-                        single.onSuccess(Result.success(commercesResult))
-                    }
-                    else{
-                        single.onSuccess(Result.failure(Exception()))
-                    }
-                }
-            })
-        }
-        return single.toObservable()
-    }*/
-
     override fun fetchCategories(): Observable<Result<List<Category>>> {
         val single = Single.create<Result<List<Category>>> create@{ single ->
             val query = GetCategoriesQuery.builder().limit(null).nextToken(null).build()
@@ -480,32 +450,6 @@ class UserUseCase : UserUseCase {
         }
         return single.toObservable()
     }
-
-    /*
-    override fun filterCommercesByCategory(categoryId: String): Observable<Result<CommercesResult>> {
-        val single = Single.create<Result<CommercesResult>> create@{ single ->
-            val query = GetCommercesQuery.builder().limit(null).nextToken(null).build()
-            this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
-                override fun onFailure(e: ApolloException) {
-                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [filterCommercesByCategory] Error.",e)
-                    single.onSuccess(Result.failure(e))                }
-
-                override fun onResponse(response: Response<GetCommercesQuery.Data>) {
-                    val data = response.data()?.commerces
-                    if(data!=null){
-                        var commerces = handleTransformCommercesInfo(data.items())
-                        commerces = commerces.filter { commerce ->
-                            return@filter commerce.category?.equals(categoryId) ?: false
-                        }
-
-                        val commercesResult = CommercesResult(commerces)
-                        single.onSuccess(Result.success(commercesResult))
-                    }
-                }
-            })
-        }
-        return single.toObservable()
-    }*/
 
     private fun handleTransformCommercesInfo(data : MutableList<GetCommercesQuery.Item>) : List<Commerce>{
         var commerces : List<Commerce>

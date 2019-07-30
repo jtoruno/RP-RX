@@ -31,7 +31,6 @@ class AuthenticationUseCase : AuthenticationUseCase {
     override fun verifyPhoneNumber(phoneNumber: String): Observable<Result<Boolean>> {
         val single = Single.create<Result<Boolean>> create@{ single ->
             val verificationRequest = InitPhoneVerificationMutation.builder()
-                //.username("@")
                 .phoneNumber(phoneNumber)
                 .build()
             this.appSyncClient!!.mutate(verificationRequest).enqueue(object : GraphQLCall.Callback<InitPhoneVerificationMutation.Data>(){
@@ -117,40 +116,6 @@ class AuthenticationUseCase : AuthenticationUseCase {
         }
         return single.toObservable()
     }
-    /*
-    override fun confirmSignUp(userId: String, verificationCode: String): Observable<Result<SignUpConfirmationResult>> {
-        val single = Single.create<Result<SignUpConfirmationResult>> create@{ single ->
-            AWSMobileClient.getInstance().confirmSignUp(userId, verificationCode, object : Callback<com.amazonaws.mobile.client.results.SignUpResult>{
-                override fun onResult(result: com.amazonaws.mobile.client.results.SignUpResult?) {
-                    var state : SignUpConfirmationState
-                    if (result!=null){
-                        if (!result.confirmationState){
-                            state = SignUpConfirmationState.unconfirmed
-                            val result1 = SignUpConfirmationResult(state)
-                            single.onSuccess(Result.success(result1))
-                        }else{
-                            state = SignUpConfirmationState.confirmed
-                            val result1 = SignUpConfirmationResult(state)
-                            single.onSuccess(Result.success(result1))
-                        }
-                    }
-                }
-
-                override fun onError(e: Exception?) {
-                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase,ConfirmSignUp Error:", e)
-                    //val error = AWSErrorDecoder.decodeSignUpError(e)
-                    val castedError = (e as? AmazonServiceException)?.let {
-                        val casted = ErrorMappingHelper(it.errorCode,it.errorMessage, it)
-                        return@let AWSErrorDecoder.decodeSignUpError(casted)
-                    } ?: kotlin.run {
-                        return@run AWSErrorDecoder.decodeSignUpError(e)
-                    }
-                    single.onSuccess(Result.failure(castedError))
-                }
-            })
-        }
-        return single.toObservable()
-    }*/
 
     override fun resendVerificationCode(userId: String): Observable<Result<SignUpResendConfirmationResult>> {
         val single = Single.create<Result<SignUpResendConfirmationResult>> create@{ single ->
@@ -267,14 +232,14 @@ class AuthenticationUseCase : AuthenticationUseCase {
     override fun getCurrentUserState(): Observable<UserStateResult> {
         val single = Single.create<UserStateResult> create@{ single ->
             var state : UserStateResult = UserStateResult.signedOut
-            val actual = AWSMobileClient.getInstance().currentUserState().userState
-            Log.e("UserState", actual.toString())
-            state = when(actual){
+            AWSMobileClient.getInstance().currentUserState().userState
+            Log.e("UserState", AWSMobileClient.getInstance().currentUserState().userState.toString())
+            state = when(AWSMobileClient.getInstance().currentUserState().userState){
                 UserState.SIGNED_IN -> UserStateResult.signedIn
                 UserState.SIGNED_OUT, UserState.GUEST, UserState.UNKNOWN, UserState.SIGNED_OUT_FEDERATED_TOKENS_INVALID,
                 UserState.SIGNED_OUT_USER_POOLS_TOKENS_INVALID -> UserStateResult.signedOut
+                else -> UserStateResult.signedOut
             }
-            Log.e("UserState", state.toString())
             single.onSuccess(state)
         }
         return single.toObservable()

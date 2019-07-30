@@ -79,7 +79,7 @@ dependencies {
     //Percent
     implementation 'androidx.percentlayout:percentlayout:1.0.0'
 
-    //Tes
+    //Test
     testImplementation "org.robolectric:robolectric:$robolectric_version"
 
     //LifeCycle
@@ -108,6 +108,9 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.firebase:firebase-messaging:17.3.0'
+
+    //Jumio dependencies
+    implementation 'androidx.room:room-runtime:2.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
