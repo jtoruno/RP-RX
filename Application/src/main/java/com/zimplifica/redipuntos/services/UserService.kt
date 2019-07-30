@@ -24,8 +24,8 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         return state.getUserInformationSubscription()
     }
 
-    fun fetchTransactions(username: String,useCache: Boolean) : Observable<Result<TransactionsResult>> {
-        return userUseCase.fetchTransactions(username, useCache)
+    fun fetchTransactions(useCache: Boolean,nextToken: String?, limit: Int?) : Observable<Result<TransactionsResult>> {
+        return userUseCase.fetchTransactions(useCache,nextToken,limit)
     }
 
     fun updateUserInfo(citizen: CitizenInput) : Observable<Result<Citizen>> {

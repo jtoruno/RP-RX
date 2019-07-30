@@ -4,6 +4,7 @@ package com.zimplifica.redipuntos.ui.fragments
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,8 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseFragment
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresFragmentViewModel
 import com.zimplifica.redipuntos.ui.activities.MovementDetailActivity
 import com.zimplifica.redipuntos.ui.adapters.MovSection
+import com.zimplifica.redipuntos.ui.paging.PaginationScrollListener
+import com.zimplifica.redipuntos.ui.paging.TransactionAdapter
 import com.zimplifica.redipuntos.viewModels.MovementsFragmentVM
 import io.github.luizgrp.sectionedrecyclerviewadapter.SectionedRecyclerViewAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,6 +31,8 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
     lateinit var sectionAdapter : SectionedRecyclerViewAdapter
     private val compositeDisposable = CompositeDisposable()
 
+    lateinit var adapter : TransactionAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,7 +45,29 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
         val divider = androidx.recyclerview.widget.DividerItemDecoration(activity, manager.orientation)
         recyclerView.addItemDecoration(divider)
         sectionAdapter = SectionedRecyclerViewAdapter()
-        recyclerView.adapter = sectionAdapter
+
+        adapter = TransactionAdapter{transaction ->
+            viewModel.inputs.showMovementDetail(transaction)
+        }
+        recyclerView.adapter = adapter
+        recyclerView.addOnScrollListener(object : PaginationScrollListener(manager){
+            override fun loadMoreItems() {
+                viewModel.isLoading = true
+                viewModel.currentPage++
+                viewModel.preparedItems(true)
+            }
+
+            override fun isLastPage(): Boolean {
+                 return viewModel.isLastPage
+            }
+
+            override fun isLoading(): Boolean {
+                return viewModel.isLoading
+            }
+
+        })
+
+        //recyclerView.adapter = sectionAdapter
         // Inflate the layout for this fragment
         return view
     }
@@ -49,10 +76,34 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        mov_fragment_swipe.setOnRefreshListener { viewModel.inputs.fetchTransactions(false) }
+        mov_fragment_swipe.setOnRefreshListener {
+            //viewModel.inputs.fetchTransactions(false)
+            viewModel.onRefresh()
+            adapter.clear()
+        }
 
-        this.viewModel.inputs.fetchTransactions(true)
-        mov_fragment_no_transaction.visibility = View.GONE
+        compositeDisposable.add(viewModel.outputs.transactionList().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            Log.e("VMOutput",viewModel.isLastPage.toString())
+            if (it.isEmpty()){
+                mov_fragment_no_transaction.visibility = View.VISIBLE
+            }else{
+                mov_fragment_no_transaction.visibility = View.GONE
+            }
+            mov_fragment_swipe.isRefreshing = false
+            if(viewModel.currentPage != viewModel.PAGE_START) adapter.removeLoading()
+            adapter.addAll(it)
+            if (viewModel.token != null) {
+                adapter.addLoading()
+            }
+            else {
+                viewModel.isLastPage = true
+            }
+            viewModel.isLoading = false
+        })
+
+        //this.viewModel.inputs.fetchTransactions(true)
+
+        //mov_fragment_no_transaction.visibility = View.GONE
 
         compositeDisposable.add(this.viewModel.outputs.fetchTransactionsAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -92,6 +143,6 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
 
     override fun onResume() {
         super.onResume()
-        this.viewModel.inputs.fetchTransactions(true)
+        //this.viewModel.inputs.fetchTransactions(true)
     }
 }

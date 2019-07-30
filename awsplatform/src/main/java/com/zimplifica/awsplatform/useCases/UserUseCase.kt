@@ -196,12 +196,12 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
-    override fun fetchTransactions(username: String, useCache: Boolean): Observable<Result<TransactionsResult>> {
+    override fun fetchTransactions(useCache: Boolean,nextToken: String?, limit: Int?): Observable<Result<TransactionsResult>> {
         val single = Single.create<Result<TransactionsResult>> create@{ single ->
             val query = GetTransactionsByUserQuery.builder()
                 //.username(username)
-                .limit(null)
-                .nextToken(null)
+                .limit(limit)
+                .nextToken(nextToken)
                 .build()
             val cachePolicy =  if(useCache){
                 AppSyncResponseFetchers.CACHE_FIRST
@@ -230,34 +230,6 @@ class UserUseCase : UserUseCase {
                                 trx.wayToPay().creditCard()?.issuer()?: "")*/
                             val wayToPay = WayToPay(trx.wayToPay().rediPuntos(),cardDetail,trx.wayToPay().creditCardCharge())
                             var transactionDetail = TransactionDetail(trx.item().type(),trx.item().amount(),trx.item().vendorId(),trx.item().vendorName())
-                            /*
-                            when(trx.item().type()){
-                                "GTIItem" -> {
-                                    val gtiItem = trx.item().asGTIItem()
-                                    if(gtiItem!=null){
-                                        transactionDetail.type = TransactionType.servicePayment
-                                        transactionDetail.gtiItem = GTIItem(trx.item().type(),gtiItem.description(),gtiItem.amount(),gtiItem.companyId(),gtiItem.agreementId(),
-                                            gtiItem.invoiceId(),gtiItem.clientName(),gtiItem.serviceId(),gtiItem.paymentType(),gtiItem.expirationDate(),gtiItem.period(),
-                                            gtiItem.isPrepaid)
-                                    }
-                                }
-                                "sitepay" -> {
-                                    val sitePayItem = trx.item().asSitePaymentItem()
-                                    if(sitePayItem!=null){
-                                        transactionDetail.type = TransactionType.directPayment
-                                        transactionDetail.sitePaymentItem = SitePaymentItem(trx.item().type(),sitePayItem.description(),sitePayItem.amount(),sitePayItem.vendorId(),
-                                            sitePayItem.vendorName())
-                                    }
-                                }
-                                else -> {
-                                    val sitePayItem = trx.item().asSitePaymentItem()
-                                    if(sitePayItem!=null){
-                                        transactionDetail.type = TransactionType.directPayment
-                                        transactionDetail.sitePaymentItem = SitePaymentItem(trx.item().type(),sitePayItem.description(),sitePayItem.amount(),sitePayItem.vendorId(),
-                                            sitePayItem.vendorName())
-                                    }
-                                }
-                            }*/
                             var status : TransactionStatus = when(trx.status()){
                                 "successful" -> TransactionStatus.success
                                 "pending" -> TransactionStatus.pending
@@ -266,7 +238,7 @@ class UserUseCase : UserUseCase {
                             }
                             return@map Transaction(trx.id(), trx.datetime(),trx.transactionType(), transactionDetail,trx.fee(),trx.tax(),trx.subtotal(),trx.total(),trx.rewards(),status, wayToPay,trx.paymentDescription())
                         }
-                        val transactionsResult = TransactionsResult(transactions)
+                        val transactionsResult = TransactionsResult(transactions,result.nextToken())
                         single.onSuccess(Result.success(transactionsResult))
                     }
                     else{

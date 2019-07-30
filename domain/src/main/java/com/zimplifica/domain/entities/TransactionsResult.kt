@@ -34,6 +34,9 @@ class Transaction(val id: String, val datetime: String, val transactionType: Str
         date = SimpleDateFormat("dd/MM/yyyy").format(dateNow)
         time = SimpleDateFormat("HH:mm").format(dateNow)
     }
+
+    constructor() : this("","1564437869927","", TransactionDetail("",0.0,"",""),0.0,0.0,
+        0.0,0.0,0.0,TransactionStatus.fail,WayToPay(0.0,null,0.0),null)
 }
 
-class TransactionsResult(val transactions : List<Transaction>)
+class TransactionsResult(val transactions : List<Transaction>, val nextToken : String?)
