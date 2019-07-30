@@ -23,7 +23,7 @@ interface MovementsFragmentVM {
 
         /// Emits when getTransactions has returned an error.
         fun showError() : Observable<String>
-        fun transactionList() : Observable<List<Transaction>>
+        fun transactionList() : Observable<List<Pair<String,List<Transaction>>>>
     }
     class ViewModel (@NonNull val environment: Environment) : FragmentViewModel<MovementsFragmentVM>(environment),Inputs, Outputs{
 
@@ -39,6 +39,7 @@ interface MovementsFragmentVM {
         var isLoading = false
         var itemCount = 0
         var token : String ? = null
+        private val PAGE_SIZE = 8
 
         //Inputs
         private val fetchTransactions = PublishSubject.create<Boolean>()
@@ -49,7 +50,7 @@ interface MovementsFragmentVM {
         private val fetchTransactionsAction = BehaviorSubject.create<List<Pair<String,List<Transaction>>>>()
         private val showError = BehaviorSubject.create<String>()
 
-        private val transactions = BehaviorSubject.create<List<Transaction>>()
+        private val transactions = BehaviorSubject.create<List<Pair<String,List<Transaction>>>>()
 
         init {
             val fetchTransactionsEvent =  fetchTransactions
@@ -85,7 +86,7 @@ interface MovementsFragmentVM {
 
         override fun showError(): Observable<String> = this.showError
 
-        override fun transactionList(): Observable<List<Transaction>> = this.transactions
+        override fun transactionList(): Observable<List<Pair<String,List<Transaction>>>> = this.transactions
 
 
         private fun fetchTransactionsServer(useCache: Boolean, nextToken: String?, limit: Int? ) : Observable<Result<TransactionsResult>>{
@@ -106,10 +107,33 @@ interface MovementsFragmentVM {
             }
         }
 
+        private fun handleTransactions(transactions : List<Transaction>) : List<Transaction>{
+            val finalList = mutableListOf<Transaction>()
+            val dateSections = mutableListOf<String>()
+            transactions.map { trx ->
+                if(!dateSections.contains(trx.date)){
+                    dateSections.add(trx.date)
+                }
+            }
+
+            val map =  dateSections.map { date ->
+                val transactionsTemp = transactions.filter { it.date == date }
+                return@map Pair(date,transactionsTemp)
+            }
+            for (value in map){
+                val transaction = Transaction()
+                transaction.id = "header"
+                transaction.date = value.first
+                finalList.add(transaction)
+                finalList.addAll(value.second)
+            }
+            return finalList
+        }
+
         fun preparedItems(useCache : Boolean){
             Log.e("Prepareditems",isLastPage.toString())
             if(!isLastPage){
-                val transactionEvent = fetchTransactionsServer(useCache,token,7)
+                val transactionEvent = fetchTransactionsServer(useCache,token,PAGE_SIZE)
                 transactionEvent
                     .filter { it.isFail() }
                     .map { "Ocurrió un error al obtener los movimientos. Por favor intenta de nuevo." }
@@ -120,7 +144,7 @@ interface MovementsFragmentVM {
                     .map {
                         itemCount += it.transactions.size
                         token = it.nextToken
-                        return@map it.transactions
+                        return@map handleTransactionsData(it)
                     }
                     .subscribe{
                         this.transactions.onNext(it)

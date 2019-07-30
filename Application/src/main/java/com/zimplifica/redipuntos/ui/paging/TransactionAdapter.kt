@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import com.amulyakhare.textdrawable.TextDrawable
 import com.zimplifica.domain.entities.TransactionStatus
 import com.zimplifica.redipuntos.R
@@ -30,6 +31,9 @@ class TransactionAdapter(val callback : (Transaction) -> Unit) : RecyclerView.Ad
             }
             VIEW_TYPE_LOADING -> {
                  FooterHolder(LayoutInflater.from(parent.context).inflate(R.layout.mov_loading, parent, false))
+            }
+            VIEW_TYPE_HEADER -> {
+                HeaderHolder(LayoutInflater.from(parent.context).inflate(R.layout.movement_header,parent,false))
             }
             else -> FooterHolder(LayoutInflater.from(parent.context).inflate(R.layout.mov_loading, parent, false))
         }
@@ -60,16 +64,30 @@ class TransactionAdapter(val callback : (Transaction) -> Unit) : RecyclerView.Ad
         return if (list == null) 0 else list.size
     }
 
+    fun addHeader(header : Transaction){
+        if (!list.contains(header)){
+            add(header)
+        }
+    }
+
     fun add(response: Transaction) {
         list.add(response)
         notifyItemInserted(list.size - 1)
     }
 
     fun addAll(postItems: List<Transaction>) {
+
         for (response in postItems) {
             add(response)
         }
         notifyDataSetChanged()
+        /*
+        val diffCallback = TransactionDiffCallback(list,postItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        list.clear()
+        list.addAll(postItems)
+        diffResult.dispatchUpdatesTo(this)
+        */
     }
 
     private fun remove(postItems: Transaction) {
@@ -153,7 +171,11 @@ class TransactionAdapter(val callback : (Transaction) -> Unit) : RecyclerView.Ad
             }
             VIEW_TYPE_LOADING -> {
                 val holderType = holder as FooterHolder
-
+            }
+            VIEW_TYPE_HEADER -> {
+                val holderType = holder as HeaderHolder
+                val transaction = list[position]
+                holderType.date.text = transaction.date
             }
         }
     }

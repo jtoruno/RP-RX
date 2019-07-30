@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.zimplifica.domain.entities.Transaction
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseFragment
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresFragmentViewModel
@@ -82,6 +83,8 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
             adapter.clear()
         }
 
+        viewModel.onRefresh()
+
         compositeDisposable.add(viewModel.outputs.transactionList().observeOn(AndroidSchedulers.mainThread()).subscribe {
             Log.e("VMOutput",viewModel.isLastPage.toString())
             if (it.isEmpty()){
@@ -91,7 +94,14 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
             }
             mov_fragment_swipe.isRefreshing = false
             if(viewModel.currentPage != viewModel.PAGE_START) adapter.removeLoading()
-            adapter.addAll(it)
+            //adapter.addAll(it)
+            for (value in it){
+                val transaction = Transaction()
+                transaction.id = "header"
+                transaction.date = value.first
+                adapter.addHeader(transaction)
+                adapter.addAll(value.second)
+            }
             if (viewModel.token != null) {
                 adapter.addLoading()
             }

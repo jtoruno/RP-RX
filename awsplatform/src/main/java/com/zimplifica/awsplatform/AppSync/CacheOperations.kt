@@ -27,7 +27,7 @@ class CacheOperations{
                     if(user!= null){
                         val item = GetUserQuery.GetUser(user.__typename(),user.id(),citizen.firstName,
                             citizen.lastName,citizen.getBirthDateAsString(),citizen.identityNumber,user.phoneNumber(),user.phoneNumberVerified(),
-                            user.email(), user.emailVerified(),user.rewards(),user.paymentMethods())
+                            user.email(), user.emailVerified(),user.rewards(),user.paymentMethods(), user.status())
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
@@ -52,7 +52,7 @@ class CacheOperations{
                     if(user!= null){
                         val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
                             user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
-                            email, user.emailVerified(),user.rewards(),user.paymentMethods())
+                            email, user.emailVerified(),user.rewards(),user.paymentMethods(),user.status())
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
@@ -77,7 +77,7 @@ class CacheOperations{
                     if(user!= null){
                         val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
                             user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
-                            user.email(), isConfirmed,user.rewards(),user.paymentMethods())
+                            user.email(), isConfirmed,user.rewards(),user.paymentMethods(), user.status())
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
@@ -107,7 +107,7 @@ class CacheOperations{
                         paymentList.add(paymentObj)
                         val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
                             user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
-                            user.email(), user.emailVerified(),user.rewards(),paymentList)
+                            user.email(), user.emailVerified(),user.rewards(),paymentList, user.status())
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 

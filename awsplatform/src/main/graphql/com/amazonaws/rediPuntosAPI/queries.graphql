@@ -19,6 +19,10 @@ query GetUser {
       rewards
       automaticRedemption
     }
+    status {
+      verificationStatus
+      verificationReference
+    }
   }
 }
 query GetPaymentMethodsByUser {
@@ -153,12 +157,12 @@ query GetCommerces($input: CommercesInput) {
         restrictions
         waysToUse
         stores
+        ... on Offer {
+          discount
+        }
         ... on Coupon {
           beforeDiscount
           afterDiscount
-        }
-        ... on Offer {
-          discount
         }
       }
       website

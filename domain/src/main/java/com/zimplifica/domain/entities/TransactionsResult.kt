@@ -24,8 +24,9 @@ class SitePaymentItem(val type: String, val description: String?, val amount: Do
 
 class TransactionDetail(var type: String , val amount: Double, val vendorId: String, val vendorName: String): Serializable
 
-class Transaction(val id: String, val datetime: String, val transactionType: String, val transactionDetail: TransactionDetail, val fee: Double, val tax: Double, val subtotal : Double,
-                  val total: Double, val rewards: Double, val status: TransactionStatus, val wayToPay: WayToPay, val description: String?): Serializable{
+class Transaction(
+    var id: String, val datetime: String, val transactionType: String, val transactionDetail: TransactionDetail, val fee: Double, val tax: Double, val subtotal : Double,
+    val total: Double, val rewards: Double, val status: TransactionStatus, val wayToPay: WayToPay, val description: String?): Serializable{
     var date : String
     var time : String
     init {
@@ -37,6 +38,11 @@ class Transaction(val id: String, val datetime: String, val transactionType: Str
 
     constructor() : this("","1564437869927","", TransactionDetail("",0.0,"",""),0.0,0.0,
         0.0,0.0,0.0,TransactionStatus.fail,WayToPay(0.0,null,0.0),null)
+
+    override fun equals(other: Any?): Boolean {
+        if(other == null || other !is Transaction) return false
+        return id == other.id && date == other.date
+    }
 }
 
 class TransactionsResult(val transactions : List<Transaction>, val nextToken : String?)
