@@ -124,7 +124,8 @@ class ManagerNav private constructor(context: Context){
         val userStatus = environment?.currentUser()?.userConfirmationStatus() ?: return
         when(step){
             ManagerNav.Step.completeCitizenInfo -> {
-                val intent = Intent(context, CitizenInfoActivity::class.java)
+                //val intent = Intent(context, CitizenInfoActivity::class.java)
+                val intent = Intent(context, JumioActivity::class.java)
                 context.startActivity(intent)
             }
             ManagerNav.Step.completeEmail -> {

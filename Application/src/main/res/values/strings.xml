@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">RediPuntos</string>
-    <string name="signUpTermsText">By clicking \'Create Account\' you are indicating that you have read and agree to our Terms and Conditions and Privacy Policy.
+    <string name="signUpTermsText">By clicking \'Create Account\' you are indicating that you have read and agree to our
+        Terms and Conditions and Privacy Policy.
     </string>
     <string name="walk1">Points explotion!</string>
     <string name="walk2">Easy and Safe</string>
@@ -38,7 +39,9 @@
     <string name="About_zimplifica">About Zimplifica</string>
     <string name="Account">Account</string>
     <string name="Account_information">Account Information</string>
-    <string name="Add_payment_method_securiy_description">RediPuntos complies all the security protocols for the secure management of the information.</string>
+    <string name="Add_payment_method_securiy_description">RediPuntos complies all the security protocols for the secure
+        management of the information.
+    </string>
     <string name="Alert">Alert</string>
     <string name="App_version">App version %1$s</string>
 </resources>

@@ -111,6 +111,9 @@ dependencies {
 
     //Jumio dependencies
     implementation 'androidx.room:room-runtime:2.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.jumio.android:core:3.2.1@aar'
+    implementation 'com.jumio.android:nv:3.2.1@aar'
 }
 
 apply plugin: 'com.google.gms.google-services'
