@@ -20,8 +20,16 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField "String", "JUMIO_API_TOKEN", "\"${System.getenv("JUMIO_API_TOKEN")}\""
+            buildConfigField "String", "JUMIO_API_SECRET", "\"${System.getenv("JUMIO_API_SECRET")}\""
+            buildConfigField "String", "JUMIO_CALLBACK_URL", "\"${System.getenv("JUMIO_CALLBACK_URL")}\""
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            buildConfigField "String", "JUMIO_API_TOKEN", "\"${System.getenv("JUMIO_API_TOKEN")}\""
+            buildConfigField "String", "JUMIO_API_SECRET", "\"${System.getenv("JUMIO_API_SECRET")}\""
+            buildConfigField "String", "JUMIO_CALLBACK_URL", "\"${System.getenv("JUMIO_CALLBACK_URL")}\""
         }
     }
     compileOptions {

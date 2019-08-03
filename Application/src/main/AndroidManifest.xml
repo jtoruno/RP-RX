@@ -32,13 +32,17 @@
             <intent-filter>
                 <action android:name="com.amazonaws.intent.fcm.NOTIFICATION_OPEN"/>
             </intent-filter>
-        </receiver> <!-- Jumio Activities -->
+        </receiver>
+
+        <!-- Jumio Activities -->
         <activity
                 android:name="com.jumio.nv.NetverifyActivity"
                 android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
                 android:hardwareAccelerated="true"
                 android:theme="@style/Theme.Netverify"
-                android:windowSoftInputMode="adjustResize"/> <!-- end -->
+                android:windowSoftInputMode="adjustResize"/>
+
+        <!-- end -->
         <activity
                 android:name=".ui.activities.PromotionDetailActivity"
                 android:screenOrientation="portrait">

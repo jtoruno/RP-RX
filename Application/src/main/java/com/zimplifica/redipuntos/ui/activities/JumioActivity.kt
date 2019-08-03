@@ -2,6 +2,7 @@ package com.zimplifica.redipuntos.ui.activities
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -16,6 +17,7 @@ import com.jumio.nv.NetverifyDocumentData
 import com.jumio.nv.NetverifySDK
 import com.jumio.nv.data.document.NVDocumentType
 import com.jumio.nv.data.document.NVDocumentVariant
+import com.zimplifica.redipuntos.BuildConfig
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
@@ -33,9 +35,9 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
         private val PRESELECTED_COUNTRY = "CRI"
     }
 
-    private var apiToken: String = "44ff8cd1-0c04-49f1-b0f1-1ef9544977b4"
-    private var apiSecret: String = "id5NbJTsoixIbtQomDLZzAmP52xfZOgM"
-    private val callbackBaseUrl = "https://c8iv1vp1q6.execute-api.us-east-1.amazonaws.com/dev/verifications/"
+    private var apiToken: String = BuildConfig.JUMIO_API_TOKEN
+    private var apiSecret: String = BuildConfig.JUMIO_API_SECRET
+    private val callbackBaseUrl = BuildConfig.JUMIO_CALLBACK_URL
     private lateinit var netverifySDK: NetverifySDK
     private val NETVERIFY_DATACENTER = JumioDataCenter.US
 
