@@ -17,4 +17,31 @@
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
             android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
+    <Button
+            android:text="Volver"
+            android:background="@drawable/btn_no_enabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/splash_back_btn" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/splash_animation" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
+    <Button
+            android:text="Reintentar"
+            android:background="@drawable/btn_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/splash_retry_btn" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/splash_back_btn" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="8dp"/>
+    <ProgressBar
+            android:layout_marginBottom="8dp"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/splash_loading"
+            app:layout_constraintBottom_toTopOf="@+id/splash_back_btn"
+            app:layout_constraintTop_toTopOf="@+id/splash_retry_btn"
+            app:layout_constraintEnd_toEndOf="@+id/splash_retry_btn" android:layout_marginEnd="32dp"
+            app:layout_constraintVertical_bias="0.5"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

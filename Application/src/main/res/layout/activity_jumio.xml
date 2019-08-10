@@ -28,12 +28,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
     <TextView
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:textAlignment="center"
             android:textSize="16sp"
             android:textColor="@android:color/white"
-            android:text="RediPuntos require escanear su cédula de identidad para verificar la cuenta. Por favor proceda a escanear el código de barras ubicado al reverso de su identificación."
+            android:text="En RediPuntos nos caracterizamos por garantizarle la máxima seguridad a nuestra comunidad, por lo que todos nuestros usuarios deben de verificar su identidad para activar su cuenta. Tan solo necesitas tu cédula de identidad a mano."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="68dp"

@@ -8,6 +8,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.UserStateResult
+import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.UserConfirmationStatus
@@ -25,7 +26,7 @@ interface HomeViewModel {
         fun token(token: String)
     }
     interface Outputs {
-        fun showCompletePersonalInfoAlert() : Observable<Unit>
+        fun showCompletePersonalInfoAlert() : Observable<VerificationStatus>
 
         /// Emits to go to complete personal info.
         fun goToCompletePersonalInfoScreen() : Observable<Unit>
@@ -52,7 +53,7 @@ interface HomeViewModel {
 
         //Outputs
         private val signOutAction = PublishSubject.create<Unit>()
-        private val showCompletePersonalInfoAlert = PublishSubject.create<Unit>()
+        private val showCompletePersonalInfoAlert = PublishSubject.create<VerificationStatus>()
         private val goToCompletePersonalInfoScreen : Observable<Unit>
         private val addPaymentMethodAction : Observable<Unit>
 
@@ -76,17 +77,8 @@ interface HomeViewModel {
                 }
 
             onCreate
-                .map { return@map environment.currentUser().userConfirmationStatus() }
-                .subscribe {
-                    Log.e("Status",it?.confirmationStatus.toString())
-                    when(it?.confirmationStatus){
-                        UserConfirmationStatus.ConfirmationStatus.missingInfo ->{
-                            this.showCompletePersonalInfoAlert.onNext(Unit)
-                        }
-                        else -> {
-                        }
-                    }
-                }
+                .map { return@map environment.currentUser().getCurrentUser()?.status?.status }
+                .subscribe (this.showCompletePersonalInfoAlert)
 
             onCreate
                 .map { return@map environment.currentUser().getCurrentUser() }
@@ -130,7 +122,7 @@ interface HomeViewModel {
             return this.completePersonalInfoButtonPressed.onNext(Unit)
         }
 
-        override fun showCompletePersonalInfoAlert(): Observable<Unit> = this.showCompletePersonalInfoAlert
+        override fun showCompletePersonalInfoAlert(): Observable<VerificationStatus> = this.showCompletePersonalInfoAlert
 
         override fun goToCompletePersonalInfoScreen(): Observable<Unit> {
             return this.goToCompletePersonalInfoScreen
@@ -149,14 +141,6 @@ interface HomeViewModel {
             return environment.authenticationUseCase().signOut()
         }
 
-        private fun formatFloatToString(mFloat : Float): String{
-            return "₡"+String.format("%,.1f", mFloat)
-        }
-
-        private fun registDevice(){
-
-
-        }
         private fun registDeviceToken(token : String) : Observable<Result<String>>{
             val userId = environment.currentUser().getCurrentUser()?.userId
             return environment.userUseCase().registPushNotificationToken(token, userId ?: "")

@@ -5,34 +5,27 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
-import androidx.fragment.app.Fragment
 import androidx.core.view.GravityCompat
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
-import com.zimplifica.redipuntos.ui.fragments.CatalogFragment
-import com.zimplifica.redipuntos.ui.fragments.MovementsFragment
-import com.zimplifica.redipuntos.ui.fragments.PayFragment
 import com.zimplifica.redipuntos.viewModels.HomeViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
-import android.view.View
-import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
+import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
 import com.zimplifica.redipuntos.models.ManagerNav
-import com.zimplifica.redipuntos.ui.fragments.PointsFragment
+import com.zimplifica.redipuntos.ui.fragments.*
 import io.reactivex.disposables.CompositeDisposable
 
 import kotlinx.android.synthetic.main.nav_header_home.view.*
@@ -45,6 +38,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
     lateinit var Payfragment : androidx.fragment.app.Fragment
     lateinit var Movementsfragment : androidx.fragment.app.Fragment
     lateinit var PointsFragment : androidx.fragment.app.Fragment
+    lateinit var ProfileFragmentClass : androidx.fragment.app.Fragment
     private val fm = supportFragmentManager
     lateinit var active : androidx.fragment.app.Fragment
     private var menuActionBar : Menu ? = null
@@ -60,12 +54,15 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         Payfragment = PayFragment()
         PointsFragment = PointsFragment()
         Movementsfragment = MovementsFragment()
+        ProfileFragmentClass =  ProfileFragment()
         active = Payfragment
 
         fm.beginTransaction().add(R.id.home_frame_layout,Catalogfragment,"commerce_fragment").hide(Catalogfragment).commit()
         fm.beginTransaction().add(R.id.home_frame_layout,Payfragment, "pay").commit()
         fm.beginTransaction().add(R.id.home_frame_layout,PointsFragment, "points").hide(PointsFragment).commit()
         fm.beginTransaction().add(R.id.home_frame_layout,Movementsfragment,"movements").hide(Movementsfragment).commit()
+
+        fm.beginTransaction().add(R.id.home_frame_layout,ProfileFragmentClass, "profile").hide(ProfileFragmentClass).commit()
 
         bottomNav = findViewById(R.id.home_nav_bottom)
         bottomNav.setOnNavigationItemSelectedListener(navItemListener)
@@ -153,7 +150,24 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
 
         compositeDisposable.add(this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                Log.e("Home","showCompletePersonalInfoAlert")
+                Log.e("HOme", it.name)
+                when(it){
+                    VerificationStatus.Pending -> {
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Hola, ¿cómo te llamas?")
+                        builder.setMessage("Debes de verificar tu identidad para activar tu cuenta.")
+                        builder.setPositiveButton("Verificar"){
+                                _,_ ->
+                            this.viewModel.inputs.completePersonalInfoButtonPressed()
+                        }
+                        val dialog = builder.create()
+                        dialog.show()
+                    }
+                    else -> {
+
+                    }
+                }
+                /*
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("Completar Información Personal")
                 builder.setMessage("RediPuntos requiere saber un poco mas de ti, ¿deseas completar tu información?")
@@ -163,7 +177,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 }
                 builder.setNegativeButton("Luego", null)
                 val dialog = builder.create()
-                dialog.show()
+                dialog.show() */
             })
 
         compositeDisposable.add(this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
@@ -218,6 +232,13 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 fm.beginTransaction().hide(active).show(PointsFragment).commit()
                 active = PointsFragment
                 toolbar.title = "Puntos"
+                invalidateOptionsMenu()
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.nav_profile->{
+                fm.beginTransaction().hide(active).show(ProfileFragmentClass).commit()
+                active = ProfileFragmentClass
+                toolbar.title = "Cuenta"
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }

@@ -272,10 +272,22 @@ class UserUseCase : UserUseCase {
                         val paymentMethods = response.data()!!.user.paymentMethods().map { p ->
                             return@map PaymentMethod(p.id(),p.cardNumber(),p.expirationDate(),p.issuer(),p.rewards(),p.automaticRedemption())
                         }
+                        var verificationReference : String ? = null
+                        var verificationStatus : VerificationStatus
+                        when(user.status().verificationStatus()){
+                            com.amazonaws.rediPuntosAPI.type.VerificationStatus.PENDING -> verificationStatus = VerificationStatus.Pending
+                            com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFYING -> verificationStatus = VerificationStatus.Verifying
+                            com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFIED_INVALID -> verificationStatus = VerificationStatus.VerifiedInvalid
+                            com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFIED_VALID -> {
+                                verificationStatus = VerificationStatus.VerifiedValid
+                                verificationReference = user.status().verificationReference()
+                            }
+                        }
+                        val userStatus = UserStatus(verificationStatus,verificationReference)
 
                         val userObj = UserInformationResult(user.id(),user.identityNumber(),user.firstName(),user.lastName(),
                             user.birthdate(),user.email(),user.phoneNumber(),user.phoneNumberVerified(),user.emailVerified(),null,user.rewards(),
-                            paymentMethods)
+                            paymentMethods, userStatus)
                         single.onSuccess(Result.success(userObj))
                     }
                     else{
@@ -289,6 +301,9 @@ class UserUseCase : UserUseCase {
 
     override fun updateUserInfo(citizen: CitizenInput): Observable<Result<Citizen>> {
         val single = Single.create<Result<Citizen>> create@{ single ->
+            val rcitizenResult = Citizen(citizen.lastName,citizen.firstName,Date(),citizen.citizenId)
+            single.onSuccess(Result.success(rcitizenResult))
+            /*
             val mutation = UpdatePersonalInfoMutation.builder()
                 //.username(citizen.citizenId)
                 .firstName(citizen.firstName)
@@ -314,7 +329,7 @@ class UserUseCase : UserUseCase {
                     }
                 }
 
-            })
+            })*/
         }
         return single.toObservable()
     }

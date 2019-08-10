@@ -5,7 +5,6 @@ import com.amazonaws.AmazonServiceException
 import com.amazonaws.mobile.client.AWSMobileClient
 import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.UserState
-import com.amazonaws.mobile.client.UserStateDetails
 import com.amazonaws.mobile.client.results.ForgotPasswordState
 import com.amazonaws.rediPuntosAPI.InitPhoneVerificationMutation
 import com.apollographql.apollo.GraphQLCall
@@ -20,7 +19,6 @@ import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.useCases.AuthenticationUseCase
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.disposables.Disposable
 import java.lang.Exception
 
 class AuthenticationUseCase : AuthenticationUseCase {
@@ -330,5 +328,20 @@ class AuthenticationUseCase : AuthenticationUseCase {
             })
         }
         return single.toObservable()
+    }
+
+    override fun userStateSubscription(): Observable<UserStateResult> {
+        return Observable.create create@{ single ->
+            AWSMobileClient.getInstance().addUserStateListener { details ->
+                when(details.userState){
+                    UserState.SIGNED_IN -> {
+                        single.onNext(UserStateResult.signedIn)
+                    }
+                    else -> {
+                        single.onNext(UserStateResult.signedOut)
+                    }
+                }
+            }
+        }
     }
 }

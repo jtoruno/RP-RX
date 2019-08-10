@@ -23,6 +23,15 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:replace="android:allowBackup">
+        <activity android:name=".ui.activities.FirstActivity"
+                  android:theme="@style/AppTheme.NoActionBar"
+                  android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".ui.activities.JumioActivity">
         </activity>
 
@@ -32,17 +41,13 @@
             <intent-filter>
                 <action android:name="com.amazonaws.intent.fcm.NOTIFICATION_OPEN"/>
             </intent-filter>
-        </receiver>
-
-        <!-- Jumio Activities -->
+        </receiver> <!-- Jumio Activities -->
         <activity
                 android:name="com.jumio.nv.NetverifyActivity"
                 android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
                 android:hardwareAccelerated="true"
                 android:theme="@style/Theme.Netverify"
-                android:windowSoftInputMode="adjustResize"/>
-
-        <!-- end -->
+                android:windowSoftInputMode="adjustResize"/> <!-- end -->
         <activity
                 android:name=".ui.activities.PromotionDetailActivity"
                 android:screenOrientation="portrait">
@@ -146,11 +151,7 @@
                 android:name=".ui.activities.SplashActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppThemeNoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity
                 android:name=".ui.activities.ConfirmForgotPasswordActivity"

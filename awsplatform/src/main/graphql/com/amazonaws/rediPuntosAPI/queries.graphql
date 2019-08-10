@@ -23,6 +23,13 @@ query GetUser {
       verificationStatus
       verificationReference
     }
+    gender
+    address {
+      country
+      province
+      district
+      canton
+    }
   }
 }
 query GetPaymentMethodsByUser {

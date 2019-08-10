@@ -5,25 +5,6 @@ mutation InitPhoneVerification($phoneNumber: String!) {
     message
   }
 }
-mutation UpdatePersonalInfo(
-  $firstName: String!
-  $lastName: String!
-  $birthdate: String!
-  $identityNumber: String!
-) {
-  updatePersonalInfo(
-    firstName: $firstName
-    lastName: $lastName
-    birthdate: $birthdate
-    identityNumber: $identityNumber
-  ) {
-    id
-    lastName
-    firstName
-    birthdate
-    identityNumber
-  }
-}
 mutation AddPaymentMethod($paymentMethod: PaymentMethodInput!) {
   addPaymentMethod(paymentMethod: $paymentMethod) {
     id
@@ -87,5 +68,23 @@ mutation SendEventToClient($user: String!, $event: ClientEventInput!) {
     user
     type
     data
+  }
+}
+mutation InitVerificationProcess {
+  initVerificationProcess {
+    success
+    message
+  }
+}
+mutation UpdateUserAddress($input: UpdateAddressInput!) {
+  updateUserAddress(input: $input) {
+    success
+    message
+  }
+}
+mutation UpdateUserGender($input: UpdateGenderInput!) {
+  updateUserGender(input: $input) {
+    success
+    message
   }
 }

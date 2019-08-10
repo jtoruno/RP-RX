@@ -41,7 +41,7 @@ class GlobalState(val context: Context){
             citizen.firstName, citizen.lastName, citizen.getBirthDateAsString(),
             currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
                 currentUser.userEmailVerified, null, currentUser.rewards,
-                currentUser.paymentMethods)
+                currentUser.paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -55,7 +55,7 @@ class GlobalState(val context: Context){
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,
                 currentUser.userFirstName, currentUser.userLastName, currentUser.userBirthDate,
                 currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
-                currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods)
+                currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -71,7 +71,7 @@ class GlobalState(val context: Context){
             val userInfo = UserInformationResult(currentUser.userId,currentUser.citizenId, currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, email, currentUser.userPhoneNumber,
                 currentUser.userPhoneVerified,currentUser.userEmailVerified, null, currentUser.rewards,
-                currentUser.paymentMethods)
+                currentUser.paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -82,7 +82,7 @@ class GlobalState(val context: Context){
         if(currentUser!=null){
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, isVerify, null, currentUser.rewards, currentUser.paymentMethods)
+                currentUser.userPhoneVerified, isVerify, null, currentUser.rewards, currentUser.paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -94,7 +94,7 @@ class GlobalState(val context: Context){
             paymentMethods.removeAll{ it.cardId == withouPaymentMethod.cardId}
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods)
+                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
 

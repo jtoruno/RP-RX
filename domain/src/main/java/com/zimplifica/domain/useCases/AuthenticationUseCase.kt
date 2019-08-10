@@ -18,4 +18,6 @@ interface AuthenticationUseCase {
     fun verifyPhoneNumber(phoneNumber: String) : Observable<Result<Boolean>>
     //fun confirmSignUp(userId: String,verificationCode: String):Observable<Result<SignUpConfirmationResult>>
 
+    fun userStateSubscription() : Observable<UserStateResult>
+
 }

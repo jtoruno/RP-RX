@@ -13,6 +13,9 @@ import com.zimplifica.domain.entities.Result
 import kotlin.math.sin
 
 class AuthenticationUseCase : AuthenticationUseCase {
+    override fun userStateSubscription(): Observable<UserStateResult> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override fun getCurrentUserState(): Observable<UserStateResult> {
         return Observable.create create@{ observer ->

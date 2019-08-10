@@ -29,7 +29,7 @@ class SquareImageView : ImageView {
 
         }*/
 
-        val width = getMeasuredWidth()
+        val width = measuredWidth
         setMeasuredDimension(width, width)
 
     }
