@@ -10,6 +10,7 @@ import com.apollographql.apollo.exception.ApolloException
 import com.zimplifica.domain.entities.Citizen
 import com.zimplifica.domain.entities.PaymentMethod
 import com.zimplifica.domain.entities.Transaction
+import com.zimplifica.domain.entities.VerificationStatus
 
 class CacheOperations{
     private var appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
@@ -177,6 +178,37 @@ class CacheOperations{
                         Log.i("🔵", "Cache updated at [CacheOperations] [updateTransactions]")
                         val data = query.wrapData(GetTransactionsByUserQuery.Data(GetTransactionsByUserQuery.GetTransactionsByUser("PaginatedTransactions",items,null)))
                         appSyncClient!!.store.write(query,data).enqueue(null)
+                    }
+                }
+
+            })
+    }
+
+    fun updateVerificationStatus(verificationStatus : VerificationStatus){
+        val query = GetUserQuery.builder().build()
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+            .enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateVerificationStatus Error:", e)                }
+
+                override fun onResponse(response: Response<GetUserQuery.Data>) {
+                    val user = response.data()?.user
+                    if(user!= null){
+                        val verStatus = when(verificationStatus){
+                            VerificationStatus.Pending -> com.amazonaws.rediPuntosAPI.type.VerificationStatus.PENDING
+                            VerificationStatus.VerifiedValid -> com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFIED_VALID
+                            VerificationStatus.Verifying -> com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFYING
+                            VerificationStatus.VerifiedInvalid -> com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFIED_INVALID
+                        }
+                        val status = GetUserQuery.Status(user.status().__typename(),verStatus,user.status().verificationReference())
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
+                            user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
+                            user.email(), user.emailVerified(),user.rewards(),user.paymentMethods(),status, user.gender(), user.address())
+
+                        val data = query.wrapData(GetUserQuery.Data(item))
+
+                        appSyncClient!!.store.write(query,data).enqueue(null)
+                        Log.i("🔵", "Cache updated at [CacheOperations] [updateEmail]")
                     }
                 }
 

@@ -6,6 +6,7 @@ import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers
 import com.amazonaws.rediPuntosAPI.*
 import com.amazonaws.rediPuntosAPI.type.CheckoutPayloadSitePayInput
 import com.amazonaws.rediPuntosAPI.type.CommercesInput
+import com.amazonaws.rediPuntosAPI.type.GenderType
 import com.amazonaws.rediPuntosAPI.type.WayToPayInput
 import com.apollographql.apollo.GraphQLCall
 import com.apollographql.apollo.api.Response
@@ -284,10 +285,24 @@ class UserUseCase : UserUseCase {
                             }
                         }
                         val userStatus = UserStatus(verificationStatus,verificationReference)
+                        var adress : Address ? = null
+                        val countryCode = user.address()?.country()
+                        if(countryCode!=null){
+                            adress = Address(countryCode,user.address()?.province(),user.address()?.canton(),user.address()?.district())
+                        }
+                        var gender : Gender ? = null
+                        val userGender = user.gender()
+                        if(userGender!=null){
+                            gender = when(userGender){
+                                GenderType.female -> Gender.Female
+                                GenderType.male -> Gender.Male
+                                GenderType.other -> Gender.Other
+                            }
+                        }
 
                         val userObj = UserInformationResult(user.id(),user.identityNumber(),user.firstName(),user.lastName(),
                             user.birthdate(),user.email(),user.phoneNumber(),user.phoneNumberVerified(),user.emailVerified(),null,user.rewards(),
-                            paymentMethods, userStatus)
+                            paymentMethods, userStatus,gender,adress)
                         single.onSuccess(Result.success(userObj))
                     }
                     else{
@@ -462,6 +477,31 @@ class UserUseCase : UserUseCase {
                 val tokenResponse = PinpointClient.setTokenDevice(token, userId)
                 single.onSuccess(Result.success(tokenResponse))
             }
+        }
+        return single.toObservable()
+    }
+
+    override fun initIdentitiyVerification(): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val mutation = InitPhoneVerificationMutation.builder().build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<InitPhoneVerificationMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [initIdentitiyVerification] Error.",e)
+                    single.onSuccess(Result.failure(e))
+                }
+
+                override fun onResponse(response: Response<InitPhoneVerificationMutation.Data>) {
+                    val result = response.data()?.initPhoneVerification()
+                    if (result != null){
+                        cacheOperations.updateVerificationStatus(VerificationStatus.Verifying)
+                        single.onSuccess(Result.success(result.success()))
+                    }
+                    else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+
+            })
         }
         return single.toObservable()
     }

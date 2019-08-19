@@ -19,4 +19,5 @@ interface UserUseCase{
     fun fetchCategories() : Observable<Result<List<Category>>>
     //fun filterCommercesByCategory(categoryId: String) : Observable<Result<CommercesResult>>
     fun registPushNotificationToken(token : String, userId : String) : Observable<Result<String>>
+    fun initIdentitiyVerification() : Observable<Result<Boolean>>
 }

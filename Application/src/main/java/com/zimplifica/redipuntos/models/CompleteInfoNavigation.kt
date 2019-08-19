@@ -5,76 +5,9 @@ import android.content.Intent
 import android.util.Log
 import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.libs.utils.ProfileStep
+import com.zimplifica.redipuntos.libs.utils.ValidationService
 import com.zimplifica.redipuntos.ui.activities.*
-/*
-class CompleteInfoNavigation(val context: Context, val environment: Environment) {
-    enum class Step {
-        completeCitizenInfo,completeEmail,verifyEmail,completePaymentMethod,none
-    }
-
-    init {
-        val step = nextStep()
-        show(step)
-    }
-
-    private fun nextStep() : Step{
-        val userStatus = environment.currentUser().userConfirmationStatus() ?: return Step.none
-        if(userStatus.shouldCompleteCitizenInfo){
-            return Step.completeCitizenInfo
-        }
-        else if (userStatus.shouldCompleteEmail){
-            return Step.completeEmail
-        }
-        else if(userStatus.shouldVerifyEmail){
-            return if (userStatus.email!=null){
-                Step.verifyEmail
-            }else{
-                Step.completeEmail
-            }
-        }
-        else if(userStatus.shouldCompletePaymentMethod){
-            return Step.completePaymentMethod
-        }
-        else{
-            return Step.none
-        }
-    }
-
-    private fun show(step: Step){
-        val userStatus = environment.currentUser().userConfirmationStatus() ?: return
-        when(step){
-            Step.completeCitizenInfo -> {
-                val intent = Intent(context, CitizenInfoActivity::class.java)
-                context.startActivity(intent)
-            }
-            Step.completeEmail -> {
-                val intent = Intent(context, CompleteEmailActivity::class.java)
-                context.startActivity(intent)
-            }
-            Step.verifyEmail -> {
-                val email = userStatus.email
-                if(email!=null){
-                    val intent = Intent(context, ConfirmEmailActivity::class.java)
-                    intent.putExtra("email",email)
-                    context.startActivity(intent)
-                }
-                else {
-                    val intent = Intent(context, CompleteEmailActivity::class.java)
-                    context.startActivity(intent)
-                }
-            }
-            Step.completePaymentMethod ->{
-                val intent = Intent(context,CompletePaymentActivity::class.java)
-                context.startActivity(intent)
-
-            }
-            Step.none -> {
-                Log.e("CompleteInfoNavigation","None to do")
-            }
-        }
-    }
-
-}*/
 
 
 class ManagerNav private constructor(context: Context){
@@ -88,68 +21,61 @@ class ManagerNav private constructor(context: Context){
 
     companion object : SingletonHolder<ManagerNav,Context>(::ManagerNav)
 
+    /*
     enum class Step {
         completeCitizenInfo,completeEmail,verifyEmail,completePaymentMethod,none
-    }
+    }*/
 
     fun initNav(){
         val step = nextStep()
         show(step)
     }
 
-    private fun nextStep() : ManagerNav.Step {
-        val userStatus = environment?.currentUser()?.userConfirmationStatus() ?: return ManagerNav.Step.none
-        if(userStatus.shouldCompleteCitizenInfo){
-            return ManagerNav.Step.completeCitizenInfo
-        }
-        else if (userStatus.shouldCompleteEmail){
-            return ManagerNav.Step.completeEmail
-        }
-        else if(userStatus.shouldVerifyEmail){
-            return if (userStatus.email!=null){
-                ManagerNav.Step.verifyEmail
-            }else{
-                ManagerNav.Step.completeEmail
-            }
-        }
-        else if(userStatus.shouldCompletePaymentMethod){
-            return ManagerNav.Step.completePaymentMethod
-        }
-        else{
-            return ManagerNav.Step.none
-        }
+    fun handleNextStep(){
+        show(nextStep())
     }
 
-    private fun show(step: ManagerNav.Step){
+    private fun nextStep() : ProfileStep? {
+        val userStatus = environment?.currentUser()?.getCurrentUser()
+        return ValidationService.getNextStepToCompleteProfile(userStatus)
+    }
+
+    private fun show(step: ProfileStep?){
+        if (step == null)return
         val userStatus = environment?.currentUser()?.userConfirmationStatus() ?: return
         when(step){
-            ManagerNav.Step.completeCitizenInfo -> {
+            ProfileStep.VerifyIdentity -> {
                 //val intent = Intent(context, CitizenInfoActivity::class.java)
                 val intent = Intent(context, JumioActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }
-            ManagerNav.Step.completeEmail -> {
+            ProfileStep.Email -> {
                 val intent = Intent(context, CompleteEmailActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }
-            ManagerNav.Step.verifyEmail -> {
+            ProfileStep.VerifyEmail -> {
                 val email = userStatus.email
                 if(email!=null){
                     val intent = Intent(context, ConfirmEmailActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent.putExtra("email",email)
                     context.startActivity(intent)
                 }
                 else {
                     val intent = Intent(context, CompleteEmailActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(intent)
                 }
             }
-            ManagerNav.Step.completePaymentMethod ->{
+            ProfileStep.PaymentMethod ->{
                 val intent = Intent(context,CompletePaymentActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
 
             }
-            ManagerNav.Step.none -> {
+            else -> {
                 Log.e("CompleteInfoNavigation","None to do")
             }
         }

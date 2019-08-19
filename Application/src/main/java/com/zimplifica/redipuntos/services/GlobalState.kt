@@ -6,6 +6,7 @@ import android.util.Log
 import com.zimplifica.domain.entities.Citizen
 import com.zimplifica.domain.entities.PaymentMethod
 import com.zimplifica.domain.entities.UserInformationResult
+import com.zimplifica.domain.entities.UserStatus
 import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.CurrentUser
@@ -41,7 +42,7 @@ class GlobalState(val context: Context){
             citizen.firstName, citizen.lastName, citizen.getBirthDateAsString(),
             currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
                 currentUser.userEmailVerified, null, currentUser.rewards,
-                currentUser.paymentMethods, currentUser.status)
+                currentUser.paymentMethods, currentUser.status, currentUser.gender, currentUser.address)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -55,7 +56,8 @@ class GlobalState(val context: Context){
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,
                 currentUser.userFirstName, currentUser.userLastName, currentUser.userBirthDate,
                 currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
-                currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
+                currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status,
+                currentUser.gender, currentUser.address)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -71,7 +73,7 @@ class GlobalState(val context: Context){
             val userInfo = UserInformationResult(currentUser.userId,currentUser.citizenId, currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, email, currentUser.userPhoneNumber,
                 currentUser.userPhoneVerified,currentUser.userEmailVerified, null, currentUser.rewards,
-                currentUser.paymentMethods, currentUser.status)
+                currentUser.paymentMethods, currentUser.status,currentUser.gender, currentUser.address)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -82,7 +84,8 @@ class GlobalState(val context: Context){
         if(currentUser!=null){
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, isVerify, null, currentUser.rewards, currentUser.paymentMethods, currentUser.status)
+                currentUser.userPhoneVerified, isVerify, null, currentUser.rewards, currentUser.paymentMethods, currentUser.status,
+                currentUser.gender, currentUser.address)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -94,9 +97,20 @@ class GlobalState(val context: Context){
             paymentMethods.removeAll{ it.cardId == withouPaymentMethod.cardId}
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
+                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status,
+                currentUser.gender, currentUser.address)
             this.userInformationSubscription.onNext(userInfo)
         }
+    }
 
+    fun updateCurrentUseerStatus(status : UserStatus){
+        val currentUser =CurrentUser.getCurrentUser()
+        if (currentUser!=null){
+            val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
+                currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
+                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, currentUser.paymentMethods, status,
+                currentUser.gender, currentUser.address)
+            this.userInformationSubscription.onNext(userInfo)
+        }
     }
 }

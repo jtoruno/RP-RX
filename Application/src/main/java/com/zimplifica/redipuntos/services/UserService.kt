@@ -102,4 +102,17 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         return userUseCase.registPushNotificationToken(token, userId)
     }
 
+    fun initIdentitiyVerification() : Observable<Result<Boolean>>{
+        return userUseCase.initIdentitiyVerification()
+            .doOnNext { result ->
+                when(result){
+                    is Result.success -> {
+                        val userStatus = UserStatus(VerificationStatus.Verifying,null)
+                        this.state.updateCurrentUseerStatus(userStatus)
+                    }
+                    else -> return@doOnNext
+                }
+            }
+    }
+
 }

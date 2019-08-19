@@ -3,10 +3,16 @@ package com.zimplifica.redipuntos.libs.utils
 import android.util.Log
 import android.util.Patterns
 import com.zimplifica.domain.entities.UserInformationResult
+import com.zimplifica.domain.entities.VerificationStatus
 import java.util.regex.Pattern
 
 enum class UserCredentialType {
     PHONE_NUMBER, EMAIL
+}
+
+enum class ProfileStep {
+    VerifyIdentity, PhoneNumber, Email, VerifyEmail,
+    PaymentMethod, Unknown
 }
 
 object ValidationService {
@@ -143,14 +149,60 @@ object ValidationService {
 
         if (!userInfo.userEmailVerified) {
             shouldVerifyEmail = true
-
         }
 
         if (userInfo.paymentMethods.isEmpty()) {
             shouldCompletePaymentMethod = true
         }
-
         return UserConfirmationStatus(shouldCompleteCitizenInfo,shouldCompleteEmail,shouldVerifyEmail,email,shouldCompletePaymentMethod)
+    }
+
+    fun verificationStatus(userInfo: UserInformationResult) : Boolean{
+        return when(userInfo.status.status){
+            VerificationStatus.Pending -> true
+            else -> {
+                false
+            }
+        }
+    }
+
+    fun getNextStepToCompleteProfile(userInfo: UserInformationResult?) : ProfileStep?{
+        if(userInfo==null){return ProfileStep.Unknown}
+        if(userInfo.status.status == VerificationStatus.Pending){
+            return ProfileStep.VerifyIdentity
+        }
+        if(userInfo.userEmail == null){
+            return ProfileStep.Email
+        }
+        if(!userInfo.userEmailVerified){
+            return ProfileStep.VerifyEmail
+        }
+        if (userInfo.paymentMethods.isEmpty()){
+            return ProfileStep.PaymentMethod
+        }
+        return null
+    }
+
+    fun getCompletedStepsCount(userInfo: UserInformationResult?) : Int{
+        if(userInfo==null){return 0}
+        var count = 0
+        if(userInfo.status.status == VerificationStatus.VerifiedValid){
+            count +=1
+        }
+        if(userInfo.userEmailVerified && userInfo.userEmail != null){
+            count +=1
+        }
+        if (userInfo.paymentMethods.isNotEmpty()){
+            count +=1
+        }
+        /*
+        if(userInfo.address != null){
+            count +=1
+        }
+        if(userInfo.gender != null){
+            count +=1
+        }*/
+        return count
     }
 }
 
@@ -159,22 +211,6 @@ class UserConfirmationStatus(var shouldCompleteCitizenInfo: Boolean, var shouldC
     enum class ConfirmationStatus{
         missingInfo,completed
     }
-    /*
-    private var shouldCompleteCitizenInfo = true
-    private var shouldCompleteEmail = true
-    private var shouldVerifyEmail = true
-    private var shouldCompletePaymentMethod = true
-    private var email : String? = null
-    */
-
-    /*
-    constructor(shouldCompleteCitizenInfo: Boolean, shouldCompleteEmail: Boolean, shouldVerifyEmail: Boolean, email: String?, shouldCompletePaymentMethod: Boolean) : this(){
-        this.shouldCompleteCitizenInfo = shouldCompleteCitizenInfo
-        this.shouldCompleteEmail = shouldCompleteEmail
-        this.shouldVerifyEmail = shouldVerifyEmail
-        this.shouldCompletePaymentMethod = shouldCompletePaymentMethod
-        this.email = email
-    }*/
 
     var confirmationStatus : ConfirmationStatus =
         if (shouldCompleteCitizenInfo||shouldCompleteEmail||shouldVerifyEmail||shouldCompletePaymentMethod){

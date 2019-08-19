@@ -21,6 +21,7 @@ import com.zimplifica.redipuntos.BuildConfig
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
+import com.zimplifica.redipuntos.models.ManagerNav
 import com.zimplifica.redipuntos.viewModels.JumioScanVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -56,7 +57,14 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
             scanAction()
         })
 
+        compositeDisposable.add(viewModel.outputs.stepCompleted().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            finish()
+            ManagerNav.getInstance(this).handleNextStep()
+        })
 
+        compositeDisposable.add(viewModel.outputs.stepError().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            Toast.makeText(this, "Error de lectura, intente de nuevo.",Toast.LENGTH_LONG).show()
+        })
     }
 
     private fun initializeNetverifySDK(){
@@ -121,12 +129,13 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
                 val scanReference = data?.getStringExtra(NetverifySDK.EXTRA_SCAN_REFERENCE)
                 val documentData = data?.getParcelableExtra<Parcelable>(NetverifySDK.EXTRA_SCAN_DATA) as? NetverifyDocumentData
                 val mrzData = documentData?.mrzData
-
                 Log.e(TAG, documentData.toString())
+                viewModel.inputs.finishVerification(true)
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 val errorMessage = data?.getStringExtra(NetverifySDK.EXTRA_ERROR_MESSAGE)
                 val errorCode = data?.getStringExtra(NetverifySDK.EXTRA_ERROR_CODE)
                 Log.e(TAG, errorMessage?:"")
+                viewModel.inputs.finishVerification(false)
             }
 
             //At this point, the SDK is not needed anymore. It is highly advisable to call destroy(), so that
