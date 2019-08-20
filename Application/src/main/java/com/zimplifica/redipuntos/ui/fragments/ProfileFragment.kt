@@ -155,8 +155,9 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             profile_user_welcome.text = "¡Bienvenido Usuario Invitado!"
             setRoundImage(getUserInitials("Usuario Invitado"))
         }else{
-            profile_user_welcome.text = "¡Hola $completeName!"
-            setRoundImage(getUserInitials(completeName))
+            val formalName = (name1.split(" ").first() + " " + name2.split(" ").first()).capitalizeWords()
+            setRoundImage(getUserInitials(formalName))
+            profile_user_welcome.text = "¡Hola $formalName!"
         }
 
         val status = user.status.status
@@ -231,6 +232,8 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
 
         }
         if(progress == 3){
+            profile_progress_text.visibility = View.GONE
+            profile_complete_account_info.visibility = View.GONE
             profile_progress_1.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
             profile_progress_2.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
             profile_progress_3.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
