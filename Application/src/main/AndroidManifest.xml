@@ -23,9 +23,13 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:replace="android:allowBackup">
-        <activity android:name=".ui.activities.FirstActivity"
-                  android:theme="@style/noAnimTheme"
+        <activity android:name=".ui.activities.VerifyWalkThActivity"
                   android:screenOrientation="portrait">
+        </activity>
+        <activity
+                android:name=".ui.activities.FirstActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/noAnimTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -151,7 +155,6 @@
                 android:name=".ui.activities.SplashActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppThemeNoActionBar">
-
         </activity>
         <activity
                 android:name=".ui.activities.ConfirmForgotPasswordActivity"

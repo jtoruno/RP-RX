@@ -5,28 +5,28 @@
   "CredentialsProvider": {
     "CognitoIdentity": {
       "Default": {
-        "PoolId": "us-east-1:00125416-d883-4fbb-ad16-02a7db2d1d3e",
+        "PoolId": "us-east-1:829d83a9-f4eb-4c89-af54-29483b6b58a6",
         "Region": "us-east-1"
       }
     }
   },
   "CognitoUserPool": {
     "Default": {
-      "PoolId": "us-east-1_UhlRRY8rQ",
-      "AppClientId": "f26bvsg6asg9rgr56mmqctrub",
+      "PoolId": "us-east-1_b5YQXtriv",
+      "AppClientId": "1bomv4f36tqc7qo1kn6l3flu8o",
       "Region": "us-east-1",
-      "PinpointAppId": "f0b280c485e1490da325dbaaab370058"
+      "PinpointAppId": "759b705d411645a58fd4a8bf20759863"
     }
   },
   "AppSync": {
     "privateAPI": {
-      "ApiUrl": "https://ogbx7bntu5a5fdvqti5eqwynbi.appsync-api.us-east-1.amazonaws.com/graphql",
+      "ApiUrl": "https://hnde4pv5kzdwfi4ru37onpn5mm.appsync-api.us-east-1.amazonaws.com/graphql",
       "Region": "us-east-1",
       "AuthMode": "AMAZON_COGNITO_USER_POOLS",
       "ClientDatabasePrefix": "privatedb"
     },
     "publicAPI": {
-      "ApiUrl": "https://ogbx7bntu5a5fdvqti5eqwynbi.appsync-api.us-east-1.amazonaws.com/graphql",
+      "ApiUrl": "https://hnde4pv5kzdwfi4ru37onpn5mm.appsync-api.us-east-1.amazonaws.com/graphql",
       "Region": "us-east-1",
       "AuthMode": "AWS_IAM",
       "ClientDatabasePrefix": "publicdb"
@@ -34,7 +34,7 @@
   },
   "PinpointAnalytics": {
     "Default": {
-      "AppId": "f0b280c485e1490da325dbaaab370058",
+      "AppId": "759b705d411645a58fd4a8bf20759863",
       "Region": "us-east-1"
     }
   },

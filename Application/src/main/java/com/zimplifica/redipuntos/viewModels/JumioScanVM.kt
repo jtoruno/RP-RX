@@ -16,8 +16,7 @@ interface JumioScanVM {
     }
     interface Outputs{
         fun openScan() : Observable<Unit>
-        fun stepCompleted() : Observable<Unit>
-        fun stepError() : Observable<Unit>
+        fun finishVerificationOutput() : Observable<Boolean>
     }
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<JumioScanVM>(environment), Inputs, Outputs{
 
@@ -30,34 +29,21 @@ interface JumioScanVM {
 
         //Outputs
         private val openScan = BehaviorSubject.create<Unit>()
-        private val stepCompleted = BehaviorSubject.create<Unit>()
-        private val stepError = BehaviorSubject.create<Unit>()
+        private val finishVerificationOutput = BehaviorSubject.create<Boolean>()
+
 
         init {
             this.scanActivity
                 .subscribe(this.openScan)
-
-            finishVerification
-                .filter { it }
-                .flatMap { environment.userUseCase().initIdentitiyVerification() }
-                .share()
-                .delay(2,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
-                .map { Unit }
-                .subscribe(this.stepCompleted)
-            
-            finishVerification
-                .filter { !it }
-                .map { Unit }
-                .subscribe(this.stepError)
+            this.finishVerification
+                .subscribe(this.finishVerificationOutput)
         }
+
+        override fun finishVerificationOutput(): Observable<Boolean> = this.finishVerificationOutput
 
         override fun finishVerification(state: Boolean) {
             this.finishVerification.onNext(state)
         }
-
-        override fun stepCompleted(): Observable<Unit> = this.stepCompleted
-
-        override fun stepError(): Observable<Unit> = this.stepError
 
         override fun scanActivity() {
             return this.scanActivity.onNext(Unit)

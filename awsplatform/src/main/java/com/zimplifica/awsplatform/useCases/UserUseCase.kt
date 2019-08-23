@@ -483,15 +483,10 @@ class UserUseCase : UserUseCase {
 
     override fun initIdentitiyVerification(): Observable<Result<Boolean>> {
         val single = Single.create<Result<Boolean>> create@{ single ->
-            val mutation = InitPhoneVerificationMutation.builder().build()
-            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<InitPhoneVerificationMutation.Data>(){
-                override fun onFailure(e: ApolloException) {
-                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [initIdentitiyVerification] Error.",e)
-                    single.onSuccess(Result.failure(e))
-                }
-
-                override fun onResponse(response: Response<InitPhoneVerificationMutation.Data>) {
-                    val result = response.data()?.initPhoneVerification()
+            val mutation = InitVerificationProcessMutation.builder().build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<InitVerificationProcessMutation.Data>(){
+                override fun onResponse(response: Response<InitVerificationProcessMutation.Data>) {
+                    val result = response.data()?.initVerificationProcess()
                     if (result != null){
                         cacheOperations.updateVerificationStatus(VerificationStatus.Verifying)
                         single.onSuccess(Result.success(result.success()))
@@ -499,6 +494,11 @@ class UserUseCase : UserUseCase {
                     else{
                         single.onSuccess(Result.failure(Exception()))
                     }
+                }
+
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [initIdentitiyVerification] Error.",e)
+                    single.onSuccess(Result.failure(e))
                 }
 
             })

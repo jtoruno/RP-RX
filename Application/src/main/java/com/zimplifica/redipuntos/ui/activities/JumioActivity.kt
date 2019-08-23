@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.ui.activities
 
+import android.animation.Animator
 import android.app.Activity
 import android.content.Intent
 import android.os.Build
@@ -26,6 +27,7 @@ import com.zimplifica.redipuntos.viewModels.JumioScanVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_jumio.*
+import java.util.concurrent.TimeUnit
 
 @RequiresActivityViewModel(JumioScanVM.ViewModel::class)
 class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
@@ -48,15 +50,47 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_jumio)
         this.supportActionBar?.title = "Información Básica"
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
-        button.setOnClickListener {
-            viewModel.inputs.scanActivity()
-        }
+        //supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        //supportActionBar!!.setDisplayShowHomeEnabled(true)
+
+        jumio_waiting_animation.repeatCount = 2
+        jumio_waiting_animation.addAnimatorListener(object: Animator.AnimatorListener{
+            override fun onAnimationRepeat(animation: Animator?) {
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                viewModel.inputs.scanActivity()
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+            }
+
+            override fun onAnimationStart(animation: Animator?) {
+            }
+
+        })
+
         compositeDisposable.add(viewModel.outputs.openScan().observeOn(AndroidSchedulers.mainThread()).subscribe {
             scanAction()
         })
 
+        compositeDisposable.add(viewModel.outputs.finishVerificationOutput().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            netverifySDK.destroy()
+            if (it){
+                viewModel.environment.userUseCase().initIdentitiyVerification()
+                    .delay(2,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
+                    .subscribe {
+                        finish()
+                        ManagerNav.getInstance(this).handleNextStep()
+                    }
+            }else{
+                finish()
+                val intent = Intent(this, VerifyWalkThActivity::class.java)
+                startActivity(intent)
+            }
+        })
+
+        /*
         compositeDisposable.add(viewModel.outputs.stepCompleted().observeOn(AndroidSchedulers.mainThread()).subscribe {
             finish()
             ManagerNav.getInstance(this).handleNextStep()
@@ -64,7 +98,7 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.stepError().observeOn(AndroidSchedulers.mainThread()).subscribe {
             Toast.makeText(this, "Error de lectura, intente de nuevo.",Toast.LENGTH_LONG).show()
-        })
+        })*/
     }
 
     private fun initializeNetverifySDK(){
@@ -140,10 +174,11 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
 
             //At this point, the SDK is not needed anymore. It is highly advisable to call destroy(), so that
             //internal resources can be freed.
-            netverifySDK.destroy()
+            //netverifySDK.destroy()
         }
     }
 
+    /*
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
@@ -152,4 +187,5 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
     override fun onBackPressed() {
         finish()
     }
+    */
 }

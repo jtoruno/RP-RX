@@ -9,7 +9,7 @@
             app:layout_heightPercent="60%"
             android:id="@+id/lottie_animation"
             android:layout_width="match_parent"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             app:lottie_rawRes="@raw/confetti"
             app:lottie_autoPlay="true"
             app:lottie_loop="true" android:layout_marginTop="10dp" android:layout_alignParentTop="true"

@@ -9,9 +9,10 @@
         tools:context=".ui.activities.JumioActivity">
 
     <com.airbnb.lottie.LottieAnimationView
-            android:layout_width="200dp" android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            app:lottie_rawRes="@raw/face_scanning"
+            android:id="@+id/jumio_waiting_animation"
+            android:layout_width="300dp" android:layout_height="300dp"
+            android:scaleType="centerInside"
+            app:lottie_rawRes="@raw/sand"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="8dp"
@@ -19,37 +20,16 @@
             app:layout_constraintBottom_toTopOf="@+id/textView52" android:layout_marginTop="8dp"
             app:layout_constraintTop_toTopOf="parent"/>
 
-    <Button
-            android:text="Continuar"
-            android:background="@color/colorAccent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/button" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
     <TextView
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:textAlignment="center"
-            android:textSize="16sp"
             android:textColor="@android:color/white"
-            android:text="En RediPuntos nos caracterizamos por garantizarle la máxima seguridad a nuestra comunidad, por lo que todos nuestros usuarios deben de verificar su identidad para activar su cuenta. Tan solo necesitas tu cédula de identidad a mano."
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="68dp"
-            android:id="@+id/textView46"
-            app:layout_constraintBottom_toTopOf="@+id/button" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.0"/>
-    <TextView
-            android:layout_marginBottom="32dp"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:text="Proporcione su identificación"
+            android:text="Por favor espere"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView52"
-            app:layout_constraintBottom_toTopOf="@+id/textView46" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp" android:layout_marginBottom="88dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

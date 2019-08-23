@@ -46,7 +46,7 @@ class ManagerNav private constructor(context: Context){
         when(step){
             ProfileStep.VerifyIdentity -> {
                 //val intent = Intent(context, CitizenInfoActivity::class.java)
-                val intent = Intent(context, JumioActivity::class.java)
+                val intent = Intent(context, VerifyWalkThActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }

@@ -44,4 +44,30 @@
     </string>
     <string name="Alert">Alert</string>
     <string name="App_version">App version %1$s</string>
+
+
+    <!-- Verify Account Walk -->
+    <string name="verify_walk_title1">Permítenos conocerte</string>
+    <string name="verify_walk_descrip1">Para poder tener acceso a todos nuestros beneficios debes de verificar tu
+        identidad y de
+        este modo garantizarle la seguridad e integridad a nuestra comunidad.
+    </string>
+    <string name="verify_walk_title2">¿Cómo lo hacemos?</string>
+    <string name="verify_walk_descrip2">Mediante tecnología de punta, un selfie y las fotos de tu identificación,
+        RediPuntos logra verificar
+        con exactitud si eres la persona quien dices ser sin hacerte salir de tu casa.
+    </string>
+    <string name="verify_walk_title3">Ve donde haya luz</string>
+    <string name="verify_walk_descrip3">Para que una verificación sea exitosa, es vital que tus fotos sean lo
+        suficientemente legíbles, por lo que
+        tómate tu tiempo y asegúraate de tener una iluminación adecuada.
+    </string>
+    <string name="verify_walk_title4">Capturamos la foto automaticamente</string>
+    <string name="verify_walk_descrip4">RediPuntos detecta automaticamente tu identificación y tu cara para capturar la
+        mejor foto posible. ¡Tan solo acércate a los márgenes!
+    </string>
+    <string name="verify_walk_title5">Confía en nosotros</string>
+    <string name="verify_walk_descrip5">RediPuntos cumple con todos los estándares de seguridad por lo que damos fe de
+        que tu información será manejada con total discreción y de la manera más responsable.
+    </string>
 </resources>
