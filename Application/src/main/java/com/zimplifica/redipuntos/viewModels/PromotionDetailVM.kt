@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.viewModels
 
 import androidx.annotation.NonNull
+import com.zimplifica.domain.entities.Commerce
 import com.zimplifica.domain.entities.Location
 import com.zimplifica.domain.entities.Promotion
 import com.zimplifica.redipuntos.libs.ActivityViewModel
@@ -20,7 +21,7 @@ interface PromotionDetailVM {
     }
     interface Outputs {
         /// Emits to get the promotion.
-        fun promotionAction() : Observable<Promotion>
+        fun commerceAction() : Observable<Commerce>
 
         /// Emits when a location is selected.
         fun locationAction() : Observable<Location>
@@ -30,6 +31,7 @@ interface PromotionDetailVM {
     }
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<PromotionDetailVM>(environment),Inputs, Outputs{
 
+
         val inputs : Inputs = this
         val outputs : Outputs = this
 
@@ -38,15 +40,15 @@ interface PromotionDetailVM {
         private val openUrl = PublishSubject.create<SocialNetworkObject>()
 
         //Outputs
-        private val promotionAction = BehaviorSubject.create<Promotion>()
+        private val commerceAction = BehaviorSubject.create<Commerce>()
         private val locationAction = BehaviorSubject.create<Location>()
         private val openUrlAction = BehaviorSubject.create<SocialNetworkObject>()
 
         init {
             intent()
-                .filter { it.hasExtra("promotion") }
-                .map { it.getSerializableExtra("promotion") as Promotion }
-                .subscribe(this.promotionAction)
+                .filter { it.hasExtra("commerce") }
+                .map { it.getSerializableExtra("commerce") as Commerce }
+                .subscribe(this.commerceAction)
 
             this.locationPressed
                 .subscribe(this.locationAction)
@@ -63,7 +65,7 @@ interface PromotionDetailVM {
             return this.openUrl.onNext(socialNetwork)
         }
 
-        override fun promotionAction(): Observable<Promotion> = this.promotionAction
+        override fun commerceAction(): Observable<Commerce> = this.commerceAction
 
         override fun locationAction(): Observable<Location> = this.locationAction
 

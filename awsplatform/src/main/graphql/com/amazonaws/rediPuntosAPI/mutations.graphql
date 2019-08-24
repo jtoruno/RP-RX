@@ -65,9 +65,15 @@ mutation ToggleAutomaticRedemption($cardId: String!) {
 mutation SendEventToClient($user: String!, $event: ClientEventInput!) {
   sendEventToClient(user: $user, event: $event) {
     id
+    createdAt
     user
     type
+    title
+    message
     data
+    actionable
+    triggered
+    hidden
   }
 }
 mutation InitVerificationProcess {
@@ -84,6 +90,12 @@ mutation UpdateUserAddress($input: UpdateAddressInput!) {
 }
 mutation UpdateUserGender($input: UpdateGenderInput!) {
   updateUserGender(input: $input) {
+    success
+    message
+  }
+}
+mutation UpdateNotificationStatus($id: String!) {
+  updateNotificationStatus(id: $id) {
     success
     message
   }

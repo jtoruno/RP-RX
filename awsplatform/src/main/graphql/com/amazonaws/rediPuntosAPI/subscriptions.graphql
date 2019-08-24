@@ -2,8 +2,14 @@
 subscription SubscribeToEvents($user: String!) {
   subscribeToEvents(user: $user) {
     id
+    createdAt
     user
     type
+    title
+    message
     data
+    actionable
+    triggered
+    hidden
   }
 }

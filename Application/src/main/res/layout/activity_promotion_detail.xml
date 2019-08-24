@@ -37,6 +37,15 @@
                 android:background="@color/navDisableColor"
                 android:layout_height="1dp"/>
         <TextView
+                android:text="TextView"
+                android:textColor="@color/red"
+                android:textSize="26sp"
+                android:layout_marginTop="10dp"
+                android:textAlignment="viewEnd"
+                android:layout_marginEnd="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/promotion_detail_cash_back"/>
+        <TextView
                 android:textSize="22sp"
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
@@ -59,6 +68,7 @@
                 android:text="Description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/promotion_detail_description"/>
+        <!---
         <TextView
                 android:textStyle="bold"
                 android:textSize="22sp"
@@ -90,6 +100,8 @@
                 android:textColor="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/promotion_detail_date2"/>
+
+                -->
         <TextView
                 android:textColor="@android:color/white"
                 android:textSize="22sp"

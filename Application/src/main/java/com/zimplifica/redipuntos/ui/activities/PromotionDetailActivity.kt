@@ -54,9 +54,9 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
             showDialog(it)
         }
         recyclerView.adapter = adapter
-        val manager = androidx.recyclerview.widget.LinearLayoutManager(
+        val manager = LinearLayoutManager(
             this,
-            androidx.recyclerview.widget.LinearLayoutManager.VERTICAL,
+            RecyclerView.VERTICAL,
             false
         )
         recyclerView.layoutManager = manager
@@ -64,14 +64,16 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
         val divider = androidx.recyclerview.widget.DividerItemDecoration(this, manager.orientation)
         recyclerView.addItemDecoration(divider)
 
-        compositeDisposable.add(viewModel.outputs.promotionAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(viewModel.outputs.commerceAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                supportActionBar?.title = it.commerceName
-                Picasso.get().load(it.promotionImage).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(promotion_detail_img)
-                promotion_detail_title.text = it.title
+                supportActionBar?.title = it.name
+                Picasso.get().load(it.posterImage).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(promotion_detail_img)
+                promotion_detail_title.text = "RediCash"
                 promotion_detail_description.text = it.description
-                promotion_detail_date1.text = "De : "+it.validFrom
-                promotion_detail_date2.text = "Hasta : "+it.validTo
+                val rediCash = it.offer?.discount ?: 0
+                promotion_detail_cash_back.text = "$rediCash%"
+                //promotion_detail_date1.text = "De : "+it.validFrom
+                //promotion_detail_date2.text = "Hasta : "+it.validTo
                 promotion_detail_restrictions.text = it.restrictions
                 promotion_detail_forms_to_use.text = it.waysToUse
                 adapter.setStores(it.stores)

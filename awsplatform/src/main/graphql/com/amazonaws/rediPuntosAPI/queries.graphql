@@ -152,26 +152,8 @@ query GetCommerces($input: CommercesInput) {
     items {
       id
       name
+      description
       posterImage
-      promotions {
-        id
-        promotionType
-        title
-        description
-        promotionImage
-        validFrom
-        validTo
-        restrictions
-        waysToUse
-        stores
-        ... on Offer {
-          discount
-        }
-        ... on Coupon {
-          beforeDiscount
-          afterDiscount
-        }
-      }
       website
       facebook
       whatsapp
@@ -225,6 +207,7 @@ query GetCommerces($input: CommercesInput) {
         }
       }
     }
+    total
   }
 }
 query GetCategories($limit: Int, $nextToken: String) {
@@ -233,6 +216,23 @@ query GetCategories($limit: Int, $nextToken: String) {
       id
       name
       categoryImage
+    }
+  }
+}
+query GetNotifications($limit: Int, $nextToken: String) {
+  getNotifications(limit: $limit, nextToken: $nextToken) {
+    nextToken
+    items {
+      id
+      createdAt
+      user
+      type
+      title
+      message
+      data
+      actionable
+      triggered
+      hidden
     }
   }
 }

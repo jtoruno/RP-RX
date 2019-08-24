@@ -318,33 +318,6 @@ class UserUseCase : UserUseCase {
         val single = Single.create<Result<Citizen>> create@{ single ->
             val rcitizenResult = Citizen(citizen.lastName,citizen.firstName,Date(),citizen.citizenId)
             single.onSuccess(Result.success(rcitizenResult))
-            /*
-            val mutation = UpdatePersonalInfoMutation.builder()
-                //.username(citizen.citizenId)
-                .firstName(citizen.firstName)
-                .lastName(citizen.lastName)
-                .birthdate(citizen.birthDate)
-                .identityNumber(citizen.citizenId)
-                .build()
-            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<UpdatePersonalInfoMutation.Data>(){
-                override fun onFailure(e: ApolloException) {
-                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [UpdateUserInfo] Error.",e)
-                    single.onSuccess(Result.failure(e))
-                }
-
-                override fun onResponse(response: Response<UpdatePersonalInfoMutation.Data>) {
-                    val result = response.data()?.updatePersonalInfo()
-                    if(result!=null){
-                        val citizen = Citizen(result.lastName(),result.firstName(), Date(result.birthdate()) ,result.identityNumber())
-                        cacheOperations.updateCitizen(citizen)
-                        single.onSuccess(Result.success(citizen))
-                    }
-                    else{
-                        single.onSuccess(Result.failure(Exception()))
-                    }
-                }
-
-            })*/
         }
         return single.toObservable()
     }
@@ -429,7 +402,7 @@ class UserUseCase : UserUseCase {
                     val data = response.data()?.commerces
                     if(data!=null){
                         val commerces = handleTransformCommercesInfo(data.items())
-                        val commercesResult = CommercesResult(commerces)
+                        val commercesResult = CommercesResult(commerces, data.total())
                         single.onSuccess(Result.success(commercesResult))
                     }
                     else{
@@ -511,41 +484,18 @@ class UserUseCase : UserUseCase {
         commerces = data.map { commerce ->
 
             //Stores
-            var commerceStores = mutableMapOf<String,Store>()
+            var commerceStores = mutableListOf<Store>()
             val storesList = commerce.stores()
-            if (!storesList.isNullOrEmpty()){
-                storesList.forEach { store ->
-                    val newStore = this.handleStoreSchedules(store)
-                    commerceStores[store.id()] = newStore
+            if(!storesList.isNullOrEmpty()){
+                storesList.forEach {store ->
+                    val newStore = handleStoreSchedules(store)
+                    commerceStores.add(newStore)
                 }
             }
-
-            //Promotions
-            var promotions = mutableListOf<Promotion>()
-            val commercePromotions =  commerce.promotions()
-            if(!commercePromotions.isNullOrEmpty()){
-                promotions = commercePromotions.map { promotion ->
-                    var stores = mutableListOf<Store>()
-                    promotion.stores()?.forEach { storeIdentification ->
-                        if (commerceStores[storeIdentification] != null){
-                            stores.add(commerceStores[storeIdentification]!!)
-                        }
-                    }
-
-                    val offerDiscount = promotion.asOffer()?.discount()
-                    if (offerDiscount!=null){
-                        val offer = Offer(offerDiscount)
-                        return@map Promotion(promotion.id(),promotion.promotionType(),promotion.title(),promotion.description(),promotion.promotionImage(),commerce.name(),promotion.validFrom(),promotion.validTo(),promotion.restrictions(),
-                            promotion.waysToUse(),stores,null,offer,commerce.website()?:"",commerce.facebook()?:"",commerce.whatsapp()?:"",commerce.instagram()?:"")
-                    }else{
-                        val coupon = Coupon(promotion.asCoupon()?.beforeDiscount()?:0.0,promotion.asCoupon()?.afterDiscount()?:0.0)
-                        return@map Promotion(promotion.id(),promotion.promotionType(),promotion.title(),promotion.description(),promotion.promotionImage(),commerce.name(),promotion.validFrom(),promotion.validTo(),promotion.restrictions(),promotion.waysToUse(),stores,coupon,
-                            null,commerce.website()?:"",commerce.facebook()?:"",commerce.whatsapp()?:"",commerce.instagram()?:"")
-                    }
-                }.toMutableList()
-            }
-            return@map Commerce(commerce.id(),commerce.name(),commerce.posterImage(),promotions,commerce.website()?:"",commerce.facebook()?:"",commerce.whatsapp()?:"",commerce.instagram()?:"",commerce.category(),
-                mutableListOf())
+            val offer = Offer(10)
+            return@map Commerce(commerce.id(),commerce.name(),commerce.posterImage(), commerce.website()?:"",commerce.facebook()?:"",
+                commerce.whatsapp()?:"",commerce.instagram()?:"",commerce.category(),commerceStores,"El descuento no aplica para otros descuentos.",
+                "El descuento es válido solo pagando con RediPuntos.",commerce.description(), offer)
         }
         return commerces
 

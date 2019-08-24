@@ -164,7 +164,7 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         when(status){
             VerificationStatus.VerifiedValid -> {
                 profile_user_status.text = "Usuario verificado"
-                profile_user_status_icon.setImageResource(R.drawable.ic_check_black_24dp)
+                profile_user_status_icon.setImageResource(R.drawable.ic_verified_user_black_24dp)
             }
             VerificationStatus.VerifiedInvalid -> {
                 profile_user_status.text = "Usuario no verificado"

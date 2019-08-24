@@ -24,6 +24,7 @@ import com.zimplifica.redipuntos.libs.qualifiers.BaseFragment
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresFragmentViewModel
 import com.zimplifica.redipuntos.ui.activities.CategoriesActivity
 import com.zimplifica.redipuntos.ui.activities.CommercePromotionsActivity
+import com.zimplifica.redipuntos.ui.activities.PromotionDetailActivity
 import com.zimplifica.redipuntos.ui.adapters.CommerceAdapter
 import com.zimplifica.redipuntos.viewModels.CommercesFragmentVM
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -149,7 +150,8 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.commerceSelectedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val intent = Intent(activity,CommercePromotionsActivity::class.java)
+
+                val intent = Intent(activity,PromotionDetailActivity::class.java)
                 intent.putExtra("commerce", it)
                 startActivity(intent)
             })
