@@ -1,6 +1,7 @@
 package com.zimplifica.awsplatform.useCases
 
 import android.content.Context
+import android.text.format.DateUtils
 import android.util.Log
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers
 import com.amazonaws.rediPuntosAPI.*
@@ -13,6 +14,7 @@ import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.zimplifica.awsplatform.AppSync.AppSyncClient
 import com.zimplifica.awsplatform.AppSync.CacheOperations
+import com.zimplifica.awsplatform.AppSync.ServerSubscription
 import com.zimplifica.awsplatform.Pinpoint.PinpointClient
 import com.zimplifica.awsplatform.Utils.PlatformUtils
 import com.zimplifica.domain.entities.*
@@ -143,7 +145,7 @@ class UserUseCase : UserUseCase {
                     Log.e("Order",result.toString())
                     if(result!=null){
                         val item = Item(result.order().item().type(), result.order().item().amount())
-                        val order = Order(result.order().id(), item,result.order().fee(),result.order().tax(),result.order().subtotal(),result.order().total(),result.order().rewards())
+                        val order = Order(result.order().id(), item,result.order().fee(),result.order().tax(),result.order().subtotal(),result.order().total(),result.order().cashback(),result.order().taxes())
 
                         val rediPuntos = result.paymentOptions().rediPuntos()
                         val paymentMethods = result.paymentOptions().paymentMethods().map { element ->
@@ -479,6 +481,60 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
+    override fun subscribeToServerEvents(user: String): RediSubscription {
+        return ServerSubscription(user)
+    }
+
+    override fun fetchNotifications(nextToken: String?, limit: Int?): Observable<Result<List<ServerEvent>>> {
+        val single = Single.create<Result<List<ServerEvent>>> create@{ single ->
+            val query = GetNotificationsQuery.builder().limit(limit).nextToken(nextToken).build()
+            this.appSyncClient!!.query(query).enqueue(object: GraphQLCall.Callback<GetNotificationsQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [FetchNotifications] Error.",e)
+                    single.onSuccess(Result.failure(e))
+                }
+
+                override fun onResponse(response: Response<GetNotificationsQuery.Data>) {
+                    val trx = response.data()?.notifications
+                    if (trx!=null){
+                        val notifications = trx.items().map { n ->
+                            val date = DateUtils.getRelativeTimeSpanString(n.createdAt().toLong())
+                            return@map ServerEvent(n.id(),n.type(),n.title(),n.message(),date.toString(),n.data(),n.actionable(),n.triggered(),n.hidden())
+                        }
+                        single.onSuccess(Result.success(notifications))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun updateNotificationStatus(id: String): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val mutation = UpdateNotificationStatusMutation.builder().id(id).build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<UpdateNotificationStatusMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [UpdateNotificationStatus] Error.",e)
+                    single.onSuccess(Result.failure(e))
+                }
+
+                override fun onResponse(response: Response<UpdateNotificationStatusMutation.Data>) {
+                    val result = response.data()?.updateNotificationStatus()
+                    if (result!=null){
+                        cacheOperations.updateNotificationStatus(id)
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+
     private fun handleTransformCommercesInfo(data : MutableList<GetCommercesQuery.Item>) : List<Commerce>{
         var commerces : List<Commerce>
         commerces = data.map { commerce ->
@@ -492,10 +548,10 @@ class UserUseCase : UserUseCase {
                     commerceStores.add(newStore)
                 }
             }
-            val offer = Offer(10)
+            val offer = Offer(commerce.cashback())
             return@map Commerce(commerce.id(),commerce.name(),commerce.posterImage(), commerce.website()?:"",commerce.facebook()?:"",
                 commerce.whatsapp()?:"",commerce.instagram()?:"",commerce.category(),commerceStores,"El descuento no aplica para otros descuentos.",
-                "El descuento es válido solo pagando con RediPuntos.",commerce.description(), offer)
+                "El descuento es válido solo pagando con RediPuntos.",commerce.description(), offer, commerce.cashback())
         }
         return commerces
 

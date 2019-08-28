@@ -125,7 +125,8 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
       tax
       subtotal
       total
-      rewards
+      cashback
+      taxes
     }
     paymentOptions {
       rediPuntos
@@ -206,6 +207,7 @@ query GetCommerces($input: CommercesInput) {
           }
         }
       }
+      cashback
     }
     total
   }

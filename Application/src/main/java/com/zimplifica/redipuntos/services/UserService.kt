@@ -1,9 +1,11 @@
 package com.zimplifica.redipuntos.services
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.useCases.UserUseCase
 import com.zimplifica.domain.entities.*
+import com.zimplifica.redipuntos.models.ServerSubscription
 import io.reactivex.Observable
 
 class UserService(private val userUseCase: UserUseCase, private val state: GlobalState) {
@@ -113,6 +115,55 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
                     else -> return@doOnNext
                 }
             }
+    }
+
+    fun updateNotificationStatus(id: String) : Observable<Result<Boolean>>{
+        return userUseCase.updateNotificationStatus(id)
+    }
+
+    fun fetchNotifications(nextToken: String?, limit: Int?) : Observable<Result<List<ServerEvent>>> {
+        return userUseCase.fetchNotifications(nextToken,limit)
+    }
+
+    @SuppressLint("CheckResult")
+    fun initServerSubscription(userId : String){
+        val subscription = userUseCase.subscribeToServerEvents(userId)
+        subscription
+            .subscribeToEvents()
+            .filter { !it.isFail() }
+            .map { it.successValue() }
+            .subscribe { event ->
+                if(event==null) {return@subscribe}
+                this.state.registerServerSubscriptionEventWith(event)
+                if(event.actionable && !event.triggered){
+                    updateNotificationStatus(event.id)
+                        .map { Unit }
+                        .subscribe{
+                            this.state.registerActionableEvent(event)
+                        }
+                }
+            }
+
+        subscription
+            .subscribeToBaseEvents()
+            .filter { !it.isFail() }
+            .map { it.successValue() }
+            .subscribe { notifications ->
+                if(notifications==null) {return@subscribe}
+                this.state.registerServerSubscriptionEventWith(notifications)
+                notifications.filter {n ->
+                    return@filter n.actionable && !n.triggered
+                }.forEach { n ->
+                    updateNotificationStatus(n.id)
+                        .map { Unit }
+                        .subscribe {
+                            this.state.registerActionableEvent(n)
+                        }
+                }
+            }
+
+        //updateServerSubscription(this)
+        ServerSubscription.updateServerSubscription(subscription)
     }
 
 }

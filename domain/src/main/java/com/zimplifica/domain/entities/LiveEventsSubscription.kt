@@ -8,6 +8,6 @@ enum class SubscriptionStatus {
 
 interface RediSubscription {
     fun subscribeToEvents() : Observable<Result<ServerEvent>>
-    fun subscribeToStatus() : Observable<SubscriptionStatus>
+    fun subscribeToBaseEvents() : Observable<Result<List<ServerEvent>>>
     fun cancel()
 }

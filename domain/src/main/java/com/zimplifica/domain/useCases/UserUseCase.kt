@@ -20,4 +20,8 @@ interface UserUseCase{
     //fun filterCommercesByCategory(categoryId: String) : Observable<Result<CommercesResult>>
     fun registPushNotificationToken(token : String, userId : String) : Observable<Result<String>>
     fun initIdentitiyVerification() : Observable<Result<Boolean>>
+
+    fun subscribeToServerEvents(user: String) : RediSubscription
+    fun fetchNotifications(nextToken: String?, limit: Int?) :  Observable<Result<List<ServerEvent>>>
+    fun updateNotificationStatus(id: String) : Observable<Result<Boolean>>
 }

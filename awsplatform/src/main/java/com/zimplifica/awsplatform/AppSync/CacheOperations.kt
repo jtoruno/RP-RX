@@ -2,6 +2,7 @@ package com.zimplifica.awsplatform.AppSync
 
 import android.util.Log
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers
+import com.amazonaws.rediPuntosAPI.GetNotificationsQuery
 import com.amazonaws.rediPuntosAPI.GetTransactionsByUserQuery
 import com.amazonaws.rediPuntosAPI.GetUserQuery
 import com.apollographql.apollo.GraphQLCall
@@ -214,6 +215,31 @@ class CacheOperations{
 
             })
 
+    }
+
+    fun updateNotificationStatus(id: String){
+        val query = GetNotificationsQuery.builder().build()
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+            .enqueue(object: GraphQLCall.Callback<GetNotificationsQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateNotificationStatus Error:", e)                }
+
+                override fun onResponse(response: Response<GetNotificationsQuery.Data>) {
+                    val result = response.data()?.notifications
+                    if (result!=null){
+                        val notifications = result.items()
+                        notifications.map { oldValue -> if(oldValue.id() == id){
+                            return@map GetNotificationsQuery.Item(oldValue.__typename(),oldValue.id(),oldValue.createdAt(),oldValue.user(),oldValue.type(),
+                                oldValue.title(),oldValue.message(),oldValue.data(),oldValue.actionable(),true,oldValue.hidden())
+                        }else{
+                            return@map oldValue
+                        }}
+                        val data = query.wrapData(GetNotificationsQuery.Data(GetNotificationsQuery.GetNotifications(result.__typename(),result.nextToken(),notifications)))
+                        appSyncClient!!.store.write(query,data).enqueue(null)
+                        Log.i("🔵", "Cache updated at [CacheOperations] [updateEmail]")
+                    }
+                }
+            })
     }
 
 }

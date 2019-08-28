@@ -4,6 +4,7 @@ import android.os.Parcelable
 import auto.parcel.AutoParcel
 import android.content.SharedPreferences
 import com.zimplifica.redipuntos.models.CurrentUser
+import com.zimplifica.redipuntos.models.ServerSubscription
 import com.zimplifica.redipuntos.services.AuthenticationService
 import com.zimplifica.redipuntos.services.UserService
 
@@ -16,6 +17,7 @@ abstract class Environment : Parcelable {
     abstract fun sharedPreferences(): SharedPreferences
     abstract fun currentUser(): CurrentUser
     abstract fun userUseCase(): UserService
+    abstract fun serverSubscription(): ServerSubscription
     @AutoParcel.Builder
     abstract class Builder {
         abstract fun webEndpoint(endPoint: String): Builder
@@ -23,6 +25,7 @@ abstract class Environment : Parcelable {
         abstract fun sharedPreferences(sharedPreferences: SharedPreferences): Builder
         abstract fun currentUser(currentUser: CurrentUser): Builder
         abstract fun userUseCase(userUseCase: UserService) : Builder
+        abstract fun serverSubscription(serverSubscription: ServerSubscription): Builder
         abstract fun build(): Environment
     }
 

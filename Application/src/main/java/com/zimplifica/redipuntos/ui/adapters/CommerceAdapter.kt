@@ -23,6 +23,7 @@ class CommerceAdapter(val callback : (Commerce) -> Unit ) : androidx.recyclervie
     override fun onBindViewHolder(p0: CommerceVH, p1: Int) {
         val commerce = items[p1]
         p0.name.text = commerce.name
+        p0.cashBack.text = commerce.cashback.toString() + "%"
         Picasso.get().load(commerce.posterImage).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(p0.image)
         p0.itemView.setOnClickListener {
             callback(commerce)
@@ -38,5 +39,6 @@ class CommerceAdapter(val callback : (Commerce) -> Unit ) : androidx.recyclervie
     class CommerceVH(itemView : View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
         val image : ImageView = itemView.findViewById(R.id.commerce_row_img)
         val name : TextView = itemView.findViewById(R.id.commerce_row_name)
+        val cashBack : TextView = itemView.findViewById(R.id.commerce_row_cash_back)
     }
 }

@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_catalog"
-        android:icon="@drawable/ic_local_offer_black_24dp"
+        android:icon="@drawable/ic_store_black_24dp"
         android:title="Comercios"/>
     <item android:icon="@drawable/ic_home_black_24dp"
         android:id="@+id/nav_pay"

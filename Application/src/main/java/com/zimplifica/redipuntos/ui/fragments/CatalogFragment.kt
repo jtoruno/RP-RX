@@ -126,6 +126,11 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
         //VM Section
         compositeDisposable.add(viewModel.outputs.commerces().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                if (it.commerces.isEmpty()){
+                    view.commerce_no_commerce_description.visibility = View.VISIBLE
+                }else{
+                    view.commerce_no_commerce_description.visibility = View.GONE
+                }
                 view.commerce_swipe_refresh.isRefreshing = false
                 adapter.setCommerces(it.commerces)
             })

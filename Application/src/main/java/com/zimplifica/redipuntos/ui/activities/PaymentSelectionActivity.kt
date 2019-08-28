@@ -156,7 +156,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
 
         val total = paymentInformation.total - rediPuntosToApply
         payment_s_total.text = "₡ "+String.format("%,.2f", total)
-        payment_s_rewards.text = viewModel.getOrder().rewards.toString() + " pts"
+        payment_s_rewards.text = viewModel.getOrder().cashback.toString() + " %"
 
     }
 

@@ -10,6 +10,7 @@ import dagger.Provides
 import javax.inject.Singleton
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.CurrentUser
+import com.zimplifica.redipuntos.models.ServerSubscription
 import com.zimplifica.redipuntos.services.AuthenticationService
 import com.zimplifica.redipuntos.services.GlobalState
 import com.zimplifica.redipuntos.services.UserService
@@ -28,7 +29,8 @@ class ApplicationModule(@NonNull application: Application) {
         @NonNull authenticationUseCase: AuthenticationService,
         @NonNull sharedPreferences: SharedPreferences,
         @NonNull currentUser: CurrentUser,
-        @NonNull userUseCase: UserService
+        @NonNull userUseCase: UserService,
+        @NonNull serverSubscription: ServerSubscription
     ): Environment {
 
         return Environment.builder()
@@ -37,6 +39,7 @@ class ApplicationModule(@NonNull application: Application) {
             .sharedPreferences(sharedPreferences)
             .currentUser(currentUser)
             .userUseCase(userUseCase)
+            .serverSubscription(serverSubscription)
             .build()
     }
 
@@ -73,6 +76,11 @@ class ApplicationModule(@NonNull application: Application) {
         return UserService(awsProvider.makeUserUseCase(),state)
     }
 
+    @Provides
+    @Singleton
+    fun provideServerSubscription() : ServerSubscription{
+        return ServerSubscription
+    }
     /*
     @Provides
     @Singleton
