@@ -166,4 +166,8 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         ServerSubscription.updateServerSubscription(subscription)
     }
 
+    fun getNotificationsSubscription() : Observable<List<ServerEvent>>{
+        return state.getNotificationsSubscription()
+    }
+
 }

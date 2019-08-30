@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        tools:context=".ui.activities.NotificationsActivity">
+    <LinearLayout
+            android:id="@+id/notification_no_message"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+                android:text="Todavía no hay notificaciones"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView54"/>
+        <TextView
+                android:textSize="16sp"
+                android:textColor="@color/grayIconTint"
+                android:layout_marginTop="20dp"
+                android:textAlignment="center"
+                android:text="Vuelve pronto!."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/textView56"/>
+    </LinearLayout>
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout android:layout_width="match_parent"
+                                                           android:id="@+id/notification_swipe"
+                                                           android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
+                                                   android:id="@+id/notification_recycler_view"
+                                                   android:layout_height="match_parent"/>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

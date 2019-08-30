@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
@@ -50,6 +51,8 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         setContentView(R.layout.activity_home)
         toolbar.title = "RediPuntos"
         setSupportActionBar(toolbar)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_notifications_black_24dp)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         Catalogfragment = CatalogFragment()
         Payfragment = PayFragment()
         PointsFragment = PointsFragment()
@@ -68,6 +71,8 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         bottomNav.setOnNavigationItemSelectedListener(navItemListener)
         bottomNav.selectedItemId = R.id.nav_pay
 
+
+        /*
         val navigationView = findViewById<NavigationView>(R.id.nav_view)
         val header = navigationView.getHeaderView(0)
 
@@ -78,6 +83,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+        */
 
         compositeDisposable.add(this.viewModel.outputs.signOutAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -139,12 +145,14 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 val name1 = (it.userFirstName?:"").toLowerCase()
                 val name2 = (it.userLastName?:"").toLowerCase()
                 val completeName = ("$name1 $name2").capitalizeWords()
+                /*
                 if(completeName.isEmpty() || completeName == " "){
                     header.home_header_name.text = "Usuario Invitado"
                 }else{
                     header.home_header_name.text = completeName
                 }
                 header.home_header_points.text = "₡ "+String.format("%,.2f", it.rewards?:0.0) +" RediPuntos"
+                */
             })
 
 
@@ -292,6 +300,11 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 this.viewModel.inputs.addPaymentButtonPressed()
                 //Toast.makeText(this, "Hello", Toast.LENGTH_SHORT).show()
                 return true}
+            android.R.id.home -> {
+                val intent = Intent(this,NotificationsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }

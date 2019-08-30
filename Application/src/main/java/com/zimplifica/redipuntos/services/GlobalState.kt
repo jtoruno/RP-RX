@@ -22,7 +22,7 @@ class GlobalState(val context: Context){
     //private val environment = Environment.builder().build()
 
      init {
-         this.notificationsSubscription = BehaviorSubject.create()
+         this.notificationsSubscription = BehaviorSubject.createDefault(mutableListOf())
          this.actionableEvents = PublishSubject.create()
         this.userInformationSubscription.subscribe { userInfo ->
             Log.e("GlobalState","  "+userInfo.userPhoneNumber+userInfo.citizenId)

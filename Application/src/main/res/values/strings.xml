@@ -70,6 +70,8 @@
     <string name="verify_walk_descrip5">RediPuntos cumple con todos los estándares de seguridad por lo que damos fe de
         que tu información será manejada con total discreción y de la manera más responsable.
     </string>
-    
-    <string name="No_commerces_description">Lo sentimos, todavía no hay comercios que coincidan con su búsqueda. &#128533;</string>
+
+    <string name="No_commerces_description">Lo sentimos, todavía no hay comercios que coincidan con su búsqueda.
+        &#128533;
+    </string>
 </resources>

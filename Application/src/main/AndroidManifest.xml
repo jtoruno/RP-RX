@@ -23,8 +23,11 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:replace="android:allowBackup">
-        <activity android:name=".ui.activities.VerifyWalkThActivity"
-                  android:screenOrientation="portrait">
+        <activity android:name=".ui.activities.NotificationsActivity">
+        </activity>
+        <activity
+                android:name=".ui.activities.VerifyWalkThActivity"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".ui.activities.FirstActivity"

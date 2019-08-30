@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   android:layout_marginTop="10dp"
+                                   android:layout_marginStart="10dp"
+                                   android:layout_marginEnd="10dp"
+                                   app:cardCornerRadius="10dp"
+                                   android:foreground="?android:attr/selectableItemBackground"
+                                   android:clickable="true"
+                                   android:layout_height="wrap_content" android:focusable="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp" app:srcCompat="@drawable/new_logo"
+                android:id="@+id/imageView2" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp" android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView
+                android:textColor="@android:color/white"
+                android:text="Hemos verificado tu identidad y activado tu cuenta por lo que estas listo para empezar a utilizar Redipuntos."
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:id="@+id/notification_row_description"
+                android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/notification_row_title"
+                app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="76dp"/>
+        <TextView
+                android:text="Hola NNNNN, bienvenido a Redipuntos"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/notification_row_title"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="76dp"/>
+        <TextView
+                android:textColor="@color/colorAccent"
+                android:text="Hace 9 segundos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/notification_row_time" app:layout_constraintStart_toEndOf="@+id/imageView2"
+                android:layout_marginStart="8dp" android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/notification_row_description"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
