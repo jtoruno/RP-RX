@@ -94,10 +94,10 @@ class SignUpVerifyViewModelTest : RPTestCase(){
     fun testResendButtonActionUnsuccessful(){
 
         setUpEnvironment(environment()!!)
-        this.vm.userId = "E621E1F8-C36C-495A-93FC-0C247A3WRONG"
+        this.vm.username = "99999999"
         this.vm.inputs.resendVerificationCodePressed()
-        val error = SignUpError.tooManyRequestsException
-        val wrapper = ErrorWrapper(error,"Has alcanzado el máximo de intentos. Por favor intenta más tarde.")
+        val error = SignUpError.internalError("Invalid phone number")
+        val wrapper = ErrorWrapper(error,"Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com")
         this.showError.assertValues(wrapper)
 
     }}

@@ -23,8 +23,9 @@ class LaunchVMTest : RPTestCase() {
     fun testNextScreen(){
         setUpEnvironment(environment()!!)
         this.vm.inputs.onCreate()
+        /*
         val userInfo = UserInformationResult("e5a06e84-73f4-4a04-bcbc-a70552a4d92a", "115650044","PEDRO","FONSECA ARGUEDAS","10/10/1993","pedro@redi.com",
-            "+50699443322", true, true, null,  0.0, mutableListOf())
+            "+50699443322", true, true, null,  0.0, mutableListOf())*/
         this.nextScreen.assertValueCount(1)
     }
 }

@@ -2,6 +2,7 @@ package com.zimplifica.redipuntos.viewModels
 
 import android.annotation.SuppressLint
 import androidx.annotation.NonNull
+import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
@@ -67,12 +68,12 @@ interface PayFragmentVM {
                 .share()
 
             nextButtonEvent
-                .skipWhile {environment.currentUser().userConfirmationStatus()?.confirmationStatus == UserConfirmationStatus.ConfirmationStatus.missingInfo}
+                .skipWhile {environment.currentUser().getCurrentUser()?.status?.status == VerificationStatus.Pending}
                 .map { return@map this.amountFloat }
                 .subscribe(this.nextButtonAction)
 
             nextButtonEvent
-                .filter { environment.currentUser().userConfirmationStatus()?.confirmationStatus == UserConfirmationStatus.ConfirmationStatus.missingInfo }
+                .filter { environment.currentUser().getCurrentUser()?.status?.status == VerificationStatus.Pending }
                 .subscribe {this.showCompletePersonalInfoAlert.onNext("nextButton")}
 
             this.completePersonalInfoButtonPressed

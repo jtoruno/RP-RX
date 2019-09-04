@@ -304,7 +304,7 @@ class UserUseCase : UserUseCase {
 
                         val userObj = UserInformationResult(user.id(),user.identityNumber(),user.firstName(),user.lastName(),
                             user.birthdate(),user.email(),user.phoneNumber(),user.phoneNumberVerified(),user.emailVerified(),null,user.rewards(),
-                            paymentMethods, userStatus,gender,adress)
+                            paymentMethods, userStatus)
                         single.onSuccess(Result.success(userObj))
                     }
                     else{

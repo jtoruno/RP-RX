@@ -17,6 +17,7 @@ class GlobalState(val context: Context){
     private var userInformationSubscription  = BehaviorSubject.create<UserInformationResult>()
     private var notificationsSubscription : BehaviorSubject<List<ServerEvent>>
     private var actionableEvents : PublishSubject<ServerEvent>
+    private var paymentsSubscription : PublishSubject<Transaction>
     //private val app = context.applicationContext as RPApplication
     //private val environment = app.component()?.environment()
     //private val environment = Environment.builder().build()
@@ -24,11 +25,12 @@ class GlobalState(val context: Context){
      init {
          this.notificationsSubscription = BehaviorSubject.createDefault(mutableListOf())
          this.actionableEvents = PublishSubject.create()
-        this.userInformationSubscription.subscribe { userInfo ->
+         this.paymentsSubscription = PublishSubject.create()
+         this.userInformationSubscription.subscribe { userInfo ->
             Log.e("GlobalState","  "+userInfo.userPhoneNumber+userInfo.citizenId)
             //environment?.currentUser()?.setCurrentUser(userInfo)
             CurrentUser.setCurrentUser(userInfo)
-        }
+         }
     }
 
     fun getUserInformationSubscription(): Observable<UserInformationResult> {
@@ -44,7 +46,7 @@ class GlobalState(val context: Context){
             citizen.firstName, citizen.lastName, citizen.getBirthDateAsString(),
             currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
                 currentUser.userEmailVerified, null, currentUser.rewards,
-                currentUser.paymentMethods, currentUser.status, currentUser.gender, currentUser.address)
+                currentUser.paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -58,8 +60,7 @@ class GlobalState(val context: Context){
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,
                 currentUser.userFirstName, currentUser.userLastName, currentUser.userBirthDate,
                 currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
-                currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status,
-                currentUser.gender, currentUser.address)
+                currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -75,7 +76,7 @@ class GlobalState(val context: Context){
             val userInfo = UserInformationResult(currentUser.userId,currentUser.citizenId, currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, email, currentUser.userPhoneNumber,
                 currentUser.userPhoneVerified,currentUser.userEmailVerified, null, currentUser.rewards,
-                currentUser.paymentMethods, currentUser.status,currentUser.gender, currentUser.address)
+                currentUser.paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -86,8 +87,7 @@ class GlobalState(val context: Context){
         if(currentUser!=null){
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, isVerify, null, currentUser.rewards, currentUser.paymentMethods, currentUser.status,
-                currentUser.gender, currentUser.address)
+                currentUser.userPhoneVerified, isVerify, null, currentUser.rewards, currentUser.paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -99,8 +99,7 @@ class GlobalState(val context: Context){
             paymentMethods.removeAll{ it.cardId == withouPaymentMethod.cardId}
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status,
-                currentUser.gender, currentUser.address)
+                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -110,10 +109,17 @@ class GlobalState(val context: Context){
         if (currentUser!=null){
             val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
                 currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, currentUser.paymentMethods, status,
-                currentUser.gender, currentUser.address)
+                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, currentUser.paymentMethods, status)
             this.userInformationSubscription.onNext(userInfo)
         }
+    }
+
+    fun registerNewPayment(transaction: Transaction){
+        paymentsSubscription.onNext(transaction)
+    }
+
+    fun getPaymentSubscription() : Observable<Transaction>{
+        return this.paymentsSubscription
     }
 
     //Events and Notifications global state

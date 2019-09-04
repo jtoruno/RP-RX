@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.mocks
 
+import com.zimplifica.awsplatform.AppSync.ServerSubscription
 import com.zimplifica.domain.entities.*
 import com.zimplifica.domain.useCases.UserUseCase
 import io.reactivex.Observable
@@ -8,6 +9,22 @@ import org.junit.runner.Request
 import java.lang.Exception
 
 class UserUseCase : UserUseCase{
+    override fun initIdentitiyVerification(): Observable<Result<Boolean>> {
+        return Observable.never()
+    }
+
+    override fun subscribeToServerEvents(user: String): RediSubscription {
+        return ServerSubscription(user)
+    }
+
+    override fun fetchNotifications(nextToken: String?, limit: Int?): Observable<Result<List<ServerEvent>>> {
+        return Observable.never()
+    }
+
+    override fun updateNotificationStatus(id: String): Observable<Result<Boolean>> {
+        return Observable.never()
+    }
+
     override fun registPushNotificationToken(token: String, userId : String): Observable<Result<String>> {
         val single = Single.create<Result<String>> create@{ single ->
             if(token.isNotEmpty()){
@@ -37,10 +54,11 @@ class UserUseCase : UserUseCase{
 
     override fun getUserInformation(useCache: Boolean): Observable<Result<UserInformationResult>> {
         val single = Single.create<Result<UserInformationResult>> create@{
+            val status = UserStatus(VerificationStatus.VerifiedValid,null)
             val userInfo = UserInformationResult( "e5a06e84-73f4-4a04-bcbc-a70552a4d92a", "115650044",
                 "PEDRO",  "FONSECA ARGUEDAS",  "10/10/1993",
                  "pedro@redi.com",  "+50699443322",
-                 true,  true, null,  0.0,  mutableListOf())
+                 true,  true, null,  0.0,  mutableListOf(),status)
             it.onSuccess(Result.success(userInfo))
         }
         return single.toObservable()
@@ -94,7 +112,7 @@ class UserUseCase : UserUseCase{
         val single = Single.create<Result<PaymentPayload>> create@{ single ->
             if (vendorId == "7120-39345-1023841023-123434"){
                 val item = Item("",5555.5)
-                val order = Order("3c288f1b-e95f-40a2-8f53-40b61d356156", item, 0.0, 5555.5,5555.5,5555.5,40.0)
+                val order = Order("3c288f1b-e95f-40a2-8f53-40b61d356156", item, 0.0, 5555.5,5555.5,5555.5,10,13)
                 val paymentMethods = mutableListOf<PaymentMethod>()
                 paymentMethods.add(PaymentMethod("1234321412341234","1234","","visa",4505.0,false))
                 val paymentPayload = PaymentPayload(1000.0,order,paymentMethods)
@@ -141,19 +159,28 @@ class UserUseCase : UserUseCase{
 
     override fun getCommerces(limit: Int?, skip: Int?, categoryId: String?, textSearch: String?): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
-            val commercesResult = CommercesResult(mutableListOf())
+            var commercesResult = CommercesResult(mutableListOf(), 0)
+            if(textSearch == "Test"){
+                single.onSuccess(Result.failure(Exception()))
+            }else if(categoryId == "54321"){
+                val commerces = mutableListOf<Commerce>()
+                commerces.add(Commerce("12345","Pizza Hut","","www.pizzahut.com","www.facebook.com/pizzahut","+50688889999","www.instagram.com/pizzahut","Food",
+                    mutableListOf(), "", "", "",  Offer( 10),  10))
+                commerces.add(Commerce("54321`","Pizza Hut 2",  "","www.pizzahut2.com","www.facebook.com/pizzahut2", "+50688889999",  "www.instagram.com/pizzahut2", "Food",
+                    mutableListOf(), "",  "",  "",  Offer( 10),  10))
+                commercesResult = CommercesResult(commerces,2)
+            }else{
+                val commerces = mutableListOf<Commerce>()
+                commerces.add(Commerce("12345","Pizza Hut","","www.pizzahut.com","www.facebook.com/pizzahut","+50688889999","www.instagram.com/pizzahut","Food",
+                    mutableListOf(), "", "", "",  Offer( 10),  10))
+                commercesResult = CommercesResult(commerces,8)
+            }
+
             single.onSuccess(Result.success(commercesResult))
         }
         return single.toObservable()
     }
-    /*
-    override fun searchCommerces(searchText: String): Observable<Result<CommercesResult>> {
-        val single = Single.create<Result<CommercesResult>> create@{ single ->
-            val commercesResult = CommercesResult(mutableListOf())
-            single.onSuccess(Result.success(commercesResult))
-        }
-        return single.toObservable()
-    }*/
+
 
     override fun fetchCategories(): Observable<Result<List<Category>>> {
         val single = Single.create<Result<List<Category>>> create@{ single ->
@@ -161,14 +188,6 @@ class UserUseCase : UserUseCase{
         }
         return single.toObservable()
     }
-    /*
-    override fun filterCommercesByCategory(categoryId: String): Observable<Result<CommercesResult>> {
-        val single = Single.create<Result<CommercesResult>> create@{ single ->
-            val commercesResult = CommercesResult(mutableListOf())
-            single.onSuccess(Result.success(commercesResult))
-        }
-        return single.toObservable()
-    }*/
 
     override fun getTransactionById(id: String): Observable<Result<Transaction>> {
         return Observable.never()

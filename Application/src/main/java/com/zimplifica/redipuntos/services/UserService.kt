@@ -170,4 +170,12 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         return state.getNotificationsSubscription()
     }
 
+    fun getPaymentsSubscription() : Observable<Transaction> {
+        return state.getPaymentSubscription()
+    }
+
+    fun registerNewPayment(transaction: Transaction) {
+        state.registerNewPayment(transaction)
+    }
+
 }

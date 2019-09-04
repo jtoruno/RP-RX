@@ -53,16 +53,23 @@ interface MovementsFragmentVM {
         private val transactions = BehaviorSubject.create<List<Pair<String,List<Transaction>>>>()
 
         init {
+            val newPayment = environment.userUseCase().getPaymentsSubscription()
+                .flatMap {
+                    Log.e("🔸", "Updating from cache")
+                    return@flatMap this.fetchTransactionsServer(true,null,null)
+                }
+                .share()
+
             val fetchTransactionsEvent =  fetchTransactions
                 .flatMap { return@flatMap this.fetchTransactionsServer(it, null, null) }
                 .share()
 
-            fetchTransactionsEvent
+            Observable.merge(newPayment,fetchTransactionsEvent)
                 .filter { it.isFail() }
                 .map { "Ocurrió un error al obtener los movimientos. Por favor intenta de nuevo." }
                 .subscribe(this.showError)
 
-            fetchTransactionsEvent
+            Observable.merge(newPayment,fetchTransactionsEvent)
                 .filter { !it.isFail() }
                 .map { it.successValue() }
                 .map { this.handleTransactionsData(it) }

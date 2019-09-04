@@ -1,6 +1,8 @@
 package com.zimplifica.redipuntos.viewModels
 
 import com.zimplifica.domain.entities.UserInformationResult
+import com.zimplifica.domain.entities.UserStatus
+import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.CurrentUser
@@ -24,10 +26,11 @@ class AccountVerifyEmailVMTest : RPTestCase() {
     }
 
     private fun setUpTest(){
+        val status = UserStatus(VerificationStatus.Pending,null)
         val currentUser = UserInformationResult("", "",
             "PEDRO", "FONSECA SANCHEZ",
             "10/10/1994","dsanchez@zimplifica", "",
-            false,  false,null, null, mutableListOf())
+            false,  false,null, null, mutableListOf(),status)
         val currentU = CurrentUser
         currentU.setCurrentUser((currentUser))
         setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())

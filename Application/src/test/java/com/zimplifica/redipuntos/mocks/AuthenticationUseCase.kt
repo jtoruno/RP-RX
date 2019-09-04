@@ -174,7 +174,7 @@ class AuthenticationUseCase : AuthenticationUseCase {
 
     override fun verifyPhoneNumber(phoneNumber: String): Observable<Result<Boolean>> {
         val single = Single.create<Result<Boolean>> create@{ single ->
-            if(phoneNumber == "88889999"){
+            if(phoneNumber == "+50688889999"){
                 single.onSuccess(Result.success(true))
             }else{
                 val error = SignUpError.internalError("Invalid phone number")

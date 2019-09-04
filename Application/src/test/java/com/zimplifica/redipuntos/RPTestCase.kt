@@ -8,6 +8,7 @@ import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.mocks.AuthenticationUseCase
 import com.zimplifica.redipuntos.mocks.UserUseCase
 import com.zimplifica.redipuntos.models.CurrentUser
+import com.zimplifica.redipuntos.models.ServerSubscription
 import com.zimplifica.redipuntos.services.AuthenticationService
 import com.zimplifica.redipuntos.services.GlobalState
 import com.zimplifica.redipuntos.services.UserService
@@ -47,6 +48,7 @@ abstract class RPTestCase : TestCase(){
             .authenticationUseCase(authenticationService())
             .currentUser(CurrentUser)
             .userUseCase(userUseCaseService())
+            .serverSubscription(ServerSubscription)
             .build()
         this.environment = environment
     }
