@@ -54,7 +54,7 @@ interface SplashViewModel {
                 .subscribe(this.backToWelcome)
 
             val mainEvent = Observable.merge(onCreate,retryButtonPressed)
-                .flatMap { return@flatMap getUserInfo() }
+                .flatMap { return@flatMap getUserInfoAndSubscribe() }
                 .share()
 
             finishLoadingUserInfo = mainEvent
@@ -93,10 +93,41 @@ interface SplashViewModel {
 
         override fun retryLoading(): Observable<Boolean> = this.retryLoading
 
-        private fun getUserInfo() : Observable<Result<UserInformationResult>>{
-            return environment.userUseCase().getUserInformation(false)
+        private fun getUserInfoAndSubscribe() : Observable<Result<UserInformationResult>>{
+            Log.e("🔸", "getUserInfoAndSubscribe")
+            return Observable.create<Result<UserInformationResult>> create@{ o ->
+                val getUserEvent = environment.userUseCase().getUserInformation(false)
+                    .share()
+                getUserEvent
+                    .filter { !it.isFail() }
+                    .map { it.successValue() }
+                    .subscribe{
+                        if (it == null) return@subscribe
+                        environment.userUseCase().initServerSubscription(it.userId)
+                        val result = Result.success(it)
+                        o.onNext(result)
+                        o.onComplete()
+                    }
+                getUserEvent
+                    .filter { it.isFail() }
+                    .map {
+                        when(it){
+                            is Result.success -> return@map null
+                            is Result.failure -> return@map it.cause
+                        }
+                    }
+                    .subscribe { error ->
+                        o.onNext(Result.failure(error))
+                        o.onComplete()
+                    }
+
+            }
                 .doOnComplete { this.retryLoading.onNext(false) }
                 .doOnSubscribe { this.retryLoading.onNext(true) }
+            /*
+            return environment.userUseCase().getUserInformation(false)
+                .doOnComplete { this.retryLoading.onNext(false) }
+                .doOnSubscribe { this.retryLoading.onNext(true) }*/
         }
     }
 }

@@ -178,4 +178,7 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
         state.registerNewPayment(transaction)
     }
 
+    fun getActionableEventSubscription() : Observable<ServerEvent>{
+        return state.getActionableEventSubscription()
+    }
 }

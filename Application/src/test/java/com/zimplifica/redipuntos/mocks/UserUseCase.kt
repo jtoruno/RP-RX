@@ -14,7 +14,7 @@ class UserUseCase : UserUseCase{
     }
 
     override fun subscribeToServerEvents(user: String): RediSubscription {
-        return ServerSubscription(user)
+        return ServerSubscriptionTest(user)
     }
 
     override fun fetchNotifications(nextToken: String?, limit: Int?): Observable<Result<List<ServerEvent>>> {

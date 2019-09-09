@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
+import com.tapadoo.alerter.Alerter
 import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
@@ -33,7 +34,7 @@ import kotlinx.android.synthetic.main.nav_header_home.view.*
 
 
 @RequiresActivityViewModel(HomeViewModel.ViewModel::class)
-class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnNavigationItemSelectedListener {
+class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
     lateinit var Catalogfragment : androidx.fragment.app.Fragment
     lateinit var Payfragment : androidx.fragment.app.Fragment
@@ -92,6 +93,45 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 finishAffinity()
             })
 
+        compositeDisposable.add(viewModel.outputs.showIdentityVerificationSuccess().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Alerter.create(this@HomeActivity)
+                    .setTitle(it.first)
+                    .setText(it.second)
+                    //.setTitle("¡Bienvenido a RediPuntos!")
+                    //.setText("Tu identidad ha sido verificada y tu cuenta ha sido activada correctamente")
+                    .setBackgroundColorRes(R.color.customGreen)
+                    .enableSwipeToDismiss()
+                    //.setDuration(3000)
+                    .enableInfiniteDuration(true)
+                    .setIcon(R.drawable.ic_check_circle_black_24dp)
+                    .show()
+            })
+
+        compositeDisposable.add(viewModel.outputs.showIdentityVerificationFailure().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Alerter.create(this@HomeActivity)
+                .setTitle("Lo sentimos")
+                .setText("No hemos podido verificar tu identidad, póngase en contacto con soporte@zimplifica.com para solucionar este problema")
+                .setBackgroundColorRes(R.color.red)
+                .enableSwipeToDismiss()
+                .enableInfiniteDuration(true)
+                .setIcon(R.drawable.ic_mtrl_chip_close_circle)
+                .show()
+            })
+
+        compositeDisposable.add(viewModel.outputs.showAlert().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                Alerter.create(this)
+                    .setTitle(it.first)
+                    .setText(it.second)
+                    .enableSwipeToDismiss()
+                    .setBackgroundColorRes(R.color.colorPrimary)
+                    .enableInfiniteDuration(true)
+                    .show()
+            })
+
+        /*
         home_log_out.setOnClickListener {
             if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
                 drawer_layout.closeDrawer(GravityCompat.START)
@@ -140,6 +180,8 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
             val intent = Intent(this,AccountInfoActivity::class.java)
             startActivity(intent)
         }
+        */
+        /*
         compositeDisposable.add(this.viewModel.outputs.accountInformationResult().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
                 val name1 = (it.userFirstName?:"").toLowerCase()
@@ -153,7 +195,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
                 }
                 header.home_header_points.text = "₡ "+String.format("%,.2f", it.rewards?:0.0) +" RediPuntos"
                 */
-            })
+            })*/
 
 
         compositeDisposable.add(this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
@@ -175,17 +217,6 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
 
                     }
                 }
-                /*
-                val builder = AlertDialog.Builder(this)
-                builder.setTitle("Completar Información Personal")
-                builder.setMessage("RediPuntos requiere saber un poco mas de ti, ¿deseas completar tu información?")
-                builder.setPositiveButton("Completar Información"){
-                    _,_ ->
-                    this.viewModel.inputs.completePersonalInfoButtonPressed()
-                }
-                builder.setNegativeButton("Luego", null)
-                val dialog = builder.create()
-                dialog.show() */
             })
 
         compositeDisposable.add(this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
@@ -309,41 +340,6 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>(), NavigationView.OnN
         }
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_sign_out -> {
-                val builder = AlertDialog.Builder(this)
-                builder.setTitle("Cerrar Sesión")
-                builder.setMessage("¿Desea salir de la aplicación?")
-                builder.setPositiveButton("Aceptar"){
-                    _,_ ->
-                    this.viewModel.inputs.signOutButtonPressed()
-                }
-                builder.setNegativeButton("Cancelar", null)
-                val dialog = builder.create()
-                dialog.show()
-            }
-        }
-
-        drawer_layout.closeDrawer(GravityCompat.START)
-        return true
-    }
 
     override fun onDestroy() {
         compositeDisposable.dispose()

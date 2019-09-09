@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.amulyakhare.textdrawable.TextDrawable
 import com.google.android.material.snackbar.Snackbar
+import com.tapadoo.alerter.Alerter
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.VerificationStatus
@@ -65,6 +66,17 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
 
         profile_terms_and_conditions.setOnClickListener {
             viewModel.inputs.termsAndConditionsButtonPressed()
+        }
+
+        profile_recommend_to_friend.setOnClickListener {
+            /*
+            Alerter.create(activity)
+                .setTitle("Hello1")
+                .setText("hELLO2")
+                .setBackgroundColorRes(R.color.colorPrimary)
+                .enableSwipeToDismiss()
+                .enableInfiniteDuration(true)
+                .show()*/
         }
 
         profile_log_out.setOnClickListener {

@@ -14,6 +14,7 @@ import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.UserConfirmationStatus
 import com.zimplifica.redipuntos.ui.data.maxCardsAllowed
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
@@ -33,8 +34,11 @@ interface HomeViewModel {
 
         fun signOutAction() : Observable<Unit>
         fun addPaymentMethodAction() : Observable<Unit>
+        fun showIdentityVerificationFailure() : Observable<Unit>
+        fun showIdentityVerificationSuccess() : Observable<Pair<String,String>>
+        fun showAlert() : Observable<Pair<String,String>>
 
-        fun accountInformationResult() : Observable<UserInformationResult>
+        //fun accountInformationResult() : Observable<UserInformationResult>
 
     }
     @SuppressLint("CheckResult")
@@ -57,19 +61,22 @@ interface HomeViewModel {
         private val goToCompletePersonalInfoScreen : Observable<Unit>
         private val addPaymentMethodAction : Observable<Unit>
 
-        private val accountInformationResult = BehaviorSubject.create<UserInformationResult>()
+        private val showIdentityVerificationFailure = BehaviorSubject.create<Unit>()
+        private val showIdentityVerificationSuccess = BehaviorSubject.create<Pair<String,String>>()
+        private val showAlert = BehaviorSubject.create<Pair<String,String>>()
+        //private val accountInformationResult = BehaviorSubject.create<UserInformationResult>()
 
         init {
 
-            val event = tokenInput
+            val tokenEvent = tokenInput
                 .flatMap { return@flatMap this.registDeviceToken(it) }
                 .share()
 
-            event
+            tokenEvent
                 .filter { it.isFail() }
                 .subscribe { Log.e("Error","Error with the token device") }
 
-            event
+            tokenEvent
                 .filter { !it.isFail() }
                 .map { it.successValue() }
                 .subscribe {
@@ -80,12 +87,13 @@ interface HomeViewModel {
                 .map { return@map environment.currentUser().getCurrentUser()?.status?.status }
                 .subscribe (this.showCompletePersonalInfoAlert)
 
+            /*
             onCreate
                 .map { return@map environment.currentUser().getCurrentUser() }
                 .subscribe(this.accountInformationResult)
 
             environment.userUseCase().getUserInformationSubscription()
-                .subscribe(this.accountInformationResult)
+                .subscribe(this.accountInformationResult)*/
 
             val signOutEvent = signOutButtonPressed
                 .flatMap { this.signOut() }
@@ -97,6 +105,68 @@ interface HomeViewModel {
             this.goToCompletePersonalInfoScreen = this.completePersonalInfoButtonPressed
             this.addPaymentMethodAction = this.addPaymentButtonPressed
 
+            environment.userUseCase().getActionableEventSubscription()
+                .subscribe {event ->
+                    if (event == null) return@subscribe
+                    Log.e("🔵", "[HomeVM] [init] New actionable event $event")
+                    when {
+                        event.type == "VerificationFinished" -> {
+                            val lastAccountStatus = environment.currentUser().getCurrentUser()?.status ?: VerificationStatus.Pending
+                            environment.userUseCase().getUserInformation(false)
+                                .filter { !it.isFail() }
+                                .map { it.successValue() }
+                                .subscribe { userInfo ->
+                                    when(userInfo?.status?.status){
+                                        VerificationStatus.Pending -> {
+                                            Log.e("🔴","Alert.showIdentityVerificationFailureAlert()")
+                                            this.showIdentityVerificationFailure.onNext(Unit)
+                                        }
+                                        VerificationStatus.Verifying -> {
+                                            Log.e("🔴", "Verification pending after verification completed subscription")
+                                        }
+                                        VerificationStatus.VerifiedValid -> {
+                                            if(lastAccountStatus != VerificationStatus.VerifiedValid){
+                                                Log.e("🔴","Alert.showIdentityVerificationSuccessAlert(title: event.title, message: event.message)")
+                                                this.showIdentityVerificationSuccess.onNext(Pair(event.title,event.message))
+                                            }else{
+                                                Log.e("🔸","Account activate notification but already triggered")
+                                            }
+                                        }
+                                        VerificationStatus.VerifiedInvalid -> {
+                                            Log.e("🔸","Account activate notification but already triggered")
+                                        }
+                                    }
+
+                                }
+                        }
+                        event.type == "PaymentRequested" -> {
+                            val paymentId = event.id
+                            environment.userUseCase().getTransactionById(paymentId)
+                                .filter { !it.isFail() }
+                                .map { it.successValue() }
+                                .subscribe {
+                                    if (it == null) return@subscribe
+                                    environment.userUseCase().registerNewPayment(it)
+                                }
+                        }
+                        event.type == "PaymentProcessed" -> {
+                            val paymentId = event.id
+                            Observables.zip(environment.userUseCase().getTransactionById(paymentId),environment.userUseCase().getUserInformation(false))
+                                .map { it.first }
+                                .filter { !it.isFail() }
+                                .map { it.successValue() }
+                                .subscribe { transition ->
+                                    if (transition == null) return@subscribe
+                                    environment.userUseCase().registerNewPayment(transition)
+                                }
+                        }
+                        event.type == "Alert" -> {
+                            Log.e("🔴","Alert.showAlert(title: event.title, message: event.message)")
+                            this.showAlert.onNext(Pair(event.title,event.message))
+                        }
+                    }
+
+                }
 
 
         }
@@ -134,12 +204,18 @@ interface HomeViewModel {
 
         override fun signOutAction(): Observable<Unit> = this.signOutAction
 
-        override fun accountInformationResult(): Observable<UserInformationResult> = this.accountInformationResult
+        //override fun accountInformationResult(): Observable<UserInformationResult> = this.accountInformationResult
 
 
         private fun signOut() : Observable<Result<UserStateResult>>{
             return environment.authenticationUseCase().signOut()
         }
+
+        override fun showIdentityVerificationFailure(): Observable<Unit> = this.showIdentityVerificationFailure
+
+        override fun showIdentityVerificationSuccess(): Observable<Pair<String, String>> = this.showIdentityVerificationSuccess
+
+        override fun showAlert(): Observable<Pair<String, String>> = this.showAlert
 
         private fun registDeviceToken(token : String) : Observable<Result<String>>{
             val userId = environment.currentUser().getCurrentUser()?.userId

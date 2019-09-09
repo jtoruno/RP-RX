@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
 import com.google.android.material.snackbar.Snackbar
+import com.tapadoo.alerter.Alerter
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
@@ -55,7 +56,8 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
                 splash_back_btn.visibility = View.VISIBLE
                 splash_retry_btn.visibility = View.VISIBLE
                 Log.e("SpashActivity", "Error with Splash")
-                showSnackBar()
+                //showSnackBar()
+                showAlerter()
             })
 
         compositeDisposable.add(this.viewModel.outputs.finishLoadingUserInfo().observeOn(AndroidSchedulers.mainThread())
@@ -97,6 +99,18 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    private fun showAlerter(){
+        Alerter.create(this@SplashActivity)
+            .setTitle("Es una pena")
+            .setText("Tenemos problemas de comunicación, asegurate de tener conexión a internet y luego intenta de nuevo.")
+            .setBackgroundColorRes(R.color.red)
+            .enableSwipeToDismiss()
+            //.setDuration(3000)
+            .enableInfiniteDuration(true)
+            .setIcon(R.drawable.ic_mtrl_chip_close_circle)
+            .show()
     }
 
     private fun showSnackBar(){

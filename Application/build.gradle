@@ -122,6 +122,9 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.jumio.android:core:3.2.1@aar'
     implementation 'com.jumio.android:nv:3.2.1@aar'
+
+    //Alerter lib -> UI Dialog library
+    implementation 'com.tapadoo.android:alerter:4.0.2'
 }
 
 apply plugin: 'com.google.gms.google-services'
