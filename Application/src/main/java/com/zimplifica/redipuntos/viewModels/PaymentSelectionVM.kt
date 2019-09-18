@@ -5,7 +5,7 @@ import com.zimplifica.domain.entities.*
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
-import com.zimplifica.redipuntos.models.SitePaySellerSelectionObject
+import com.zimplifica.redipuntos.models.CheckAndPayModel
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
@@ -17,6 +17,8 @@ interface PaymentSelectionVM {
         fun nextButtonPressed()
         fun applyRewardsRowPressed(state : Boolean)
         fun descriptionTextFieldChanged(description: String)
+        fun addPaymentMethodButtonPressed()
+        fun reloadPaymentMethods(paymentMethod: PaymentMethod)
     }
     interface Outputs {
         fun paymentMethodChangedAction() : Observable<PaymentMethod>
@@ -29,9 +31,13 @@ interface PaymentSelectionVM {
         fun nextButtonLoadingIndicator() : Observable<Boolean>
 
         /// Emits when the payment method is changed.
-        fun paymentInformationChangedAction() : Observable<PaymentInformation>
+        fun checkAndPayModelAction() : Observable<CheckAndPayModel>
 
-        fun showVendor() : Observable<Vendor>
+        /// Emits when user press add payment method.
+        fun addPaymentMethodAction() : Observable<Unit>
+
+        /// Emits when the user adds a payment method and needs to reload the payment methods.
+        fun reloadPaymentMethodsAction() : Observable<CheckAndPayModel?>
 
         fun applyRewards() : Observable<Boolean>
 
@@ -39,115 +45,104 @@ interface PaymentSelectionVM {
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<PaymentSelectionVM>(environment), Inputs, Outputs{
 
-
         val inputs : Inputs = this
         val outputs : Outputs = this
+
+        private var _checkAndPayModel : CheckAndPayModel? = null
+        private var checkAndPayModel : CheckAndPayModel
+            set(value) {_checkAndPayModel = value; this.checkAndPayModelAction.onNext(value) }
+            get() = _checkAndPayModel ?: throw UninitializedPropertyAccessException("this was queried")
+
+        private val defaultPayment = PaymentMethod("","","","",0.0,false)
 
         //Inputs
         private val paymentMethodChanged = PublishSubject.create<PaymentMethod>()
         private val nextButtonPressed = PublishSubject.create<Unit>()
         private val applyRewardsRowPressed = BehaviorSubject.createDefault(false)
         private val descriptionTextFieldChanged = BehaviorSubject.createDefault("")
+        private val addPaymentMethodButtonPressed = PublishSubject.create<Unit>()
+        private val reloadPaymentMethods = PublishSubject.create<PaymentMethod>()
+
 
         //Outputs
         private val paymentMethodChangedAction = BehaviorSubject.create<PaymentMethod>()
         private val showError = BehaviorSubject.create<String>()
         private val finishPaymentProcessingAction = BehaviorSubject.create<Transaction>()
         private val nextButtonLoadingIndicator = BehaviorSubject.create<Boolean>()
-        private val paymentInformationChangedAction = BehaviorSubject.create<PaymentInformation>()
+        private val checkAndPayModelAction = BehaviorSubject.create<CheckAndPayModel>()
         private val applyRewards = BehaviorSubject.create<Boolean>()
+        private val addPaymentMethodAction = BehaviorSubject.create<Unit>()
+        private val reloadPaymentMethodsAction = BehaviorSubject.create<CheckAndPayModel?>()
 
-        private val showVendor = BehaviorSubject.create<Vendor>()
-        private val amountObserver = BehaviorSubject.create<Float>()
-        private val orderObservable = BehaviorSubject.create<Order>()
-        private val rediPointsObservable = BehaviorSubject.create<Double>()
-
-        private lateinit var paymentPayload: PaymentPayload
-        private var amount : Float = 0F
 
         init {
-            val payloadIntent = intent()
-                .filter { it.hasExtra("SPSelectionObject") }
+            val modelIntent = intent()
+                .filter { it.hasExtra("CheckAndPayModel") }
                 .map {
-                    val result = it.getSerializableExtra("SPSelectionObject") as SitePaySellerSelectionObject
-                    paymentPayload = result.payload
+                    val result = it.getSerializableExtra("CheckAndPayModel") as CheckAndPayModel
+                    //this.checkAndPayModel = result
                     return@map result
                 }
 
-            payloadIntent
-                .map { return@map it.vendor }
-                .subscribe(this.showVendor)
-
-            payloadIntent
-                .map { return@map it.payload.order }
-                .subscribe(this.orderObservable)
-
-            payloadIntent
-                .map { return@map it.payload.rediPuntos }
-                .subscribe(this.rediPointsObservable)
-
-            val amountIntent = intent()
-                .filter { it.hasExtra("amount") }
-                .map {
-                    return@map it.getFloatExtra("amount",0F)
+            modelIntent
+                .subscribe {
+                    this.checkAndPayModel = it
                 }
 
-            amountIntent
-                .subscribe(this.amountObserver)
-
-
-
+            environment.userUseCase().getPaymentMethodsSubscription()
+                .subscribe(this.reloadPaymentMethods)
 
             this.paymentMethodChanged
                 .subscribe(this.paymentMethodChangedAction)
 
-            this.paymentMethodChanged
-                .map { return@map PaymentInformation(paymentPayload.rediPuntos,it.rewards, amount.toDouble(),paymentPayload.order.fee,paymentPayload.order.tax,paymentPayload.order.total) }
-                .subscribe(this.paymentInformationChangedAction)
-            /*
-            val form = Observable.combineLatest<PaymentMethod,PaymentInformation,Pair<PaymentMethod,PaymentInformation>>(this.paymentMethodChanged,this.paymentInformationChangedAction,
-                BiFunction { t1, t2 ->
-                Pair(t1, t2)
-            })*/
+            this.addPaymentMethodButtonPressed
+                .subscribe(this.addPaymentMethodAction)
 
-            val form = Observables.combineLatest(this.paymentMethodChanged,this.paymentInformationChangedAction,this.descriptionTextFieldChanged)
+            applyRewardsRowPressed
+                .subscribe(this.applyRewards)
 
-            val requestPaymentEvent = form
-                .takeWhen(this.nextButtonPressed)
+            nextButtonPressed
+                .filter { checkAndPayModel.selectedPaymentMethod == null }
+                .map { return@map "Por favor seleccione un método de pago." }
+                .subscribe(this.showError)
+
+            val requestPayment = nextButtonPressed
+                .filter { checkAndPayModel.selectedPaymentMethod!=null }
                 .flatMap {
-                    var wayToPayInput : WayToPayInput
-                    println("Hello"+applyRewardsRowPressed.value)
-                    wayToPayInput = if(this.applyRewardsRowPressed.value){
-                        WayToPayInput(it.second.second.usedRediPoints,it.second.first.cardId,0.0,it.second.second.cardAmountToPay)
-
-                    }else{
-                        WayToPayInput(0.0,it.second.first.cardId,0.0,it.second.second.total)
-                    }
-                    val description = if (it.second.third.isNullOrEmpty()){
-                        null
-                    }else{
-                        it.second.third
-                    }
-                    val requestPaymentInput = RequestPaymentInput(environment.currentUser().getCurrentUser()?.userId?:"",this.paymentPayload.order.pid,wayToPayInput, description)
-                    return@flatMap this.requestPayment(requestPaymentInput)
+                    val cardId = this.checkAndPayModel.selectedPaymentMethod?.cardId
+                    var wayToPayInput = WayToPayInput(checkAndPayModel.rediPuntosToApply(),cardId,0.0,checkAndPayModel.chargeToApply())
+                    val requestPaymentInput = RequestPaymentInput("",checkAndPayModel.orderId,wayToPayInput,checkAndPayModel.description)
+                    return@flatMap requestPayment(requestPaymentInput)
                 }
                 .share()
 
-            requestPaymentEvent
+            requestPayment
                 .filter { it.isFail() }
                 .map { return@map "Ocurrió un error al procesar el pago. Por favor intente de nuevo." }
                 .subscribe(this.showError)
 
-            requestPaymentEvent
+            requestPayment
                 .filter { !it.isFail() }
                 .map { it.successValue() }
                 .subscribe(this.finishPaymentProcessingAction)
 
-            applyRewardsRowPressed
-                .subscribe(this.applyRewards)
+            reloadPaymentMethods
+                .map {
+                    val temporaryPaymentMethods = checkAndPayModel.paymentMethods.toMutableList()
+                    temporaryPaymentMethods.add(it)
+                    checkAndPayModel.paymentMethods = temporaryPaymentMethods
+                    val firstPaymentMethod = checkAndPayModel.paymentMethods.first()
+                    if (firstPaymentMethod != null){
+                        checkAndPayModel.selectedPaymentMethod = firstPaymentMethod
+                    }
+                    return@map checkAndPayModelAction.value
+                }
+                .subscribe(this.reloadPaymentMethodsAction)
+
         }
 
         override fun applyRewardsRowPressed(state: Boolean) {
+            checkAndPayModel.applyRediPuntos = state
             return this.applyRewardsRowPressed.onNext(state)
         }
 
@@ -155,6 +150,7 @@ interface PaymentSelectionVM {
 
 
         override fun paymentMethodChanged(paymentMethod: PaymentMethod) {
+            checkAndPayModel.selectedPaymentMethod = paymentMethod
             return this.paymentMethodChanged.onNext(paymentMethod)
         }
 
@@ -163,6 +159,7 @@ interface PaymentSelectionVM {
         }
 
         override fun descriptionTextFieldChanged(description: String) {
+            checkAndPayModel.description = description
             return this.descriptionTextFieldChanged.onNext(description)
         }
 
@@ -174,37 +171,25 @@ interface PaymentSelectionVM {
 
         override fun nextButtonLoadingIndicator(): Observable<Boolean> = this.nextButtonLoadingIndicator
 
-        override fun paymentInformationChangedAction(): Observable<PaymentInformation> = this.paymentInformationChangedAction
+        override fun addPaymentMethodButtonPressed() {
+            return this.addPaymentMethodButtonPressed.onNext(Unit)
+        }
 
-        override fun showVendor(): Observable<Vendor> = this.showVendor
+        override fun reloadPaymentMethods(paymentMethod: PaymentMethod) {
+            return this.reloadPaymentMethods.onNext(paymentMethod)
+        }
+
+        override fun checkAndPayModelAction(): Observable<CheckAndPayModel> = this.checkAndPayModelAction
+
+        override fun addPaymentMethodAction(): Observable<Unit> = this.addPaymentMethodAction
+
+        override fun reloadPaymentMethodsAction(): Observable<CheckAndPayModel?> = this.reloadPaymentMethodsAction
+
 
         private fun requestPayment(input : RequestPaymentInput) : Observable<Result<Transaction>>{
             return environment.userUseCase().requestPayment(input)
                 .doOnComplete { this.nextButtonLoadingIndicator.onNext(false) }
                 .doOnSubscribe { this.nextButtonLoadingIndicator.onNext(true) }
         }
-
-
-
-        fun getPaymentMethods() : List<PaymentMethod>{
-            return this.paymentPayload.paymentMethods
-        }
-
-        fun getVendor() : Vendor {
-            return this.showVendor.value
-        }
-
-        fun getAmount() : Float {
-            return this.amountObserver.value
-        }
-
-        fun getOrder() : Order {
-            return this.orderObservable.value
-        }
-
-        fun rediPoints() : Double{
-            return this.rediPointsObservable.value
-        }
-
     }
 }

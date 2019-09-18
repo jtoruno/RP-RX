@@ -16,6 +16,7 @@ import com.zimplifica.redipuntos.extensions.addOnItemClickListener
 import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
+import com.zimplifica.redipuntos.models.CheckAndPayModel
 import com.zimplifica.redipuntos.ui.adapters.RecyclerCardPoints
 import com.zimplifica.redipuntos.viewModels.PaymentSelectionVM
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -29,7 +30,8 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
     lateinit var adapter : RecyclerCardPoints
     private var applyAwards = false
 
-    lateinit var paymentInformation: PaymentInformation
+    //lateinit var paymentInformation: PaymentInformation
+    lateinit var model : CheckAndPayModel
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,34 +45,29 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
 
         adapter = RecyclerCardPoints()
 
-        adapter.setPaymentMethods(this.viewModel.getPaymentMethods())
-
-        this.viewModel.inputs.paymentMethodChanged(viewModel.getPaymentMethods().first())
-
-
-        compositeDisposable.add(this.viewModel.outputs.showVendor().observeOn(AndroidSchedulers.mainThread())
+        //adapter.setPaymentMethods(this.viewModel.getPaymentMethods())
+        compositeDisposable.add(viewModel.outputs.checkAndPayModelAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                payment_selection_vendor_name.text = it.name
-                payment_selection_vendor_place.text = it.address
+                model = it
+                reloadData()
             })
-
-        payment_selection_amount.text = "₡ "+String.format("%,.2f", viewModel.getAmount())
-        payment_s_subtotal.text = "₡ "+String.format("%,.2f", viewModel.getAmount())
 
         payment_select_change_method.setOnClickListener {
             openCardPicker()
         }
 
-        compositeDisposable.add(this.viewModel.outputs.paymentInformationChangedAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.reloadPaymentMethodsAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                this.paymentInformation = it
-                updateData()
+                if(it!= null){
+                    this.model = it
+                }
+                reloadData()
             })
 
         compositeDisposable.add(this.viewModel.outputs.applyRewards().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 this.applyAwards = it
-                updateData()
+                reloadData()
             })
 
         compositeDisposable.add(this.viewModel.outputs.paymentMethodChangedAction().observeOn(AndroidSchedulers.mainThread())
@@ -84,8 +81,6 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
                 showDialog("Lo sentimos", it)
             })
 
-        payment_selection_order.text = ""
-
         payment_s_checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
             this.viewModel.inputs.applyRewardsRowPressed(isChecked)
         }
@@ -96,6 +91,12 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
                 intent.putExtra("transaction",it)
                 startActivity(intent)
                 finish()
+            })
+
+        compositeDisposable.add(viewModel.outputs.addPaymentMethodAction().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val intent = Intent(this,AddPaymentMethodActivity::class.java)
+                startActivity(intent)
             })
 
         payment_selection_btn.setOnClickListener {  viewModel.inputs.nextButtonPressed() }
@@ -125,39 +126,41 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
 
         payment_s_checkBox.isChecked = true
 
-
     }
 
-    private fun updateData(){
-        Log.e("PaymentSelection","Update Data")
-        payment_s_fee.text = "₡ "+String.format("%,.2f", paymentInformation.fee)
-        payment_s_tax.text = "₡ "+String.format("%,.2f", paymentInformation.tax)
-        /*
-        payment_s_reward_applied.text = if (applyAwards){
-            "- ₡ "+String.format("%,.2f", paymentInformation.rediPoints)
+    private fun reloadData(){
+        adapter.setPaymentMethods(model.paymentMethods)
+
+        //Vendor
+        payment_selection_vendor_name.text = model.vendor.name
+        payment_selection_vendor_place.text = model.vendor.address
+
+        //
+        payment_selection_amount.text = "₡ "+String.format("%,.2f", model.total)
+        payment_s_subtotal.text = "₡ "+String.format("%,.2f", model.subtotal)
+
+        //
+        payment_s_fee.text = "₡ "+String.format("%,.2f", model.fee)
+        payment_s_tax.text = "₡ "+String.format("%,.2f", model.tax)
+
+        //
+        payment_selection_redipoints.text = "Tienes "+String.format("%,.2f",model.rediPuntos)+" disponibles"
+        payment_s_total.text =  "₡ "+String.format("%,.2f", model.chargeToApply())
+        payment_s_rewards.text = "₡ "+String.format("%,.2f", model.rewardsToGet())
+        val rediPuntosToApply = model.rediPuntosToApply()
+        if(rediPuntosToApply>0){
+            payment_s_reward_applied.text = "- ₡ "+String.format("%,.2f", rediPuntosToApply)
         }else{
-            "₡ "+String.format("%,.2f",0.0)
-        }*/
-        val rediPuntosToApply = if (applyAwards){
-            if(paymentInformation.total-paymentInformation.rediPoints < 0.0){
-                paymentInformation.total
-            }else{
-                paymentInformation.rediPoints
-            }
-        } else { 0.0 }
-        payment_s_reward_applied.text = if (applyAwards){
-            "- ₡ "+String.format("%,.2f", rediPuntosToApply)
-        }else{
-            "₡ "+String.format("%,.2f",0.0)
+            payment_s_reward_applied.text = "₡ "+String.format("%,.2f", 0.0)
         }
+        //
+        payment_s_fee.text = "₡ "+String.format("%,.2f", model.fee)
+        payment_s_tax.text =  "${model.taxes} %"
 
-
-        payment_selection_redipoints.text = "Tienes "+paymentInformation.rediPoints+" pts"
-
-        val total = paymentInformation.total - rediPuntosToApply
-        payment_s_total.text = "₡ "+String.format("%,.2f", total)
-        payment_s_rewards.text = viewModel.getOrder().cashback.toString() + " %"
-
+        if (model.selectedPaymentMethod!=null){
+            val cardIdentifier = model.selectedPaymentMethod?.issuer?.toUpperCase() + " **** " +  model.selectedPaymentMethod?.cardNumberWithMask
+            ps_card_id_text.text = cardIdentifier
+        }
     }
 
     private fun openCardPicker(){
@@ -182,10 +185,15 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         alert.show()
         recyclerView.addOnItemClickListener(object : OnItemClickListener{
             override fun onItemClicked(position: Int, view: View) {
-                viewModel.inputs.paymentMethodChanged(viewModel.getPaymentMethods()[position])
+                val viewType = adapter.getItemViewType(position)
+                if (viewType == RecyclerCardPoints.PAYMENT_METHOD){
+                    viewModel.inputs.paymentMethodChanged(model.paymentMethods[position])
+                }
+                else{
+                    viewModel.inputs.addPaymentMethodButtonPressed()
+                }
                 alert.dismiss()
             }
-
         })
 
     }

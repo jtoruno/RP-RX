@@ -1,6 +1,6 @@
 package com.zimplifica.domain.entities
 
-class PaymentInformation(rediPoints: Double, cardPoints: Double, subtotal : Double,fee: Double,tax : Double,total: Double) {
+class PaymentInformation(rediPoints: Double, cardPoints: Double, subtotal : Double,fee: Double,tax : Double,total: Double, cashback : Int, taxes : Int) {
     var rediPoints: Double
     var cardPoints: Double
     var subtotal : Double

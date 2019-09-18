@@ -58,8 +58,8 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
                 setResult(Activity.RESULT_OK,returnIntent)
                 finish()*/
                 val intent = Intent(this,PaymentSelectionActivity::class.java)
-                intent.putExtra("SPSelectionObject",it)
-                intent.putExtra("amount",it.payload.order.subtotal.toFloat())
+                intent.putExtra("CheckAndPayModel",it)
+                //intent.putExtra("amount",it.payload.order.subtotal.toFloat())
                 startActivity(intent)
                 finish()
             })

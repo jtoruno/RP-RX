@@ -181,4 +181,8 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
     fun getActionableEventSubscription() : Observable<ServerEvent>{
         return state.getActionableEventSubscription()
     }
+
+    fun getPaymentMethodsSubscription() : Observable<PaymentMethod>{
+        return state.getPaymentMethodSubscription()
+    }
 }

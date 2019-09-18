@@ -24,6 +24,10 @@ class CommerceAdapter(val callback : (Commerce) -> Unit ) : androidx.recyclervie
         val commerce = items[p1]
         p0.name.text = commerce.name
         p0.cashBack.text = commerce.cashback.toString() + "%"
+        p0.favoriteImg.setOnClickListener {
+            p0.favoriteImg.setImageResource(R.drawable.ic_favorite_black_24dp)
+            p0.favoriteImg.setColorFilter(p0.itemView.context.getColor(R.color.red))
+        }
         Picasso.get().load(commerce.posterImage).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(p0.image)
         p0.itemView.setOnClickListener {
             callback(commerce)
@@ -40,5 +44,6 @@ class CommerceAdapter(val callback : (Commerce) -> Unit ) : androidx.recyclervie
         val image : ImageView = itemView.findViewById(R.id.commerce_row_img)
         val name : TextView = itemView.findViewById(R.id.commerce_row_name)
         val cashBack : TextView = itemView.findViewById(R.id.commerce_row_cash_back)
+        val favoriteImg : ImageView = itemView.findViewById(R.id.commerce_row_favorite)
     }
 }

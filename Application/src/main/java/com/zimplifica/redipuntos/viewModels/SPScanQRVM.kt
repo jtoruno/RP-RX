@@ -7,6 +7,7 @@ import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.Vendor
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.models.CheckAndPayModel
 import com.zimplifica.redipuntos.models.SitePaySellerSelectionObject
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -23,7 +24,7 @@ interface SPScanQRVM {
     interface Outputs{
         fun showError() : Observable<String>
         //fun getVendorInformationAction() : Observable<Vendor>
-        fun nextScreenAction() : Observable<SitePaySellerSelectionObject>
+        fun nextScreenAction() : Observable<CheckAndPayModel>
     }
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<SPScanQRVM>(environment),Inputs,Outputs{
@@ -39,7 +40,7 @@ interface SPScanQRVM {
         private val showError = BehaviorSubject.create<String>()
         //private val getVendorInformationAction = BehaviorSubject.create<Vendor>()
 
-        private val nextScreenAction = BehaviorSubject.create<SitePaySellerSelectionObject>()
+        private val nextScreenAction = BehaviorSubject.create<CheckAndPayModel>()
 
         init {
             val amountObservable = intent()
@@ -82,7 +83,11 @@ interface SPScanQRVM {
                 .map { it.successValue()!! }
 
             Observables.combineLatest(paymentPayloadResult,vendorInfo)
-                .map { return@map SitePaySellerSelectionObject(it.second,it.first) }
+                .map {
+                    val vendor = it.second
+                    val payload = it.first
+                    return@map CheckAndPayModel(payload.order.pid,payload.order.subtotal,payload.order.fee,payload.order.tax,payload.order.total,payload.rediPuntos,payload.order.cashback,payload.order.taxes,payload.paymentMethods, vendor)
+                }
                 .subscribe(this.nextScreenAction)
         }
 
@@ -93,7 +98,7 @@ interface SPScanQRVM {
 
         override fun showError(): Observable<String> = this.showError
 
-        override fun nextScreenAction(): Observable<SitePaySellerSelectionObject> = this.nextScreenAction
+        override fun nextScreenAction(): Observable<CheckAndPayModel> = this.nextScreenAction
 
         //override fun getVendorInformationAction(): Observable<Vendor> = this.getVendorInformationAction
 

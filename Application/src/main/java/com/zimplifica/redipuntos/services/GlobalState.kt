@@ -18,11 +18,13 @@ class GlobalState(val context: Context){
     private var notificationsSubscription : BehaviorSubject<List<ServerEvent>>
     private var actionableEvents : PublishSubject<ServerEvent>
     private var paymentsSubscription : PublishSubject<Transaction>
+    private var paymentMethodsSubscription : PublishSubject<PaymentMethod>
     //private val app = context.applicationContext as RPApplication
     //private val environment = app.component()?.environment()
     //private val environment = Environment.builder().build()
 
      init {
+         this.paymentMethodsSubscription = PublishSubject.create()
          this.notificationsSubscription = BehaviorSubject.createDefault(mutableListOf())
          this.actionableEvents = PublishSubject.create()
          this.paymentsSubscription = PublishSubject.create()
@@ -35,6 +37,10 @@ class GlobalState(val context: Context){
 
     fun getUserInformationSubscription(): Observable<UserInformationResult> {
         return this.userInformationSubscription
+    }
+
+    fun getPaymentMethodSubscription(): Observable<PaymentMethod>{
+        return this.paymentMethodsSubscription
     }
 
     fun updateCurrentUser(citizen: Citizen) {
@@ -62,6 +68,7 @@ class GlobalState(val context: Context){
                 currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
                 currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
             this.userInformationSubscription.onNext(userInfo)
+            this.paymentMethodsSubscription.onNext(paymentMethod)
         }
     }
 
