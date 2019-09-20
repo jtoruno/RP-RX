@@ -8,6 +8,7 @@ import androidx.viewpager.widget.ViewPager
 import android.text.Html
 import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.zimplifica.redipuntos.R
@@ -26,28 +27,29 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
     lateinit var mSlideViewPager: androidx.viewpager.widget.ViewPager
     lateinit var mDotLayout: LinearLayout
     var mcurrentPage: Int = 0
-    lateinit var mNextBtn : Button
-    lateinit var mBackBtn : Button
-    lateinit var mFinishBtn: Button
-    lateinit var closeBtn : Button
     lateinit var sliderAdapter: SliderAdapter
+
+    lateinit var singInBtn : Button
+    lateinit var signUpBtn : Button
+    lateinit var helpBtn : ImageButton
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_walkthrough)
+        /*
         val flag = SharedPreferencesUtils.getBooleanInSp(this, "walkthrough")
         if(flag){
             val intent = Intent(this,MainActivity::class.java)
             startActivity(intent)
             finish()
-        }
+        }*/
+
+        singInBtn = findViewById(R.id.walk_sign_in_btn)
+        signUpBtn = findViewById(R.id.walk_sign_up_btn)
+        helpBtn = findViewById(R.id.walk_help_btn)
 
         //Buttons
-        mNextBtn = findViewById(R.id.nextBtn)
-        mBackBtn = findViewById(R.id.backBtb)
-        mFinishBtn = findViewById(R.id.finishBtn)
-        closeBtn = findViewById(R.id.CloseBtnWalktr)
         mSlideViewPager = findViewById(R.id.slideViewPager)
         mDotLayout = findViewById(R.id.dotsLayout)
         sliderAdapter = SliderAdapter(this)
@@ -55,34 +57,31 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
         addDotsIndicator(0)
         mSlideViewPager.addOnPageChangeListener(viewListener)
 
-        /*
-        mNextBtn.setOnClickListener {
-            mSlideViewPager.currentItem = mcurrentPage +1
+
+        singInBtn.setOnClickListener {
+            this.viewModel.inputs.signInButtonClicked()
         }
-        mBackBtn.setOnClickListener {
-            mSlideViewPager.currentItem = mcurrentPage -1
-        }*/
-        closeBtn.setOnClickListener { this.viewModel.inputs.skipButtonClicked() }
-        mFinishBtn.setOnClickListener { this.viewModel.inputs.skipButtonClicked() }
-        mNextBtn.setOnClickListener { this.viewModel.inputs.nextButtonClicked() }
-        mBackBtn.setOnClickListener { this.viewModel.inputs.backButtonClicked() }
+        signUpBtn.setOnClickListener {
+            this.viewModel.inputs.signUpButtonClicked()
+        }
+        helpBtn.setOnClickListener {
+            this.viewModel.inputs.helpButtonClicked()
+        }
 
-        compositeDisposable.add(this.viewModel.outputs.startBackActivity()
-            .subscribe { mSlideViewPager.currentItem = mcurrentPage -1 })
-        compositeDisposable.add(this.viewModel.outputs.startNextActivity()
-            .subscribe { mSlideViewPager.currentItem = mcurrentPage +1 })
-
-        compositeDisposable.add(this.viewModel.outputs.startMainActivity()
-            .subscribe { navigate() })
-
+        compositeDisposable.add(this.viewModel.outputs.startSignUpActivity().subscribe {
+            val intent = Intent(this, TakePhoneActivity::class.java)
+            startActivity(intent)
+        })
+        compositeDisposable.add(this.viewModel.outputs.startSignInActivity().subscribe {
+            val intent = Intent(this, SignInActivity::class.java)
+            startActivity(intent)
+        })
+        compositeDisposable.add(this.viewModel.outputs.startHelpActivity().subscribe{
+            val intent = Intent(this, HelpActivity::class.java)
+            startActivity(intent)
+        })
     }
 
-    private fun navigate(){
-        SharedPreferencesUtils.saveBooleanInSp(this,"walkthrough", true)
-        val intent = Intent(this,MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
 
     fun addDotsIndicator(position: Int){
         mDots = Array(4){ TextView(this) }
@@ -111,6 +110,7 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
         override fun onPageSelected(p0: Int) {
             addDotsIndicator(p0)
             mcurrentPage = p0
+            /*
             if(p0==0){
                 mNextBtn.isEnabled = true
                 mBackBtn.isEnabled = false
@@ -144,7 +144,7 @@ class WalkThrough : BaseActivity<WalkThroughViewModel.ViewModel>() {
 
                 mNextBtn.text = "Siguiente"
                 mBackBtn.text = "Anterior"
-            }
+            }*/
         }
     }
 

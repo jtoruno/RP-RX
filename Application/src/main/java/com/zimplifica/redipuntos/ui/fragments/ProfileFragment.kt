@@ -68,16 +68,6 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             viewModel.inputs.termsAndConditionsButtonPressed()
         }
 
-        profile_recommend_to_friend.setOnClickListener {
-            /*
-            Alerter.create(activity)
-                .setTitle("Hello1")
-                .setText("hELLO2")
-                .setBackgroundColorRes(R.color.colorPrimary)
-                .enableSwipeToDismiss()
-                .enableInfiniteDuration(true)
-                .show()*/
-        }
 
         profile_log_out.setOnClickListener {
             class MyDialogFragment : DialogFragment() {
@@ -111,7 +101,7 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         })
 
         compositeDisposable.add(viewModel.outputs.signOutAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            val intent = Intent(activity, MainActivity::class.java)
+            val intent = Intent(activity, WalkThrough::class.java)
             startActivity(intent)
             activity?.finishAffinity()
         })

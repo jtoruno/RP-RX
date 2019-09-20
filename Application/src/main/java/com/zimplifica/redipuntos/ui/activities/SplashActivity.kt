@@ -88,7 +88,7 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.backToWelcome().observeOn(AndroidSchedulers.mainThread())
             .subscribe{
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, WalkThrough::class.java)
                 startActivity(intent)
                 finishAffinity()
             })

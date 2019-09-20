@@ -88,7 +88,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.signOutAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, WalkThrough::class.java)
                 startActivity(intent)
                 finishAffinity()
             })

@@ -8,14 +8,14 @@ import io.reactivex.subjects.PublishSubject
 
 interface WalkThroughViewModel {
     interface Inputs {
-        fun skipButtonClicked()
-        fun nextButtonClicked()
-        fun backButtonClicked()
+        fun signInButtonClicked()
+        fun signUpButtonClicked()
+        fun helpButtonClicked()
     }
     interface Outputs {
-        fun startNextActivity(): Observable<Unit>
-        fun startBackActivity(): Observable<Unit>
-        fun startMainActivity(): Observable<Unit>
+        fun startSignInActivity() : Observable<Unit>
+        fun startSignUpActivity() : Observable<Unit>
+        fun startHelpActivity() : Observable<Unit>
     }
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<WalkThroughViewModel>(environment), Inputs, Outputs{
@@ -24,34 +24,33 @@ interface WalkThroughViewModel {
         val outputs : Outputs = this
 
         //Inputs
-        private val skipButtonClicked = PublishSubject.create<Unit>()
-        private val nextButtonClicked = PublishSubject.create<Unit>()
-        private val backButtonClicked = PublishSubject.create<Unit>()
-
+        private val signInButtonClicked = PublishSubject.create<Unit>()
+        private val signUpButtonClicked = PublishSubject.create<Unit>()
+        private val helpButtonClicked = PublishSubject.create<Unit>()
 
         //Outputs
-        private val startNextActivity : Observable<Unit>
-        private val startMainActivity : Observable<Unit>
-        private val startBackActivity : Observable<Unit>
+        private val startSignInActivity : Observable<Unit>
+        private val startSignUpActivity : Observable<Unit>
+        private val startHelpActivity : Observable<Unit>
 
         init {
-            this.startNextActivity = this.nextButtonClicked
-            this.startMainActivity = this.skipButtonClicked
-            this.startBackActivity = this.backButtonClicked
+            this.startSignInActivity = this.signInButtonClicked
+            this.startSignUpActivity = this.signUpButtonClicked
+            this.startHelpActivity = this.helpButtonClicked
         }
 
 
-        override fun skipButtonClicked() = this.skipButtonClicked.onNext(Unit)
+        override fun signInButtonClicked() = this.signInButtonClicked.onNext(Unit)
 
-        override fun nextButtonClicked() = this.nextButtonClicked.onNext(Unit)
+        override fun signUpButtonClicked() = this.signUpButtonClicked.onNext(Unit)
 
-        override fun startNextActivity(): Observable<Unit> = this.startNextActivity
+        override fun helpButtonClicked() = this.helpButtonClicked.onNext(Unit)
 
-        override fun startMainActivity(): Observable<Unit> = this.startMainActivity
+        override fun startSignInActivity(): Observable<Unit> = this.startSignInActivity
 
-        override fun backButtonClicked() = this.backButtonClicked.onNext(Unit)
+        override fun startSignUpActivity(): Observable<Unit> = this.startSignUpActivity
 
-        override fun startBackActivity(): Observable<Unit> = this.startBackActivity
+        override fun startHelpActivity(): Observable<Unit> = this.startHelpActivity
 
     }
 }
