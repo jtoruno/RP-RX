@@ -15,9 +15,7 @@ interface UserUseCase{
     fun getTransactionById(id: String) : Observable<Result<Transaction>>
 
     fun getCommerces(limit: Int?, skip: Int?, categoryId: String?, textSearch: String?) : Observable<Result<CommercesResult>>
-    //fun searchCommerces(searchText: String) : Observable<Result<CommercesResult>>
     fun fetchCategories() : Observable<Result<List<Category>>>
-    //fun filterCommercesByCategory(categoryId: String) : Observable<Result<CommercesResult>>
     fun registPushNotificationToken(token : String, userId : String) : Observable<Result<String>>
     fun initIdentitiyVerification() : Observable<Result<Boolean>>
 
