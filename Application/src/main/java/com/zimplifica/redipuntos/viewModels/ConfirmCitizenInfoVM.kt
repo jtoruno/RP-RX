@@ -47,6 +47,7 @@ interface ConfirmCitizenInfoVM {
             personObservable
                 .subscribe(this.printData)
 
+            /*
             val updateInfo = personObservable
                 .takeWhen(this.nextButtonPressed)
                 .flatMap { updateUserInfo(it.second) }
@@ -67,7 +68,7 @@ interface ConfirmCitizenInfoVM {
                         }
                         else -> {}
                     }
-                }
+                }*/
         }
 
         override fun nextButtonPressed() {
@@ -85,12 +86,12 @@ interface ConfirmCitizenInfoVM {
         }
         override fun printData(): Observable<Person> = this.printData
 
+        /*
         private fun updateUserInfo(person : Person) : Observable<Result<Citizen>>{
             val input = CitizenInput(person.cedula?:"",person.nombre!!,person.apellido1+" "+person.apellido2,person.fechaNacimiento!!)
             return environment.userUseCase().updateUserInfo(input)
                 .doOnComplete { this.loadingEnabled.onNext(false) }
                 .doOnSubscribe { this.loadingEnabled.onNext(true) }
-        }
-
+        }*/
     }
 }

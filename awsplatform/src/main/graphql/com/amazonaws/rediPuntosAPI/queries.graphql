@@ -2,9 +2,7 @@
 query GetUser {
   getUser {
     id
-    firstName
-    lastName
-    birthdate
+    nickname
     identityNumber
     phoneNumber
     phoneNumberVerified
@@ -16,20 +14,8 @@ query GetUser {
       cardNumber
       expirationDate
       issuer
-      rewards
-      automaticRedemption
     }
-    status {
-      verificationStatus
-      verificationReference
-    }
-    gender
-    address {
-      country
-      province
-      district
-      canton
-    }
+    hasSecurityCode
   }
 }
 query GetPaymentMethodsByUser {
@@ -39,13 +25,11 @@ query GetPaymentMethodsByUser {
       cardNumber
       expirationDate
       issuer
-      rewards
-      automaticRedemption
     }
   }
 }
-query GetTransactionsByUser($limit: Int, $nextToken: String) {
-  getTransactionsByUser(limit: $limit, nextToken: $nextToken) {
+query GetTransactionsByUser($input: GetTransactionsByUserInput) {
+  getTransactionsByUser(input: $input) {
     items {
       id
       datetime
@@ -78,8 +62,8 @@ query GetTransactionsByUser($limit: Int, $nextToken: String) {
     nextToken
   }
 }
-query GetTransactionById($id: String) {
-  getTransactionById(id: $id) {
+query GetTransactionById($input: GetTransactionByIdInput!) {
+  getTransactionById(input: $input) {
     id
     datetime
     transactionType
@@ -135,20 +119,18 @@ query GetCheckoutPayloadSitePay($input: CheckoutPayloadSitePayInput!) {
         cardNumber
         expirationDate
         issuer
-        rewards
-        automaticRedemption
       }
     }
   }
 }
-query GetVendor($id: String!) {
-  getVendor(id: $id) {
+query GetVendor($input: GetVendorInput!) {
+  getVendor(input: $input) {
     id
     name
     address
   }
 }
-query GetCommerces($input: CommercesInput) {
+query GetCommerces($input: GetCommercesInput!) {
   getCommerces(input: $input) {
     items {
       id
@@ -208,12 +190,13 @@ query GetCommerces($input: CommercesInput) {
         }
       }
       cashback
+      isFavorite
     }
     total
   }
 }
-query GetCategories($limit: Int, $nextToken: String) {
-  getCategories(limit: $limit, nextToken: $nextToken) {
+query GetCategories($input: GetCategoriesInput!) {
+  getCategories(input: $input) {
     items {
       id
       name
@@ -221,11 +204,12 @@ query GetCategories($limit: Int, $nextToken: String) {
     }
   }
 }
-query GetNotifications($limit: Int, $nextToken: String) {
-  getNotifications(limit: $limit, nextToken: $nextToken) {
+query GetNotifications($input: GetNotificationsInput!) {
+  getNotifications(input: $input) {
     nextToken
     items {
       id
+      origin
       createdAt
       user
       type

@@ -2,6 +2,7 @@
 subscription SubscribeToEvents($user: String!) {
   subscribeToEvents(user: $user) {
     id
+    origin
     createdAt
     user
     type

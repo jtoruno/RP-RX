@@ -1,13 +1,10 @@
 package com.zimplifica.awsplatform.useCases
 
-import android.content.Context
 import android.text.format.DateUtils
 import android.util.Log
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers
 import com.amazonaws.rediPuntosAPI.*
-import com.amazonaws.rediPuntosAPI.type.CheckoutPayloadSitePayInput
-import com.amazonaws.rediPuntosAPI.type.CommercesInput
-import com.amazonaws.rediPuntosAPI.type.GenderType
+import com.amazonaws.rediPuntosAPI.type.*
 import com.amazonaws.rediPuntosAPI.type.WayToPayInput
 import com.apollographql.apollo.GraphQLCall
 import com.apollographql.apollo.api.Response
@@ -18,23 +15,191 @@ import com.zimplifica.awsplatform.AppSync.ServerSubscription
 import com.zimplifica.awsplatform.Pinpoint.PinpointClient
 import com.zimplifica.awsplatform.Utils.PlatformUtils
 import com.zimplifica.domain.entities.*
+import com.zimplifica.domain.entities.PaymentMethodInput
+import com.zimplifica.domain.entities.RequestPaymentInput
 import com.zimplifica.domain.useCases.UserUseCase
 import io.reactivex.Observable
 import io.reactivex.Single
 import java.lang.Exception
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.util.*
 
 class UserUseCase : UserUseCase {
 
     private val appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
     private val cacheOperations = CacheOperations()
 
-    override fun disablePaymentMethod(owner: String, cardId: String): Observable<Result<PaymentMethod>> {
+
+    override fun updateFavoriteMerchant(merchantId: String, isFavorite: Boolean): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val input = UpdateFavoriteMerchantInput.builder().isFavorite(isFavorite).merchantId(merchantId).build()
+            val mutation = UpdateFavoriteMerchantMutation.builder()
+                .input(input)
+                .build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<UpdateFavoriteMerchantMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [updateFavoriteMerchant] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<UpdateFavoriteMerchantMutation.Data>) {
+                    val result = response.data()?.updateFavoriteMerchant()
+                    if(result!=null){
+                        cacheOperations.updateCommerce( isFavorite, merchantId)
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun reviewMerchant(rateCommerceModel: RateCommerceModel): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val input = ReviewMerchantInput.builder().review(rateCommerceModel.rate.int).transactionId(rateCommerceModel.id).build()
+            val mutation = ReviewMerchantMutation.builder().input(input).build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<ReviewMerchantMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [reviewMerchant] Error.",e)
+                    single.onSuccess(Result.failure(e))
+                }
+
+                override fun onResponse(response: Response<ReviewMerchantMutation.Data>) {
+                    val result = response.data()?.reviewMerchant()
+                    if(result !=null){
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun createPin(securityCode: SecurityCode): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val jsonString = securityCode.getJson() ?: return@create
+            val encryptedData = PlatformUtils.encrypt(jsonString)?.replace("\n","") ?: return@create
+            val input = PinInput.builder().data(encryptedData).build()
+            val mutation = CreatePinMutation.builder().input(input).build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<CreatePinMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [createPin] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<CreatePinMutation.Data>) {
+                    val result = response.data()?.createPin()
+                    if(result!=null){
+                        cacheOperations.updateUserHasSecurityCode(result.success())
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun verifyPin(securityCode: SecurityCode): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val jsonString = securityCode.getJson() ?: return@create
+            val encryptedData = PlatformUtils.encrypt(jsonString)?.replace("\n","") ?: return@create
+            val input = PinInput.builder().data(encryptedData).build()
+            val mutation = VerifyPinMutation.builder().input(input).build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<VerifyPinMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [verifyPin] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<VerifyPinMutation.Data>) {
+                    val result = response.data()?.verifyPin()
+                    if(result!=null){
+                        cacheOperations.updateUserHasSecurityCode(result.success())
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun verifyPhoneNumber(): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val mutation = VerifyUserPhoneNumberMutation.builder().build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object : GraphQLCall.Callback<VerifyUserPhoneNumberMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [verifyPhoneNumber] Error.",e)
+                    single.onSuccess(Result.failure(e))                  }
+
+                override fun onResponse(response: Response<VerifyUserPhoneNumberMutation.Data>) {
+                    val result = response.data()?.verifyUserPhoneNumber()
+                    if(result!=null){
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun updatePin(securityCode: SecurityCode): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val jsonString = securityCode.getJson() ?: return@create
+            val encryptedData = PlatformUtils.encrypt(jsonString)?.replace("\n","") ?: return@create
+            val input = PinInput.builder().data(encryptedData).build()
+            val mutation = UpdatePinMutation.builder().input(input).build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<UpdatePinMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [updatePin] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<UpdatePinMutation.Data>) {
+                    val result = response.data()?.updatePin()
+                    if(result!=null){
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun changePassword(changePasswordModel: ChangePasswordModel): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val jsonString = changePasswordModel.toJson() ?: return@create
+            val encryptedData = PlatformUtils.encrypt(jsonString)?.replace("\n","") ?: return@create
+            val input = ChangePasswordInput.builder().data(encryptedData).build()
+            val mutation = ChangePasswordMutation.builder().input(input).build()
+            this.appSyncClient!!.mutate(mutation).enqueue(object : GraphQLCall.Callback<ChangePasswordMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [changePassword] Error.",e)
+                    single.onSuccess(Result.failure(e))                }
+
+                override fun onResponse(response: Response<ChangePasswordMutation.Data>) {
+                    val result = response.data()?.changePassword()
+                    if(result!=null){
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }                }
+
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun disablePaymentMethod(cardId: String): Observable<Result<PaymentMethod>> {
         val single = Single.create<Result<PaymentMethod>> create@{ single ->
+            val input = DisablePaymentMethodInput.builder().cardId(cardId).build()
             val mutation = DisablePaymentMethodMutation.builder()
-                .cardId(cardId)
+                .input(input)
                 .build()
             this.appSyncClient!!.mutate(mutation).enqueue(object : GraphQLCall.Callback<DisablePaymentMethodMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -46,7 +211,7 @@ class UserUseCase : UserUseCase {
                     val result = response.data()?.disablePaymentMethod()
                     if(result!=null){
                         val paymentMethod = PaymentMethod(result.id(),result.cardNumber(),result.expirationDate(),
-                            result.issuer(),result.rewards(),result.automaticRedemption())
+                            result.issuer())
                         cacheOperations.addPaymentMethod(paymentMethod)
                         single.onSuccess(Result.success(paymentMethod))
                     }
@@ -65,14 +230,12 @@ class UserUseCase : UserUseCase {
             val wayToPayInput = WayToPayInput.builder()
                 .rediPuntos(requestPaymentInput.wayToPay.rediPuntos)
                 .creditCardId(requestPaymentInput.wayToPay.creditCardId)
-                //.creditCardRewards(requestPaymentInput.wayToPay.creditCardRewards)
                 .creditCardCharge(requestPaymentInput.wayToPay.creditCardCharge)
                 .build()
             val input = com.amazonaws.rediPuntosAPI.type.RequestPaymentInput.builder()
                 .wayToPay(wayToPayInput)
                 .paymentDescription(requestPaymentInput.paymentDescription)
                 .orderId(requestPaymentInput.orderId)
-                //.username(requestPaymentInput.username)
                 .build()
             val mutation = RequestPaymentMutation.builder()
                 .input(input)
@@ -119,17 +282,13 @@ class UserUseCase : UserUseCase {
     }
 
     override fun checkoutPayloadSitePay(
-        username: String,
         amount: Float,
-        vendorId: String,
-        description: String
+        vendorId: String
     ): Observable<Result<PaymentPayload>> {
         val single = Single.create<Result<PaymentPayload>> create@{ single ->
             val input = CheckoutPayloadSitePayInput.builder()
-                //.username(username)
                 .amount(amount.toDouble())
                 .vendorId(vendorId)
-                //.description(description)
                 .build()
             val query = GetCheckoutPayloadSitePayQuery.builder()
                 .input(input)
@@ -149,8 +308,7 @@ class UserUseCase : UserUseCase {
 
                         val rediPuntos = result.paymentOptions().rediPuntos()
                         val paymentMethods = result.paymentOptions().paymentMethods().map { element ->
-                            return@map PaymentMethod(element.id(),element.cardNumber(),element.expirationDate(),element.issuer(),
-                                element.rewards(),element.automaticRedemption())
+                            return@map PaymentMethod(element.id(),element.cardNumber(),element.expirationDate(),element.issuer())
                         }
                         val paymentPayload = PaymentPayload(rediPuntos,order,paymentMethods)
                         single.onSuccess(Result.success(paymentPayload))
@@ -172,7 +330,7 @@ class UserUseCase : UserUseCase {
                 .data(inputValue?:"")
                 .build()
             val mutation = AddPaymentMethodMutation.builder()
-                .paymentMethod(input)
+                .input(input)
                 .build()
             this.appSyncClient!!.mutate(mutation).enqueue(object : GraphQLCall.Callback<AddPaymentMethodMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -186,7 +344,7 @@ class UserUseCase : UserUseCase {
                     val result = response.data()?.addPaymentMethod()
                     if(result!=null){
                         val paymentMethod = PaymentMethod(result.id(),result.cardNumber(),result.expirationDate(),
-                            result.issuer(),result.rewards(),result.automaticRedemption())
+                            result.issuer())
                         cacheOperations.addPaymentMethod(paymentMethod)
                         single.onSuccess(Result.success(paymentMethod))
                     }
@@ -201,10 +359,9 @@ class UserUseCase : UserUseCase {
 
     override fun fetchTransactions(useCache: Boolean,nextToken: String?, limit: Int?): Observable<Result<TransactionsResult>> {
         val single = Single.create<Result<TransactionsResult>> create@{ single ->
+            val input = GetTransactionsByUserInput.builder().limit(limit).nextToken(nextToken).build()
             val query = GetTransactionsByUserQuery.builder()
-                //.username(username)
-                .limit(limit)
-                .nextToken(nextToken)
+                .input(input)
                 .build()
             val cachePolicy =  if(useCache){
                 AppSyncResponseFetchers.CACHE_FIRST
@@ -228,9 +385,6 @@ class UserUseCase : UserUseCase {
                             if(card != null){
                                 cardDetail = CardDetail(card.id(),card.cardNumber(),card.issuer())
                             }
-                            /*
-                            val cardDetail = CardDetail(trx.wayToPay().creditCard()?.cardId()?: "",trx.wayToPay().creditCard()?.cardNumber()?:"",
-                                trx.wayToPay().creditCard()?.issuer()?: "")*/
                             val wayToPay = WayToPay(trx.wayToPay().rediPuntos(),cardDetail,trx.wayToPay().creditCardCharge())
                             var transactionDetail = TransactionDetail(trx.item().type(),trx.item().amount(),trx.item().vendorId(),trx.item().vendorName())
                             var status : TransactionStatus = when(trx.status()){
@@ -273,38 +427,11 @@ class UserUseCase : UserUseCase {
                     if(response.data()!=null){
                         val user = response.data()!!.user
                         val paymentMethods = response.data()!!.user.paymentMethods().map { p ->
-                            return@map PaymentMethod(p.id(),p.cardNumber(),p.expirationDate(),p.issuer(),p.rewards(),p.automaticRedemption())
-                        }
-                        var verificationReference : String ? = null
-                        var verificationStatus : VerificationStatus
-                        when(user.status().verificationStatus()){
-                            com.amazonaws.rediPuntosAPI.type.VerificationStatus.PENDING -> verificationStatus = VerificationStatus.Pending
-                            com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFYING -> verificationStatus = VerificationStatus.Verifying
-                            com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFIED_INVALID -> verificationStatus = VerificationStatus.VerifiedInvalid
-                            com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFIED_VALID -> {
-                                verificationStatus = VerificationStatus.VerifiedValid
-                                verificationReference = user.status().verificationReference()
-                            }
-                        }
-                        val userStatus = UserStatus(verificationStatus,verificationReference)
-                        var adress : Address ? = null
-                        val countryCode = user.address()?.country()
-                        if(countryCode!=null){
-                            adress = Address(countryCode,user.address()?.province(),user.address()?.canton(),user.address()?.district())
-                        }
-                        var gender : Gender ? = null
-                        val userGender = user.gender()
-                        if(userGender!=null){
-                            gender = when(userGender){
-                                GenderType.female -> Gender.Female
-                                GenderType.male -> Gender.Male
-                                GenderType.other -> Gender.Other
-                            }
+                            return@map PaymentMethod(p.id(),p.cardNumber(),p.expirationDate(),p.issuer())
                         }
 
-                        val userObj = UserInformationResult(user.id(),user.identityNumber(),user.firstName(),user.lastName(),
-                            user.birthdate(),user.email(),user.phoneNumber(),user.phoneNumberVerified(),user.emailVerified(),null,user.rewards(),
-                            paymentMethods, userStatus)
+                        val userObj = UserInformationResult(user.id(),user.nickname(),user.email(),user.phoneNumber(),user.phoneNumberVerified(),user.emailVerified(),user.rewards(),
+                            paymentMethods, user.hasSecurityCode())
                         single.onSuccess(Result.success(userObj))
                     }
                     else{
@@ -316,17 +443,10 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
-    override fun updateUserInfo(citizen: CitizenInput): Observable<Result<Citizen>> {
-        val single = Single.create<Result<Citizen>> create@{ single ->
-            val rcitizenResult = Citizen(citizen.lastName,citizen.firstName,Date(),citizen.citizenId)
-            single.onSuccess(Result.success(rcitizenResult))
-        }
-        return single.toObservable()
-    }
-
     override fun getVendorInformation(vendorId: String): Observable<Result<Vendor>> {
         val single = Single.create<Result<Vendor>> create@{ single ->
-            val query = GetVendorQuery.builder().id(vendorId).build()
+            val input = GetVendorInput.builder().id(vendorId).build()
+            val query = GetVendorQuery.builder().input(input).build()
             this.appSyncClient!!.query(query).enqueue(object :GraphQLCall.Callback<GetVendorQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getVendorInformation] Error.",e)
@@ -351,7 +471,8 @@ class UserUseCase : UserUseCase {
 
     override fun getTransactionById(id: String): Observable<Result<Transaction>> {
         val single = Single.create<Result<Transaction>> create@{ single ->
-            val query = GetTransactionByIdQuery.builder().id(id).build()
+            val input = GetTransactionByIdInput.builder().id(id).build()
+            val query = GetTransactionByIdQuery.builder().input(input).build()
             this.appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY).enqueue(object:GraphQLCall.Callback<GetTransactionByIdQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getTransactionById] Error.",e)
@@ -393,7 +514,7 @@ class UserUseCase : UserUseCase {
 
     override fun getCommerces(limit: Int?, skip: Int?, categoryId: String?, textSearch: String?): Observable<Result<CommercesResult>> {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
-            val input = CommercesInput.builder().limit(limit).skip(skip) .categoryId(categoryId).textSearch(textSearch).build()
+            val input = GetCommercesInput.builder().limit(limit).skip(skip) .categoryId(categoryId).textSearch(textSearch).build()
             val query = GetCommercesQuery.builder().input(input).build()
             this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -419,7 +540,8 @@ class UserUseCase : UserUseCase {
 
     override fun fetchCategories(): Observable<Result<List<Category>>> {
         val single = Single.create<Result<List<Category>>> create@{ single ->
-            val query = GetCategoriesQuery.builder().limit(null).nextToken(null).build()
+            val input = GetCategoriesInput.builder().limit(null).nextToken(null).build()
+            val query = GetCategoriesQuery.builder().input(input).build()
             this.appSyncClient!!.query(query).enqueue(object : GraphQLCall.Callback<GetCategoriesQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [fetchCategories] Error.",e)
@@ -456,38 +578,14 @@ class UserUseCase : UserUseCase {
         return single.toObservable()
     }
 
-    override fun initIdentitiyVerification(): Observable<Result<Boolean>> {
-        val single = Single.create<Result<Boolean>> create@{ single ->
-            val mutation = InitVerificationProcessMutation.builder().build()
-            this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<InitVerificationProcessMutation.Data>(){
-                override fun onResponse(response: Response<InitVerificationProcessMutation.Data>) {
-                    val result = response.data()?.initVerificationProcess()
-                    if (result != null){
-                        cacheOperations.updateVerificationStatus(VerificationStatus.Verifying)
-                        single.onSuccess(Result.success(result.success()))
-                    }
-                    else{
-                        single.onSuccess(Result.failure(Exception()))
-                    }
-                }
-
-                override fun onFailure(e: ApolloException) {
-                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [initIdentitiyVerification] Error.",e)
-                    single.onSuccess(Result.failure(e))
-                }
-
-            })
-        }
-        return single.toObservable()
-    }
-
     override fun subscribeToServerEvents(user: String): RediSubscription {
         return ServerSubscription(user)
     }
 
     override fun fetchNotifications(nextToken: String?, limit: Int?): Observable<Result<List<ServerEvent>>> {
         val single = Single.create<Result<List<ServerEvent>>> create@{ single ->
-            val query = GetNotificationsQuery.builder().limit(limit).nextToken(nextToken).build()
+            val input = GetNotificationsInput.builder().limit(limit).nextToken(nextToken).build()
+            val query = GetNotificationsQuery.builder().input(input).build()
             this.appSyncClient!!.query(query).enqueue(object: GraphQLCall.Callback<GetNotificationsQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [FetchNotifications] Error.",e)
@@ -513,7 +611,8 @@ class UserUseCase : UserUseCase {
 
     override fun updateNotificationStatus(id: String): Observable<Result<Boolean>> {
         val single = Single.create<Result<Boolean>> create@{ single ->
-            val mutation = UpdateNotificationStatusMutation.builder().id(id).build()
+            val input = UpdateNotificationStatusInput.builder().id(id).build()
+            val mutation = UpdateNotificationStatusMutation.builder().input(input).build()
             this.appSyncClient!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<UpdateNotificationStatusMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [UpdateNotificationStatus] Error.",e)

@@ -40,7 +40,7 @@ class CardAdapter(val context : Context, val callBack : (PaymentMethod) -> Unit)
         if(item.issuer.toLowerCase() == "redipuntos"){
             p0.cardCloseBtn.visibility = View.GONE
             p0.cardImage.setImageResource(R.drawable.cutmypic)
-            p0.cardNumber.text = item.rewards.toString()
+            //p0.cardNumber.text = item.rewards.toString()
         }
         p0.cardCloseBtn.setOnClickListener {
             callBack(item)

@@ -143,7 +143,7 @@ interface SPSelectionVM {
         override fun vendorInformationAction(): Observable<Vendor> = this.vendorInformationAction
 
         private fun checkoutPayloadSitePay(vendorId : String, description : String, amount : Float) : Observable<Result<PaymentPayload>>{
-            return environment.userUseCase().checkoutPayloadSitePay(environment.currentUser().getCurrentUser()?.userId?:"",amount,vendorId,description)
+            return environment.userUseCase().checkoutPayloadSitePay(amount,vendorId)
                 .doOnComplete { this.nextButtonLoadingIndicator.onNext(false) }
                 .doOnSubscribe { this.nextButtonLoadingIndicator.onNext(true) }
         }

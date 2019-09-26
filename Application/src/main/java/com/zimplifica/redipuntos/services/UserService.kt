@@ -22,24 +22,12 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
             }
     }
 
-    fun getUserInformationSubscription() : Observable<UserInformationResult>{
-        return state.getUserInformationSubscription()
+    fun getCommerces(limit: Int?, skip: Int?, categoryId: String?, textSearch: String?) : Observable<Result<CommercesResult>> {
+        return userUseCase.getCommerces(limit,skip,categoryId,textSearch)
     }
 
     fun fetchTransactions(useCache: Boolean,nextToken: String?, limit: Int?) : Observable<Result<TransactionsResult>> {
         return userUseCase.fetchTransactions(useCache,nextToken,limit)
-    }
-
-    fun updateUserInfo(citizen: CitizenInput) : Observable<Result<Citizen>> {
-        return userUseCase.updateUserInfo(citizen)
-            .doOnNext { result ->
-                when(result){
-                    is Result.success -> {
-                        this.state.updateCurrentUser(result.value!!)
-                    }
-                    else -> return@doOnNext
-                }
-            }
     }
 
     fun addPaymentMethod(paymentMethod: PaymentMethodInput) : Observable<Result<PaymentMethod>> {
@@ -54,20 +42,8 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
             }
     }
 
-    fun checkoutPayloadSitePay(username: String, amount: Float, vendorId: String, description: String) : Observable<Result<PaymentPayload>> {
-        return userUseCase.checkoutPayloadSitePay(username,amount,vendorId,description)
-    }
-
-    fun requestPayment(requestPaymentInput: RequestPaymentInput) : Observable<Result<Transaction>> {
-        return userUseCase.requestPayment(requestPaymentInput)
-    }
-
-    fun getVendorInformation(vendorId: String) : Observable<Result<Vendor>> {
-        return userUseCase.getVendorInformation(vendorId)
-    }
-
-    fun disablePaymentMethod(owner: String, cardId: String) : Observable<Result<PaymentMethod>>{
-        return userUseCase.disablePaymentMethod(owner,cardId)
+    fun disablePaymentMethod(cardId: String) : Observable<Result<PaymentMethod>>{
+        return userUseCase.disablePaymentMethod(cardId)
             .doOnNext {result ->
                 when(result){
                     is Result.success -> {
@@ -78,43 +54,36 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
             }
     }
 
-    fun getTransactionById(id: String) : Observable<Result<Transaction>> {
-        return userUseCase.getTransactionById(id)
+    fun checkoutPayloadSitePay(amount: Float, vendorId: String) : Observable<Result<PaymentPayload>> {
+        return userUseCase.checkoutPayloadSitePay(amount,vendorId)
     }
 
-    fun getCommerces(limit: Int?, skip: Int?, categoryId: String?, textSearch: String?) : Observable<Result<CommercesResult>> {
-        return userUseCase.getCommerces(limit,skip,categoryId,textSearch)
+    fun requestPayment(requestPaymentInput: RequestPaymentInput) : Observable<Result<Transaction>> {
+        return userUseCase.requestPayment(requestPaymentInput)
+            .doOnNext { result ->
+                if (result==null) return@doOnNext
+                when(result){
+                    is Result.success ->{
+                        this.state.registerNewPayment(result.value!!)
+                    }else -> return@doOnNext
+                }
+            }
     }
 
-    /*
-    fun searchCommerces(searchText: String) : Observable<Result<CommercesResult>> {
-        return userUseCase.searchCommerces(searchText)
+    fun getVendorInformation(vendorId: String) : Observable<Result<Vendor>> {
+        return userUseCase.getVendorInformation(vendorId)
     }
-
-    fun filterCommercesByCategory(categoryId: String) : Observable<Result<CommercesResult>> {
-        return userUseCase.filterCommercesByCategory(categoryId)
-    }*/
 
     fun fetchCategories() : Observable<Result<List<Category>>> {
         return userUseCase.fetchCategories()
     }
 
-    fun registPushNotificationToken(token : String, userId : String) : Observable<Result<String>>{
-        Log.e("Service","token" + token)
-        return userUseCase.registPushNotificationToken(token, userId)
+    fun getTransactionById(id: String) : Observable<Result<Transaction>> {
+        return userUseCase.getTransactionById(id)
     }
 
-    fun initIdentitiyVerification() : Observable<Result<Boolean>>{
-        return userUseCase.initIdentitiyVerification()
-            .doOnNext { result ->
-                when(result){
-                    is Result.success -> {
-                        val userStatus = UserStatus(VerificationStatus.Verifying,null)
-                        this.state.updateCurrentUseerStatus(userStatus)
-                    }
-                    else -> return@doOnNext
-                }
-            }
+    fun registPushNotificationToken(token : String, userId : String) : Observable<Result<String>>{
+        return userUseCase.registPushNotificationToken(token, userId)
     }
 
     fun updateNotificationStatus(id: String) : Observable<Result<Boolean>>{
@@ -164,6 +133,58 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
 
         //updateServerSubscription(this)
         ServerSubscription.updateServerSubscription(subscription)
+    }
+
+    fun updateFavoriteMerchant(merchantId: String, isFavorite: Boolean) : Observable<Result<Boolean>> {
+        return userUseCase.updateFavoriteMerchant( merchantId,isFavorite)
+    }
+
+    fun reviewMerchant(rateCommerceModel: RateCommerceModel) : Observable<Result<Boolean>> {
+        return userUseCase.reviewMerchant( rateCommerceModel)
+    }
+
+    fun createPin(securityCode: SecurityCode) : Observable<Result<Boolean>> {
+        return userUseCase.createPin( securityCode)
+            .doOnNext {result ->
+                when(result){
+                    is Result.success -> {
+                        this.state.updateCurrentUserSecurityCode(result.value?:false)
+                    }
+                    else -> return@doOnNext
+                }
+            }
+    }
+
+    fun verifyPin(securityCode: SecurityCode) : Observable<Result<Boolean>> {
+        return userUseCase.verifyPin(securityCode)
+    }
+
+    fun verifyPhoneNumber() : Observable<Result<Boolean>> {
+        return userUseCase.verifyPhoneNumber()
+    }
+
+    fun updatePin(securityCode: SecurityCode) : Observable<Result<Boolean>> {
+        return userUseCase.updatePin(securityCode)
+    }
+
+    fun changePassword(changePasswordModel: ChangePasswordModel) : Observable<Result<Boolean>> {
+        return userUseCase.changePassword(changePasswordModel)
+    }
+
+    fun initForgotPassword(phoneNumber: String) : Observable<Result<Boolean>> {
+        return Observable.never()
+    }
+
+    /*
+    fun confirmForgotPassword(forgotPasswordModel: ForgotPasswordModel) : Observable<Result<Boolean>> {
+        return userUseCase.confirmForgotPassword(forgotPasswordModel)
+    }*/
+
+
+    //Global State Subscriptions
+
+    fun getUserInformationSubscription() : Observable<UserInformationResult>{
+        return state.getUserInformationSubscription()
     }
 
     fun getNotificationsSubscription() : Observable<List<ServerEvent>>{

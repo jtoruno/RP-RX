@@ -21,7 +21,7 @@ class PushListenerService : FirebaseMessagingService() {
         val app = application as RPApplication
         val environment = app.component()?.environment()
         val api = environment?.userUseCase()
-        api?.registPushNotificationToken(p0?:"",environment.currentUser().getCurrentUser()?.userId ?: "")
+        api?.registPushNotificationToken(p0?:"",environment.currentUser().getCurrentUser()?.id ?: "")
     }
     override fun onMessageReceived(p0: RemoteMessage?) {
         super.onMessageReceived(p0)

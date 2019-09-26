@@ -10,8 +10,7 @@ import com.zimplifica.redipuntos.libs.utils.ValidationService
 import com.zimplifica.redipuntos.ui.activities.*
 
 
-class ManagerNav private constructor(context: Context){
-    private val context : Context = context
+class ManagerNav private constructor(private val context: Context){
     private val environment : Environment?
 
     init {
@@ -42,21 +41,15 @@ class ManagerNav private constructor(context: Context){
 
     private fun show(step: ProfileStep?){
         if (step == null)return
-        val userStatus = environment?.currentUser()?.userConfirmationStatus() ?: return
+        val userStatus = environment?.currentUser()?.getCurrentUser() ?: return
         when(step){
-            ProfileStep.VerifyIdentity -> {
-                //val intent = Intent(context, CitizenInfoActivity::class.java)
-                val intent = Intent(context, VerifyWalkThActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(intent)
-            }
             ProfileStep.Email -> {
                 val intent = Intent(context, CompleteEmailActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)
             }
             ProfileStep.VerifyEmail -> {
-                val email = userStatus.email
+                val email = userStatus.userEmail
                 if(email!=null){
                     val intent = Intent(context, ConfirmEmailActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

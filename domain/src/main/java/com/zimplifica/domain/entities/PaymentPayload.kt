@@ -3,8 +3,7 @@ package com.zimplifica.domain.entities
 import java.io.Serializable
 
 class PaymentMethod(val cardId: String,val cardNumberWithMask: String,
-                     val cardExpirationDate: String, val issuer: String,
-                     val rewards: Double, val automaticRedemption: Boolean) : Serializable
+                     val cardExpirationDate: String, val issuer: String) : Serializable
 
 class Item (val type: String, /*val description: String,*/ val amount: Double) : Serializable
 

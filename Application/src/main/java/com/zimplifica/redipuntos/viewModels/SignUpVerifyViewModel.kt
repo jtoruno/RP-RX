@@ -163,7 +163,7 @@ interface SignUpVerifyViewModel {
                 UserCredentialType.PHONE_NUMBER -> "+506$username"
                 UserCredentialType.EMAIL -> username
             }
-            return environment.authenticationUseCase().signUp(userId,usernameFormated,password,verificationCode)
+            return environment.authenticationUseCase().signUp(userId,usernameFormated,password,verificationCode,"")
                 .doOnSubscribe { this.loadingEnabled.onNext(true) }
         }
 
@@ -178,7 +178,7 @@ interface SignUpVerifyViewModel {
                     UserCredentialType.EMAIL -> username
                 }
 
-                val verifyEvent = environment.authenticationUseCase().signUp(userId,usernameFormated,password,verificationCode)
+                val verifyEvent = environment.authenticationUseCase().signUp(userId,usernameFormated,password,verificationCode,"")
                     .share()
 
 

@@ -142,7 +142,6 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         })
 
         compositeDisposable.add(viewModel.outputs.completeAccountInfoAction().subscribe {
-            Log.e("ProfileF",it.status.status.name)
             ManagerNav.getInstance(activity?.applicationContext!!).initNav()
         })
 
@@ -150,37 +149,18 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
     }
 
     private fun refreshUI(user: UserInformationResult){
-        val name1 = (user.userFirstName?:"").toLowerCase()
-        val name2 = (user.userLastName?:"").toLowerCase()
-        val completeName = ("$name1 $name2").capitalizeWords()
-        if (completeName.isEmpty() || completeName == " "){
+        val name = user.nickname
+        if (name==null){
             profile_user_welcome.text = "¡Bienvenido Usuario Invitado!"
             setRoundImage(getUserInitials("Usuario Invitado"))
         }else{
-            val formalName = (name1.split(" ").first() + " " + name2.split(" ").first()).capitalizeWords()
-            setRoundImage(getUserInitials(formalName))
-            profile_user_welcome.text = "¡Hola $formalName!"
+
+            setRoundImage(getUserInitials(name))
+            profile_user_welcome.text = "¡Hola $name!"
         }
 
-        val status = user.status.status
-        when(status){
-            VerificationStatus.VerifiedValid -> {
-                profile_user_status.text = "Usuario verificado"
-                profile_user_status_icon.setImageResource(R.drawable.ic_verified_user_black_24dp)
-            }
-            VerificationStatus.VerifiedInvalid -> {
-                profile_user_status.text = "Usuario no verificado"
-                profile_user_status_icon.setImageResource(R.drawable.ic_warning_black_24dp)
-            }
-            VerificationStatus.Verifying -> {
-                profile_user_status.text = "Verificación en proceso"
-                profile_user_status_icon.setImageResource(R.drawable.ic_sync_black_24dp )
-            }
-            else -> {
-                profile_user_status.text = "Verificación pendiente"
-                profile_user_status_icon.setImageResource(R.drawable.ic_warning_black_24dp)
-            }
-        }
+        profile_user_status.text = "Usuario verificado"
+        profile_user_status_icon.setImageResource(R.drawable.ic_verified_user_black_24dp)
     }
 
     private fun refreshProgressBar(user: UserInformationResult){
@@ -192,10 +172,6 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
                     val nextStepString = "Añadir teléfono"
                     profile_next_step.text = nextStepString
 
-                }
-                ProfileStep.VerifyIdentity -> {
-                    val nextStepString = "Verificar Identidad"
-                    profile_next_step.text = nextStepString
                 }
                 ProfileStep.Email -> {
                     val nextStepString = "Añadir Email"
@@ -283,6 +259,4 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         compositeDisposable.dispose()
         super.onDestroy()
     }
-
-
 }

@@ -2,6 +2,7 @@ package com.zimplifica.awsplatform.AppSync
 
 import android.util.Log
 import com.amazonaws.mobileconnectors.appsync.fetcher.AppSyncResponseFetchers
+import com.amazonaws.rediPuntosAPI.GetCommercesQuery
 import com.amazonaws.rediPuntosAPI.GetNotificationsQuery
 import com.amazonaws.rediPuntosAPI.GetTransactionsByUserQuery
 import com.amazonaws.rediPuntosAPI.GetUserQuery
@@ -16,6 +17,7 @@ import com.zimplifica.domain.entities.VerificationStatus
 class CacheOperations{
     private var appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
 
+    /*
     fun updateCitizen(citizen: Citizen){
         val query = GetUserQuery.builder().build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
@@ -39,7 +41,7 @@ class CacheOperations{
                 }
 
             })
-    }
+    }*/
 
     fun updateEmail(email : String){
         val query = GetUserQuery.builder().build()
@@ -52,9 +54,8 @@ class CacheOperations{
                 override fun onResponse(response: Response<GetUserQuery.Data>) {
                     val user = response.data()?.user
                     if(user!= null){
-                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
-                            user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
-                            email, user.emailVerified(),user.rewards(),user.paymentMethods(),user.status(), user.gender(), user.address())
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.nickname(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
+                            email, user.emailVerified(),user.rewards(),user.paymentMethods(),user.hasSecurityCode())
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
@@ -77,10 +78,8 @@ class CacheOperations{
                 override fun onResponse(response: Response<GetUserQuery.Data>) {
                     val user = response.data()?.user
                     if(user!= null){
-                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
-                            user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
-                            user.email(), isConfirmed,user.rewards(),user.paymentMethods(), user.status(), user.gender(), user.address())
-
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.nickname(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
+                            user.email(), isConfirmed,user.rewards(),user.paymentMethods(),user.hasSecurityCode())
                         val data = query.wrapData(GetUserQuery.Data(item))
 
                         appSyncClient!!.store.write(query,data).enqueue(null)
@@ -104,12 +103,10 @@ class CacheOperations{
                     if(user!= null){
                         val paymentList = user.paymentMethods().toMutableList()
                         val paymentObj = GetUserQuery.PaymentMethod("__PaymentMethod",paymentMethod.cardId,
-                            paymentMethod.cardNumberWithMask, paymentMethod.cardExpirationDate, paymentMethod.issuer, paymentMethod.rewards,
-                            paymentMethod.automaticRedemption)
+                            paymentMethod.cardNumberWithMask, paymentMethod.cardExpirationDate, paymentMethod.issuer)
                         paymentList.add(paymentObj)
-                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
-                            user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
-                            user.email(), user.emailVerified(),user.rewards(),paymentList, user.status(), user.gender(), user.address())
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.nickname(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
+                            user.email(), user.emailVerified(),user.rewards(),paymentList,user.hasSecurityCode())
 
                         val data = query.wrapData(GetUserQuery.Data(item))
 
@@ -122,7 +119,7 @@ class CacheOperations{
 
     fun updateTransactions(withExistingTransaction : Transaction){
 
-        val query = GetTransactionsByUserQuery.builder().limit(null).nextToken(null).build()
+        val query = GetTransactionsByUserQuery.builder().build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -158,7 +155,7 @@ class CacheOperations{
                 } })
     }
     fun updateNewTransactions(newTransaction: Transaction){
-        val query = GetTransactionsByUserQuery.builder().nextToken(null).limit(null).build()
+        val query = GetTransactionsByUserQuery.builder().build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -185,38 +182,6 @@ class CacheOperations{
             })
     }
 
-    fun updateVerificationStatus(verificationStatus : VerificationStatus){
-        val query = GetUserQuery.builder().build()
-        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
-            .enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
-                override fun onFailure(e: ApolloException) {
-                    Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateVerificationStatus Error:", e)                }
-
-                override fun onResponse(response: Response<GetUserQuery.Data>) {
-                    val user = response.data()?.user
-                    if(user!= null){
-                        val verStatus = when(verificationStatus){
-                            VerificationStatus.Pending -> com.amazonaws.rediPuntosAPI.type.VerificationStatus.PENDING
-                            VerificationStatus.VerifiedValid -> com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFIED_VALID
-                            VerificationStatus.Verifying -> com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFYING
-                            VerificationStatus.VerifiedInvalid -> com.amazonaws.rediPuntosAPI.type.VerificationStatus.VERIFIED_INVALID
-                        }
-                        val status = GetUserQuery.Status(user.status().__typename(),verStatus,user.status().verificationReference())
-                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.firstName(),
-                            user.lastName(),user.birthdate(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
-                            user.email(), user.emailVerified(),user.rewards(),user.paymentMethods(),status, user.gender(), user.address())
-
-                        val data = query.wrapData(GetUserQuery.Data(item))
-
-                        appSyncClient!!.store.write(query,data).enqueue(null)
-                        Log.i("🔵", "Cache updated at [CacheOperations] [updateEmail]")
-                    }
-                }
-
-            })
-
-    }
-
     fun updateNotificationStatus(id: String){
         val query = GetNotificationsQuery.builder().build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
@@ -229,16 +194,66 @@ class CacheOperations{
                     if (result!=null){
                         val notifications = result.items()
                         notifications.map { oldValue -> if(oldValue.id() == id){
-                            return@map GetNotificationsQuery.Item(oldValue.__typename(),oldValue.id(),oldValue.createdAt(),oldValue.user(),oldValue.type(),
+                            return@map GetNotificationsQuery.Item(oldValue.__typename(),oldValue.id(),oldValue.origin(),oldValue.createdAt(),oldValue.user(),oldValue.type(),
                                 oldValue.title(),oldValue.message(),oldValue.data(),oldValue.actionable(),true,oldValue.hidden())
                         }else{
                             return@map oldValue
                         }}
                         val data = query.wrapData(GetNotificationsQuery.Data(GetNotificationsQuery.GetNotifications(result.__typename(),result.nextToken(),notifications)))
                         appSyncClient!!.store.write(query,data).enqueue(null)
-                        Log.i("🔵", "Cache updated at [CacheOperations] [updateEmail]")
+                        Log.i("🔵", "Cache updated at [CacheOperations] [updateNotificationStatus]")
                     }
                 }
+            })
+    }
+
+    fun updateCommerce(favorite: Boolean, merchantId: String) {
+        val query = GetCommercesQuery.builder().build()
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+            .enqueue(object: GraphQLCall.Callback<GetCommercesQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateCommerce Error:", e)                 }
+
+                override fun onResponse(response: Response<GetCommercesQuery.Data>) {
+                    val result = response.data()?.commerces
+                    if (result!=null){
+                        val commerces = result.items()
+                        commerces.map { if (it.id() == merchantId){
+                            return@map GetCommercesQuery.Item(it.__typename(),it.id(),it.name(),it.description(),it.posterImage(),it.website(),it.facebook(),it.whatsapp(),it.instagram(),it.tags(),it.category(),it.stores(),
+                                it.cashback(),favorite)
+                        }else{
+                            return@map it
+                        } }
+                        val data = query.wrapData(GetCommercesQuery.Data(GetCommercesQuery.GetCommerces(result.__typename(),commerces,result.total())))
+                        appSyncClient!!.store.write(query,data).enqueue(null)
+                        Log.i("🔵", "Cache updated at [CacheOperations] [updateCommerce]")
+                    }
+                }
+            })
+
+    }
+
+    fun updateUserHasSecurityCode(success: Boolean) {
+        val query = GetUserQuery.builder().build()
+        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
+            .enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "Platform, CacheOperations,updateEmail Error:", e)
+                }
+
+                override fun onResponse(response: Response<GetUserQuery.Data>) {
+                    val user = response.data()?.user
+                    if(user!= null){
+                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),user.nickname(),user.identityNumber(),user.phoneNumber(),user.phoneNumberVerified(),
+                            user.email(), user.emailVerified(),user.rewards(),user.paymentMethods(),success)
+
+                        val data = query.wrapData(GetUserQuery.Data(item))
+
+                        appSyncClient!!.store.write(query,data).enqueue(null)
+                        Log.i("🔵", "Cache updated at [CacheOperations] [updateUserHasSecurityCode]")
+                    }
+                }
+
             })
     }
 

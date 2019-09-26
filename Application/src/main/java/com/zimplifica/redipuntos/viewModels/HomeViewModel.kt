@@ -5,13 +5,9 @@ import androidx.annotation.NonNull
 import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
-import com.zimplifica.domain.entities.Result
-import com.zimplifica.domain.entities.UserInformationResult
-import com.zimplifica.domain.entities.UserStateResult
-import com.zimplifica.domain.entities.VerificationStatus
+import com.zimplifica.domain.entities.*
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
-import com.zimplifica.redipuntos.libs.utils.UserConfirmationStatus
 import com.zimplifica.redipuntos.ui.data.maxCardsAllowed
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
@@ -83,17 +79,6 @@ interface HomeViewModel {
                     Log.e("TokenCorrect",it)
                 }
 
-            onCreate
-                .map { return@map environment.currentUser().getCurrentUser()?.status?.status }
-                .subscribe (this.showCompletePersonalInfoAlert)
-
-            /*
-            onCreate
-                .map { return@map environment.currentUser().getCurrentUser() }
-                .subscribe(this.accountInformationResult)
-
-            environment.userUseCase().getUserInformationSubscription()
-                .subscribe(this.accountInformationResult)*/
 
             val signOutEvent = signOutButtonPressed
                 .flatMap { this.signOut() }
@@ -110,35 +95,6 @@ interface HomeViewModel {
                     if (event == null) return@subscribe
                     Log.e("🔵", "[HomeVM] [init] New actionable event $event")
                     when {
-                        event.type == "VerificationFinished" -> {
-                            val lastAccountStatus = environment.currentUser().getCurrentUser()?.status ?: VerificationStatus.Pending
-                            environment.userUseCase().getUserInformation(false)
-                                .filter { !it.isFail() }
-                                .map { it.successValue() }
-                                .subscribe { userInfo ->
-                                    when(userInfo?.status?.status){
-                                        VerificationStatus.Pending -> {
-                                            Log.e("🔴","Alert.showIdentityVerificationFailureAlert()")
-                                            this.showIdentityVerificationFailure.onNext(Unit)
-                                        }
-                                        VerificationStatus.Verifying -> {
-                                            Log.e("🔴", "Verification pending after verification completed subscription")
-                                        }
-                                        VerificationStatus.VerifiedValid -> {
-                                            if(lastAccountStatus != VerificationStatus.VerifiedValid){
-                                                Log.e("🔴","Alert.showIdentityVerificationSuccessAlert(title: event.title, message: event.message)")
-                                                this.showIdentityVerificationSuccess.onNext(Pair(event.title,event.message))
-                                            }else{
-                                                Log.e("🔸","Account activate notification but already triggered")
-                                            }
-                                        }
-                                        VerificationStatus.VerifiedInvalid -> {
-                                            Log.e("🔸","Account activate notification but already triggered")
-                                        }
-                                    }
-
-                                }
-                        }
                         event.type == "PaymentRequested" -> {
                             val paymentId = event.id
                             environment.userUseCase().getTransactionById(paymentId)
@@ -204,8 +160,6 @@ interface HomeViewModel {
 
         override fun signOutAction(): Observable<Unit> = this.signOutAction
 
-        //override fun accountInformationResult(): Observable<UserInformationResult> = this.accountInformationResult
-
 
         private fun signOut() : Observable<Result<UserStateResult>>{
             return environment.authenticationUseCase().signOut()
@@ -218,8 +172,12 @@ interface HomeViewModel {
         override fun showAlert(): Observable<Pair<String, String>> = this.showAlert
 
         private fun registDeviceToken(token : String) : Observable<Result<String>>{
-            val userId = environment.currentUser().getCurrentUser()?.userId
+            val userId = environment.currentUser().getCurrentUser()?.id
             return environment.userUseCase().registPushNotificationToken(token, userId ?: "")
+        }
+
+        private fun handleReviewMerchant(rateCommerceModel: RateCommerceModel) : Observable<Result<Boolean>>{
+            return environment.userUseCase().reviewMerchant(rateCommerceModel)
         }
     }
 }

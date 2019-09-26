@@ -53,7 +53,7 @@ interface PaymentSelectionVM {
             set(value) {_checkAndPayModel = value; this.checkAndPayModelAction.onNext(value) }
             get() = _checkAndPayModel ?: throw UninitializedPropertyAccessException("this was queried")
 
-        private val defaultPayment = PaymentMethod("","","","",0.0,false)
+        private val defaultPayment = PaymentMethod("","","","")
 
         //Inputs
         private val paymentMethodChanged = PublishSubject.create<PaymentMethod>()

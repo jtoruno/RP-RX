@@ -11,7 +11,7 @@ enum class UserCredentialType {
 }
 
 enum class ProfileStep {
-    VerifyIdentity, PhoneNumber, Email, VerifyEmail,
+    PhoneNumber, Email, VerifyEmail,
     PaymentMethod, Unknown
 }
 
@@ -30,6 +30,24 @@ object ValidationService {
         }else{
             return UserCredentialType.EMAIL
         }
+    }
+
+    // Validate the nickname and username.
+    fun validateNicknameAndUsername(nickname: String?,username: String?) : Boolean {
+        if(nickname == null || username==null) { return false }
+        if (nickname.isEmpty() || !validatePhoneNumber(username)) { return false }
+        return true
+    }
+
+    /// Validate the phone number lenght.
+    fun validatePhoneNumber(phoneText: String?) : Boolean {
+        if (phoneText.isNullOrEmpty()) { return false }
+
+        if (phoneText.length < 9) { return false }
+
+        val phoneStart = phoneText.first()
+        if (!allowedPhoneNumbers.contains(phoneStart.toString())){ return false }
+        return true
     }
 
     fun isValidEmail(username : String): Boolean{
@@ -129,48 +147,23 @@ object ValidationService {
         return confirmationCodeValidation && passwordValidation
     }
 
-
-    fun validateUserStatus(userInfo: UserInformationResult) : UserConfirmationStatus{
-        var shouldCompleteCitizenInfo = false
-        var shouldCompleteEmail = false
-        var shouldVerifyEmail = false
-        var shouldCompletePaymentMethod = false
-        var email: String? = null
-
-        if (userInfo.citizenId == null) {
-            shouldCompleteCitizenInfo = true
-        }
-
-        if (userInfo.userEmail == null) {
-            shouldCompleteEmail = true
-        } else {
-            email = userInfo.userEmail
-        }
-
-        if (!userInfo.userEmailVerified) {
-            shouldVerifyEmail = true
-        }
-
-        if (userInfo.paymentMethods.isEmpty()) {
-            shouldCompletePaymentMethod = true
-        }
-        return UserConfirmationStatus(shouldCompleteCitizenInfo,shouldCompleteEmail,shouldVerifyEmail,email,shouldCompletePaymentMethod)
+    /// Validate if the verification and the security code are valid.
+    fun validateVerificationAndSecurityCode(pin: String?, verificationCode: String?) : Boolean {
+        if(pin == null || verificationCode == null) { return false }
+        if (verificationCode.length != 6 || !validateSecurityCode( pin)) { return false }
+        return true
     }
 
-    fun verificationStatus(userInfo: UserInformationResult) : Boolean{
-        return when(userInfo.status.status){
-            VerificationStatus.Pending -> true
-            else -> {
-                false
-            }
-        }
+    /// Validate if the security code is valid.
+    fun validateSecurityCode(securityCode: String?) : Boolean {
+        if(securityCode == null) { return false }
+        val  numberRegEx  = Pattern.compile("[0-9]{4}")
+        if (numberRegEx.matcher(securityCode).matches()) { return true }
+        return false
     }
 
     fun getNextStepToCompleteProfile(userInfo: UserInformationResult?) : ProfileStep?{
         if(userInfo==null){return ProfileStep.Unknown}
-        if(userInfo.status.status == VerificationStatus.Pending){
-            return ProfileStep.VerifyIdentity
-        }
         if(userInfo.userEmail == null){
             return ProfileStep.Email
         }
@@ -186,37 +179,14 @@ object ValidationService {
     fun getCompletedStepsCount(userInfo: UserInformationResult?) : Int{
         if(userInfo==null){return 0}
         var count = 0
-        if(userInfo.status.status == VerificationStatus.VerifiedValid){
-            count +=1
-        }
+
         if(userInfo.userEmailVerified && userInfo.userEmail != null){
             count +=1
         }
         if (userInfo.paymentMethods.isNotEmpty()){
             count +=1
         }
-        /*
-        if(userInfo.address != null){
-            count +=1
-        }
-        if(userInfo.gender != null){
-            count +=1
-        }*/
         return count
     }
 }
 
-class UserConfirmationStatus(var shouldCompleteCitizenInfo: Boolean, var shouldCompleteEmail: Boolean, var shouldVerifyEmail: Boolean, var email: String?, var shouldCompletePaymentMethod: Boolean){
-
-    enum class ConfirmationStatus{
-        missingInfo,completed
-    }
-
-    var confirmationStatus : ConfirmationStatus =
-        if (shouldCompleteCitizenInfo||shouldCompleteEmail||shouldVerifyEmail||shouldCompletePaymentMethod){
-             ConfirmationStatus.missingInfo
-        }else{
-             ConfirmationStatus.completed
-        }
-
-}

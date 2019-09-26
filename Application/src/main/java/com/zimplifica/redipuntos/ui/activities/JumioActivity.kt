@@ -77,12 +77,7 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
         compositeDisposable.add(viewModel.outputs.finishVerificationOutput().observeOn(AndroidSchedulers.mainThread()).subscribe {
             netverifySDK.destroy()
             if (it){
-                viewModel.environment.userUseCase().initIdentitiyVerification()
-                    .delay(2,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
-                    .subscribe {
-                        finish()
-                        ManagerNav.getInstance(this).handleNextStep()
-                    }
+
             }else{
                 finish()
                 val intent = Intent(this, VerifyWalkThActivity::class.java)
@@ -118,7 +113,7 @@ class JumioActivity : BaseActivity<JumioScanVM.ViewModel>() {
             listOfDocTypes.add(NVDocumentType.IDENTITY_CARD)
             netverifySDK.setPreselectedDocumentTypes(listOfDocTypes)
             netverifySDK.setPreselectedDocumentVariant(NVDocumentVariant.PLASTIC)
-            val url = callbackBaseUrl + viewModel.environment.currentUser().getCurrentUser()?.userId
+            val url = callbackBaseUrl + viewModel.environment.currentUser().getCurrentUser()?.id
             netverifySDK.setCallbackUrl(url)
             netverifySDK.setCameraPosition(JumioCameraPosition.BACK)
 

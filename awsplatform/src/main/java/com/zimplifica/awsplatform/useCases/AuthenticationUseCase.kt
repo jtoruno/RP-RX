@@ -7,6 +7,7 @@ import com.amazonaws.mobile.client.Callback
 import com.amazonaws.mobile.client.UserState
 import com.amazonaws.mobile.client.results.ForgotPasswordState
 import com.amazonaws.rediPuntosAPI.InitPhoneVerificationMutation
+import com.amazonaws.rediPuntosAPI.type.InitPhoneVerificationInput
 import com.apollographql.apollo.GraphQLCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
@@ -28,8 +29,10 @@ class AuthenticationUseCase : AuthenticationUseCase {
 
     override fun verifyPhoneNumber(phoneNumber: String): Observable<Result<Boolean>> {
         val single = Single.create<Result<Boolean>> create@{ single ->
+            val input = InitPhoneVerificationInput.builder().phoneNumber(phoneNumber).build()
             val verificationRequest = InitPhoneVerificationMutation.builder()
-                .phoneNumber(phoneNumber)
+                //.phoneNumber(phoneNumber)
+                .input(input)
                 .build()
             this.appSyncClient!!.mutate(verificationRequest).enqueue(object : GraphQLCall.Callback<InitPhoneVerificationMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -78,9 +81,9 @@ class AuthenticationUseCase : AuthenticationUseCase {
         return single.toObservable()
     }
 
-    override fun signUp(userId: String, username: String, password: String, verificationCode: String): Observable<Result<SignUpResult>> {
+    override fun signUp(userId: String, username: String, password: String, verificationCode: String, nickname: String): Observable<Result<SignUpResult>> {
         val single = Single.create<Result<SignUpResult>> create@{ single ->
-            AWSMobileClient.getInstance().signUp(userId,password, mapOf(Pair("phone_number",username)), mapOf(Pair("verificationCode",verificationCode)), object: Callback<com.amazonaws.mobile.client.results.SignUpResult>{
+            AWSMobileClient.getInstance().signUp(userId,password, mapOf(Pair("phone_number",username),Pair("nickname",nickname)), mapOf(Pair("verificationCode",verificationCode)), object: Callback<com.amazonaws.mobile.client.results.SignUpResult>{
                 override fun onResult(result: com.amazonaws.mobile.client.results.SignUpResult?) {
                     var state : SignUpState
                     if (result!=null){
@@ -343,5 +346,22 @@ class AuthenticationUseCase : AuthenticationUseCase {
                 }
             }
         }
+    }
+
+    override fun changePassword(currentPassword: String, proposedPassword: String): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            AWSMobileClient.getInstance().changePassword(currentPassword,proposedPassword,object : Callback<Void>{
+                override fun onResult(result: Void?) {
+                    single.onSuccess(Result.success(true))
+                }
+
+                override fun onError(e: Exception?) {
+                    Log.e("\uD83D\uDD34", "Platform, AuthenticationUseCase, ChangePassword Error:", e)
+                    val error = AWSErrorDecoder.decodeForgotPasswordError(e)
+                    single.onSuccess(Result.failure(error))
+                }
+            })
+        }
+        return single.toObservable()
     }
 }

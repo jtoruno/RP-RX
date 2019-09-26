@@ -73,9 +73,8 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         mov_detail_description.text = transaction.description?:"Sin descripción"
         mov_detail_commerce.text = transaction.transactionDetail.vendorName
         mov_detail_amount.text = "₡ "+String.format("%,.2f", transaction.total)
-        val firstName = viewModel.environment.currentUser().getCurrentUser()?.userFirstName ?: ""
-        val lastName = viewModel.environment.currentUser().getCurrentUser()?.userLastName ?: ""
-        mov_detail_user_name.text = ("$firstName $lastName").toLowerCase().capitalizeWords()
+        val name = viewModel.environment.currentUser().getCurrentUser()?.nickname?: ""
+        mov_detail_user_name.text = (name).toLowerCase().capitalizeWords()
         mov_detail_date.text = transaction.date
         mov_detail_hour.text = transaction.time
         mov_detail_rewards.text = "+ ₡ "+String.format("%,.2f", transaction.rewards)

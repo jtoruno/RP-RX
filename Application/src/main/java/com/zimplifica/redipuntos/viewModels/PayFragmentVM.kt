@@ -6,7 +6,6 @@ import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
-import com.zimplifica.redipuntos.libs.utils.UserConfirmationStatus
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -68,13 +67,10 @@ interface PayFragmentVM {
                 .share()
 
             nextButtonEvent
-                .skipWhile {environment.currentUser().getCurrentUser()?.status?.status == VerificationStatus.Pending}
+                //.skipWhile {environment.currentUser().getCurrentUser()?.status?.status == VerificationStatus.Pending}
                 .map { return@map this.amountFloat }
                 .subscribe(this.nextButtonAction)
 
-            nextButtonEvent
-                .filter { environment.currentUser().getCurrentUser()?.status?.status == VerificationStatus.Pending }
-                .subscribe {this.showCompletePersonalInfoAlert.onNext("nextButton")}
 
             this.completePersonalInfoButtonPressed
                 .subscribe(this.goToCompletePersonalInfoScreen)

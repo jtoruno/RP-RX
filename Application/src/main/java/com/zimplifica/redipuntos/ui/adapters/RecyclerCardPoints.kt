@@ -99,6 +99,6 @@ class RecyclerCardPoints: androidx.recyclerview.widget.RecyclerView.Adapter<Recy
     fun setPaymentMethods(list : List<PaymentMethod>){
         paymentMethods.clear()
         this.paymentMethods = list.toMutableList()
-        paymentMethods.add(PaymentMethod("ADD_VIEW","","","",0.0,false))
+        paymentMethods.add(PaymentMethod("ADD_VIEW","","",""))
     }
 }

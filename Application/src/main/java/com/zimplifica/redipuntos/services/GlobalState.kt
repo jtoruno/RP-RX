@@ -14,6 +14,7 @@ import io.reactivex.subjects.ReplaySubject
 
 @SuppressLint("CheckResult")
 class GlobalState(val context: Context){
+    private var userStateSubscription : BehaviorSubject<UserStateResult>
     private var userInformationSubscription  = BehaviorSubject.create<UserInformationResult>()
     private var notificationsSubscription : BehaviorSubject<List<ServerEvent>>
     private var actionableEvents : PublishSubject<ServerEvent>
@@ -24,13 +25,12 @@ class GlobalState(val context: Context){
     //private val environment = Environment.builder().build()
 
      init {
+         this.userStateSubscription = BehaviorSubject.createDefault(UserStateResult.signedOut)
          this.paymentMethodsSubscription = PublishSubject.create()
          this.notificationsSubscription = BehaviorSubject.createDefault(mutableListOf())
          this.actionableEvents = PublishSubject.create()
          this.paymentsSubscription = PublishSubject.create()
          this.userInformationSubscription.subscribe { userInfo ->
-            Log.e("GlobalState","  "+userInfo.userPhoneNumber+userInfo.citizenId)
-            //environment?.currentUser()?.setCurrentUser(userInfo)
             CurrentUser.setCurrentUser(userInfo)
          }
     }
@@ -43,30 +43,15 @@ class GlobalState(val context: Context){
         return this.paymentMethodsSubscription
     }
 
-    fun updateCurrentUser(citizen: Citizen) {
-        //val currentUser = environment?.currentUser()?.getCurrentUser()
-        val currentUser =CurrentUser.getCurrentUser()
-        if(currentUser!=null){
-            Log.e("GlobalState","Citizen ww"+citizen.identityNumber)
-            val  userInfo = UserInformationResult(currentUser.userId, citizen.identityNumber,
-            citizen.firstName, citizen.lastName, citizen.getBirthDateAsString(),
-            currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
-                currentUser.userEmailVerified, null, currentUser.rewards,
-                currentUser.paymentMethods, currentUser.status)
-            this.userInformationSubscription.onNext(userInfo)
-        }
-    }
-
     fun updateCurrentUser(paymentMethod: PaymentMethod){
         //val currentUser = environment?.currentUser()?.getCurrentUser()
         val currentUser =CurrentUser.getCurrentUser()
         if(currentUser!=null){
             var paymentMethods = currentUser.paymentMethods.toMutableList()
             paymentMethods.add(paymentMethod)
-            val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,
-                currentUser.userFirstName, currentUser.userLastName, currentUser.userBirthDate,
+            val userInfo = UserInformationResult(currentUser.id, currentUser.nickname,
                 currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
-                currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
+                currentUser.userEmailVerified,  currentUser.rewards, paymentMethods, currentUser.securityCodeCreated)
             this.userInformationSubscription.onNext(userInfo)
             this.paymentMethodsSubscription.onNext(paymentMethod)
         }
@@ -77,13 +62,11 @@ class GlobalState(val context: Context){
     }
 
     fun updateCurrentUser(email: String) {
-        //val currentUser = environment?.currentUser()?.getCurrentUser()
         val currentUser =CurrentUser.getCurrentUser()
         if(currentUser!=null){
-            val userInfo = UserInformationResult(currentUser.userId,currentUser.citizenId, currentUser.userFirstName,
-                currentUser.userLastName, currentUser.userBirthDate, email, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified,currentUser.userEmailVerified, null, currentUser.rewards,
-                currentUser.paymentMethods, currentUser.status)
+            val userInfo = UserInformationResult(currentUser.id, currentUser.nickname,
+                email, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
+                currentUser.userEmailVerified,  currentUser.rewards, currentUser.paymentMethods, currentUser.securityCodeCreated)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -92,9 +75,9 @@ class GlobalState(val context: Context){
         //val currentUser = environment?.currentUser()?.getCurrentUser()
         val currentUser =CurrentUser.getCurrentUser()
         if(currentUser!=null){
-            val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
-                currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, isVerify, null, currentUser.rewards, currentUser.paymentMethods, currentUser.status)
+            val userInfo = UserInformationResult(currentUser.id, currentUser.nickname,
+                currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
+                isVerify,  currentUser.rewards, currentUser.paymentMethods, currentUser.securityCodeCreated)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
@@ -102,23 +85,24 @@ class GlobalState(val context: Context){
     fun updateCurrentUserDelete(withouPaymentMethod : PaymentMethod){
         val currentUser =CurrentUser.getCurrentUser()
         if(currentUser!=null){
-            var paymentMethods = currentUser.paymentMethods.toMutableList()
+            val paymentMethods = currentUser.paymentMethods.toMutableList()
             paymentMethods.removeAll{ it.cardId == withouPaymentMethod.cardId}
-            val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
-                currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, paymentMethods, currentUser.status)
+            val userInfo = UserInformationResult(currentUser.id, currentUser.nickname,
+                currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
+                currentUser.userEmailVerified,  currentUser.rewards, paymentMethods, currentUser.securityCodeCreated)
             this.userInformationSubscription.onNext(userInfo)
         }
     }
 
-    fun updateCurrentUseerStatus(status : UserStatus){
+    fun updateCurrentUserSecurityCode(securityCodeCreated: Boolean){
         val currentUser =CurrentUser.getCurrentUser()
-        if (currentUser!=null){
-            val userInfo = UserInformationResult(currentUser.userId, currentUser.citizenId,currentUser.userFirstName,
-                currentUser.userLastName, currentUser.userBirthDate, currentUser.userEmail, currentUser.userPhoneNumber,
-                currentUser.userPhoneVerified, currentUser.userEmailVerified, null, currentUser.rewards, currentUser.paymentMethods, status)
+        if(currentUser!=null){
+            val userInfo = UserInformationResult(currentUser.id, currentUser.nickname,
+                currentUser.userEmail, currentUser.userPhoneNumber, currentUser.userPhoneVerified,
+                currentUser.userEmailVerified,  currentUser.rewards, currentUser.paymentMethods, securityCodeCreated)
             this.userInformationSubscription.onNext(userInfo)
         }
+
     }
 
     fun registerNewPayment(transaction: Transaction){
@@ -150,5 +134,17 @@ class GlobalState(val context: Context){
 
     fun getActionableEventSubscription() : Observable<ServerEvent> {
         return this.actionableEvents
+    }
+
+    fun updateUserState(state : UserStateResult){
+        return this.userStateSubscription.onNext(state)
+    }
+
+    fun getUserStateSubscription() : Observable<UserStateResult> {
+        return userStateSubscription
+    }
+
+    fun getCurrentUserState() : UserStateResult {
+        return userStateSubscription.value
     }
 }

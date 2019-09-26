@@ -6,16 +6,24 @@ import io.reactivex.Observable
 
 class AuthenticationService(private val state : GlobalState, private val authenticationUseCase : AuthenticationUseCase) {
 
+    init {
+        authenticationUseCase.userStateSubscription()
+            .subscribe {state.updateUserState(it)}
+    }
+
     fun signIn(username: String, password: String) : Observable<Result<SignInResult>> {
         return authenticationUseCase.signIn(username, password)
     }
 
     fun getCurrentUserState() : Observable<UserStateResult> {
         return authenticationUseCase.getCurrentUserState()
+            .doOnNext { state ->
+                this.state.updateUserState(state)
+            }
     }
 
-    fun signUp(userId: String, username: String, password: String,verificationCode: String) : Observable<Result<SignUpResult>> {
-        return authenticationUseCase.signUp(userId, username, password,verificationCode)
+    fun signUp(userId: String, username: String, password: String,verificationCode: String, nickname: String) : Observable<Result<SignUpResult>> {
+        return authenticationUseCase.signUp(userId, username, password,verificationCode,nickname)
     }
 
     fun verifyPhoneNumber(phoneNumber: String) : Observable<Result<Boolean>> {
@@ -28,14 +36,6 @@ class AuthenticationService(private val state : GlobalState, private val authent
 
     fun signOut() : Observable<Result<UserStateResult>> {
         return authenticationUseCase.signOut()
-    }
-
-    fun forgotPassword(username: String) : Observable<Result<ForgotPasswordResult>> {
-        return authenticationUseCase.forgotPassword(username)
-    }
-
-    fun confirmForgotPassword(username: String, confirmationCode: String, newPassword: String) : Observable<Result<ForgotPasswordResult>> {
-        return authenticationUseCase.confirmForgotPassword(username, confirmationCode, newPassword)
     }
 
     fun updateUserAttributes(attributes: Map<String, String>) : Observable<Result<Boolean>> {
@@ -66,5 +66,25 @@ class AuthenticationService(private val state : GlobalState, private val authent
                     else -> return@doOnNext
                 }
             }
+    }
+
+    fun changePassword(currentPassword: String, proposedPassword: String) : Observable<Result<Boolean>> {
+        return authenticationUseCase.changePassword(currentPassword, proposedPassword)
+    }
+
+    fun getUserState() : UserStateResult{
+        return state.getCurrentUserState()
+    }
+
+    fun getUserStateSubscription() : Observable<UserStateResult>{
+        return state.getUserStateSubscription()
+    }
+
+    fun forgotPassword(username: String) : Observable<Result<ForgotPasswordResult>> {
+        return authenticationUseCase.forgotPassword(username)
+    }
+
+    fun confirmForgotPassword(username: String, confirmationCode: String, newPassword: String) : Observable<Result<ForgotPasswordResult>> {
+        return authenticationUseCase.confirmForgotPassword(username, confirmationCode, newPassword)
     }
 }

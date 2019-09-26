@@ -164,11 +164,7 @@ interface AccountVM {
         }
 
         private fun accountInfoEnabled() : Boolean{
-            return environment.currentUser().getCurrentUser()?.status?.status == VerificationStatus.VerifiedValid
-        }
-
-        private fun accountInfoCompleted() : Boolean{
-            return environment.currentUser().getCurrentUser()?.status?.status == VerificationStatus.VerifiedValid
+            return environment.currentUser().getCurrentUser()?.nickname!=null
         }
 
         private fun fetchUserInfo() : Observable<Result<UserInformationResult>>{

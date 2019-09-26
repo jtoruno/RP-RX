@@ -1,28 +1,24 @@
 # this is an auto generated file. This will be overwritten
-mutation InitPhoneVerification($phoneNumber: String!) {
-  initPhoneVerification(phoneNumber: $phoneNumber) {
+mutation InitPhoneVerification($input: InitPhoneVerificationInput!) {
+  initPhoneVerification(input: $input) {
     success
     message
   }
 }
-mutation AddPaymentMethod($paymentMethod: PaymentMethodInput!) {
-  addPaymentMethod(paymentMethod: $paymentMethod) {
+mutation AddPaymentMethod($input: PaymentMethodInput!) {
+  addPaymentMethod(input: $input) {
     id
     cardNumber
     expirationDate
     issuer
-    rewards
-    automaticRedemption
   }
 }
-mutation DisablePaymentMethod($cardId: String!) {
-  disablePaymentMethod(cardId: $cardId) {
+mutation DisablePaymentMethod($input: DisablePaymentMethodInput!) {
+  disablePaymentMethod(input: $input) {
     id
     cardNumber
     expirationDate
     issuer
-    rewards
-    automaticRedemption
   }
 }
 mutation RequestPayment($input: RequestPaymentInput!) {
@@ -56,15 +52,10 @@ mutation RequestPayment($input: RequestPaymentInput!) {
     paymentDescription
   }
 }
-mutation ToggleAutomaticRedemption($cardId: String!) {
-  toggleAutomaticRedemption(cardId: $cardId) {
-    success
-    message
-  }
-}
-mutation SendEventToClient($user: String!, $event: ClientEventInput!) {
-  sendEventToClient(user: $user, event: $event) {
+mutation SendEventToClient($input: SendEventToClientInput!) {
+  sendEventToClient(input: $input) {
     id
+    origin
     createdAt
     user
     type
@@ -76,26 +67,62 @@ mutation SendEventToClient($user: String!, $event: ClientEventInput!) {
     hidden
   }
 }
-mutation InitVerificationProcess {
-  initVerificationProcess {
+mutation UpdateNotificationStatus($input: UpdateNotificationStatusInput!) {
+  updateNotificationStatus(input: $input) {
     success
     message
   }
 }
-mutation UpdateUserAddress($input: UpdateAddressInput!) {
-  updateUserAddress(input: $input) {
+mutation ChangePassword($input: ChangePasswordInput!) {
+  changePassword(input: $input) {
     success
     message
   }
 }
-mutation UpdateUserGender($input: UpdateGenderInput!) {
-  updateUserGender(input: $input) {
+mutation VerifyUserPhoneNumber {
+  verifyUserPhoneNumber {
     success
     message
   }
 }
-mutation UpdateNotificationStatus($id: String!) {
-  updateNotificationStatus(id: $id) {
+mutation CreatePin($input: PinInput!) {
+  createPin(input: $input) {
+    success
+    message
+  }
+}
+mutation VerifyPin($input: PinInput!) {
+  verifyPin(input: $input) {
+    success
+    message
+  }
+}
+mutation UpdatePin($input: PinInput!) {
+  updatePin(input: $input) {
+    success
+    message
+  }
+}
+mutation UpdateFavoriteMerchant($input: UpdateFavoriteMerchantInput!) {
+  updateFavoriteMerchant(input: $input) {
+    success
+    message
+  }
+}
+mutation ReviewMerchant($input: ReviewMerchantInput!) {
+  reviewMerchant(input: $input) {
+    success
+    message
+  }
+}
+mutation InitForgotPassword($input: InitForgotPasswordInput!) {
+  initForgotPassword(input: $input) {
+    success
+    message
+  }
+}
+mutation ConfirmForgotPassword($input: ConfirmForgotPasswordInput!) {
+  confirmForgotPassword(input: $input) {
     success
     message
   }

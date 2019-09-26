@@ -103,7 +103,7 @@ interface SplashViewModel {
                     .map { it.successValue() }
                     .subscribe{
                         if (it == null) return@subscribe
-                        environment.userUseCase().initServerSubscription(it.userId)
+                        environment.userUseCase().initServerSubscription(it.id)
                         val result = Result.success(it)
                         o.onNext(result)
                         o.onComplete()

@@ -107,7 +107,7 @@ interface SPScanQRVM {
         }
 
         private fun requestPayment(vendorId: String, amount: Float) : Observable<Result<PaymentPayload>>{
-            return environment.userUseCase().checkoutPayloadSitePay("",amount,vendorId,"")
+            return environment.userUseCase().checkoutPayloadSitePay(amount,vendorId)
         }
     }
 
