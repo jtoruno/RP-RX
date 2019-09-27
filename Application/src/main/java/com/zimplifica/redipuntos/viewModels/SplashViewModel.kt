@@ -11,10 +11,12 @@ import com.zimplifica.domain.entities.UserStateResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import java.util.concurrent.TimeUnit
 
 interface SplashViewModel {
     interface Inputs {
@@ -55,7 +57,15 @@ interface SplashViewModel {
 
             val mainEvent = Observable.merge(onCreate,retryButtonPressed)
                 .flatMap { return@flatMap getUserInfoAndSubscribe() }
+                .timeout(30,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
                 .share()
+
+            mainEvent
+                .doOnError {
+                    environment.authenticationUseCase().signOut()
+                    this.backToWelcome.onNext(Unit)
+                }
+
 
             finishLoadingUserInfo = mainEvent
                 .filter { !it.isFail() }
@@ -103,7 +113,7 @@ interface SplashViewModel {
                     .map { it.successValue() }
                     .subscribe{
                         if (it == null) return@subscribe
-                        environment.userUseCase().initServerSubscription(it.id)
+                        //environment.userUseCase().initServerSubscription(it.id)
                         val result = Result.success(it)
                         o.onNext(result)
                         o.onComplete()

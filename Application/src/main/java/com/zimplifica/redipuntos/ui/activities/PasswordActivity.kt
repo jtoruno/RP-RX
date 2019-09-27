@@ -147,6 +147,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
             .subscribe {
                 val intent = Intent(this,SignUpVerifyActivity::class.java)
                 //intent.putExtra("password",it.password)
+                intent.putExtra("SignUpModel",it)
                 startActivity(intent)
             })
     }

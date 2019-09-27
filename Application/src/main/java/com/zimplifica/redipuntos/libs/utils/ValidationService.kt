@@ -43,7 +43,7 @@ object ValidationService {
     fun validatePhoneNumber(phoneText: String?) : Boolean {
         if (phoneText.isNullOrEmpty()) { return false }
 
-        if (phoneText.length < 9) { return false }
+        if (phoneText.length != 8) { return false }
 
         val phoneStart = phoneText.first()
         if (!allowedPhoneNumbers.contains(phoneStart.toString())){ return false }

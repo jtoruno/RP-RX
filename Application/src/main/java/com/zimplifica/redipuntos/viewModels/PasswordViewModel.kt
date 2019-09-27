@@ -16,7 +16,9 @@ import java.util.regex.Pattern
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.redipuntos.libs.utils.*
 import com.zimplifica.redipuntos.models.SignUpModel
+import com.zimplifica.redipuntos.models.SignUpUsernameModel
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Observables
 
 interface PasswordViewModel {
     interface Inputs {
@@ -93,30 +95,23 @@ interface PasswordViewModel {
                 .map { validatePasswordSpecialCharacters(it)}
                 .subscribe(this.validPasswordSpecialCharacters)
 
-            val phone  = intent()
-                .filter { it.hasExtra("phone") }
+            val model  = intent()
+                .filter { it.hasExtra("SignUpUsernameModel") }
                 .map {
-                    this.phone = it.getStringExtra("phone")
-                    Log.e("PSVM","PhoneNumber "+phone)
-                    return@map it.getStringExtra("phone")
+                    return@map it.getSerializableExtra("SignUpUsernameModel") as SignUpUsernameModel
                 }
 
 
-            val usernameAndPassword = Observable.combineLatest<String, String, Pair<String, String>>(
-                phone,
-                passwordEditTextChanged,
-                BiFunction { t1, t2 ->
-                    Pair(t1, t2)
-                })
+            val modelAndPassword = Observables.combineLatest(passwordEditTextChanged,model)
 
-            val verifyPhoneNumber = usernameAndPassword
+            val verifyPhoneNumber = modelAndPassword
                 .takeWhen(this.signUpButtonPressed)
-                .flatMap{it -> this.verifyPhoneNumber(uuid,it.second.first, it.second.second)}
+                .flatMap{ this.verifyPhoneNumber(uuid,it.second.second.username, it.second.first)}
                 .share()
 
             verifyPhoneNumber
                 .filter { it.isFail() }
-                .map { it ->
+                .map {
                     when(it){
                         is Result.success -> return@map null
                         is Result.failure -> return@map it.cause as? SignUpError
@@ -125,23 +120,24 @@ interface PasswordViewModel {
                 .map { ErrorHandler.handleError(it , AuthenticationErrorType.SIGN_UP_ERROR) }
                 .subscribe(this.showError)
 
-            verifyPhoneNumber
+            val verifyEventSucess = verifyPhoneNumber
                 .filter { !it.isFail() }
-                .map{it ->
+                .map{
                     when(it){
                         is Result.success -> return@map it.value
                         is Result.failure -> return@map null
                     }}
+
+            val sucessEventAndModel = Observables.combineLatest(verifyEventSucess,model)
+
+            sucessEventAndModel
                 .map { result ->
                     val password = this.passwordEditTextChanged.value
-                    val username = this.phone ?:""
+                    val nickname = result.second.nickname
+                    val username = result.second.username
                     print(username+ password+uuid+"\n")
-                    environment.sharedPreferences().edit().putString("phoneNumber",username).apply()
-                    environment.sharedPreferences().edit().putString("userId",uuid).apply()
-                    environment.sharedPreferences().edit().putString("password",password).apply()
-                    return@map SignUpModel(uuid,username,password)
+                    return@map SignUpModel(uuid,username,password,nickname)
                 }
-                .filter { it!=null }
                 .subscribe(this.verifyPhoneNumberAction)
 
         }

@@ -15,6 +15,7 @@ import com.zimplifica.redipuntos.extensions.text
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresActivityViewModel
 import com.zimplifica.redipuntos.viewModels.TakePhoneViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 
 @RequiresActivityViewModel(TakePhoneViewModel.ViewModel::class)
@@ -22,6 +23,7 @@ class TakePhoneActivity : BaseActivity<TakePhoneViewModel.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
     lateinit var nextBtn : Button
     lateinit var phoneEditText: EditText
+    lateinit var nicknameEditText: EditText
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,16 +32,18 @@ class TakePhoneActivity : BaseActivity<TakePhoneViewModel.ViewModel>() {
         this.supportActionBar?.title = "Registrar"
         nextBtn = findViewById(R.id.next_take_btn)
         phoneEditText = findViewById(R.id.phone_edit_text)
+        nicknameEditText = findViewById(R.id.nickname_editText)
 
         phoneEditText.onChange { this.viewModel.inputs.phone(it) }
+        nicknameEditText.onChange { this.viewModel.inputs.nicknameChanged(it) }
 
         nextBtn.setOnClickListener { this.viewModel.inputs.nextButtonClicked() }
         compositeDisposable.add(this.viewModel.outputs.startNextActivity().subscribe {
             val intent = Intent(this, PasswordActivity::class.java)
-            intent.putExtra("phone",phoneEditText.text())
+            intent.putExtra("SignUpUsernameModel",it)
             startActivity(intent)
         })
-        compositeDisposable.add(this.viewModel.outputs.nextButtonIsEnabled().subscribe {
+        compositeDisposable.add(this.viewModel.outputs.nextButtonIsEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe {
             nextBtn.isEnabled = it
         })
 

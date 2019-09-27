@@ -6,7 +6,9 @@ import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.*
+import com.zimplifica.redipuntos.models.SignUpModel
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
@@ -29,10 +31,7 @@ interface SignUpVerifyViewModel {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
-
-        var username : String = environment.sharedPreferences().getString("phoneNumber","")?:"default"
-        var userId : String = environment.sharedPreferences().getString("userId", "")?:"default"
-        var password : String = environment.sharedPreferences().getString("password", "")?:"default"
+        var username = ""
 
         //Inputs
 
@@ -50,19 +49,28 @@ interface SignUpVerifyViewModel {
 
 
         init {
+            val model = intent()
+                .filter{it.hasExtra("SignUpModel")}
+                .map {
+                    val result = it.getSerializableExtra("SignUpModel") as SignUpModel
+                    username = result.phoneNumber
+                    return@map result
+                }
 
             val validCode = verificationCodeTextChanged
                 .map{ValidationService.validateVerificationCode(it)}
             validCode.subscribe(this.verificationButtonEnabled)
 
-            val verifyAndSignInEvent = verificationCodeTextChanged
+            val modelAndCode = Observables.combineLatest(model,verificationCodeTextChanged)
+
+            val verifyAndSignInEvent = modelAndCode
                 .takeWhen(verificationButtonPressed)
-                .flatMap { return@flatMap this.confirmSignUpAndSignIn(it.second) }
+                .flatMap { return@flatMap this.confirmSignUpAndSignIn(it.second.second,it.second.first) }
                 .share()
 
             verifyAndSignInEvent
                 .filter { !it.isFail() }
-                .map { it -> Unit }
+                .map { Unit }
                 .subscribe(this.verifiedAction)
 
             verifyAndSignInEvent
@@ -76,66 +84,25 @@ interface SignUpVerifyViewModel {
                 .map { ErrorHandler.handleError(it,AuthenticationErrorType.SIGN_UP_ERROR) }
                 .subscribe(this.showError)
 
-            val resendEvent = resendVerificationCodePressed
-                .flatMap { this.resendVerificationCode(username) }
+            val resendEvent = modelAndCode
+                .takeWhen(this.resendVerificationCodePressed)
+                .flatMap { this.resendVerificationCode(it.second.first.phoneNumber) }
                 .share()
 
             resendEvent
                 .filter { !it.isFail() }
-                .map { it -> Unit }
+                .map { Unit }
                 .subscribe(this.resendAction)
 
             resendEvent
                 .filter { it.isFail() }
-                .map { it ->
+                .map {
                     when(it){
                         is Result.success -> return@map null
                         is Result.failure -> return@map it.cause as? SignUpError
                     } }
                 .map { ErrorHandler.handleError(it , AuthenticationErrorType.SIGN_UP_ERROR) }
                 .subscribe(this.showError)
-
-            /*val verifyEvent = verificationCodeTextChanged
-                .takeWhen(this.verificationButtonPressed)
-                .flatMap { it -> this.confirmSignUp(this.userId,it.second) }
-                .share()
-            verifyEvent
-                .filter { !it.isFail() }
-                .map { it ->
-                    when(it){
-                        is Result.success -> return@map it.value as SignUpConfirmationResult
-                        is Result.failure -> return@map null
-                    }
-                }
-                .filter { it!=null }
-                .flatMap { this.signIn(this.username, this.password) }
-                .map { it -> Unit }
-                .subscribe(this.verifiedAction)
-
-            val resendEvent = resendVerificationCodePressed
-                .flatMap { it -> this.resendVerificationCode(this.userId) }
-                .share()
-
-            Observable.merge(
-                verifyEvent
-                    .filter { it.isFail() }
-                    .map { it ->
-                        when(it){
-                            is Result.success -> return@map null
-                            is Result.failure -> return@map it.cause as? SignUpError
-                        }  }
-                    .filter { it!= null }
-                    .map { ErrorHandler.handleError(it , AuthenticationErrorType.SIGN_UP_ERROR) },
-                resendEvent
-                    .filter { it.isFail() }
-                    .map { it ->
-                        when(it){
-                            is Result.success -> return@map null
-                            is Result.failure -> return@map it.cause as? SignUpError
-                        } }
-                    .filter { it!= null }
-                    .map { ErrorHandler.handleError(it , AuthenticationErrorType.SIGN_UP_ERROR) })
-                .subscribe(this.showError)*/
         }
 
 
@@ -156,29 +123,11 @@ interface SignUpVerifyViewModel {
 
         override fun loadingEnabled(): Observable<Boolean> = this.loadingEnabled
 
-        private fun confirmSignUp(verificationCode: String) : Observable<Result<SignUpResult>>{
-            var usernameFormated = ""
-            val credentialType = ValidationService.userCredentialType(username)
-            usernameFormated = when(credentialType) {
-                UserCredentialType.PHONE_NUMBER -> "+506$username"
-                UserCredentialType.EMAIL -> username
-            }
-            return environment.authenticationUseCase().signUp(userId,usernameFormated,password,verificationCode,"")
-                .doOnSubscribe { this.loadingEnabled.onNext(true) }
-        }
 
-
-        private fun confirmSignUpAndSignIn(verificationCode: String) : Observable<Result<SignInResult>>{
+        private fun confirmSignUpAndSignIn(verificationCode: String, model : SignUpModel) : Observable<Result<SignInResult>>{
             return Observable.create<Result<SignInResult>> create@{ observable ->
 
-                var usernameFormated = ""
-                val credentialType = ValidationService.userCredentialType(username)
-                usernameFormated = when(credentialType) {
-                    UserCredentialType.PHONE_NUMBER -> "+506$username"
-                    UserCredentialType.EMAIL -> username
-                }
-
-                val verifyEvent = environment.authenticationUseCase().signUp(userId,usernameFormated,password,verificationCode,"")
+                val verifyEvent = environment.authenticationUseCase().signUp(model.userId,model.phoneNumberWithExtension(),model.password,verificationCode,model.nickname)
                     .share()
 
 
@@ -198,7 +147,7 @@ interface SignUpVerifyViewModel {
                 val signInEvent = verifyEvent
                     .filter { !it.isFail() }
                     .flatMap {
-                        return@flatMap environment.authenticationUseCase().signIn(usernameFormated, it.successValue()?.password!!)
+                        return@flatMap environment.authenticationUseCase().signIn(model.phoneNumberWithExtension(), model.password)
                     }
 
                 signInEvent
@@ -234,6 +183,7 @@ interface SignUpVerifyViewModel {
                 .doOnComplete { this.loadingEnabled.onNext(false) }
                 .doOnSubscribe { this.loadingEnabled.onNext(true) }
         }
+        /*
 
         fun getUserName() : String{
             return this.username
@@ -241,7 +191,7 @@ interface SignUpVerifyViewModel {
 
         fun getUserUUid() : String {
             return this.userId
-        }
+        }*/
 
     }
 }
