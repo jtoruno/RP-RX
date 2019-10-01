@@ -8,6 +8,7 @@ import com.zimplifica.domain.entities.CommercesResult
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
+import com.zimplifica.redipuntos.models.FavoriteMerchant
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
@@ -28,6 +29,8 @@ interface CommercesFragmentVM {
         fun categorySelected(category: Category)
         /// Call when the search button is pressed.
         fun searchButtonPressed(searchText: String)
+
+        fun favoriteMerchantPressed(state: FavoriteMerchant)
     }
     interface Outputs {
         /// Emits when gets the commerces info.
@@ -48,7 +51,6 @@ interface CommercesFragmentVM {
     }
     class ViewModel (@NonNull val environment: Environment) : FragmentViewModel<CommercesFragmentVM>(environment),Inputs,Outputs{
 
-
         val inputs : Inputs = this
         val outputs : Outputs = this
 
@@ -59,6 +61,7 @@ interface CommercesFragmentVM {
         private val filterByCategory = BehaviorSubject.create<Category>()
         private val categorySelected = PublishSubject.create<Category>()
         private val searchButtonPressed = BehaviorSubject.create<String>()
+        private val favoriteMerchantPressed = PublishSubject.create<FavoriteMerchant>()
 
         //Outputs
         private val commerces = BehaviorSubject.create<CommercesResult>()
@@ -125,6 +128,18 @@ interface CommercesFragmentVM {
                 .filter { it.isFail() }
                 .map { return@map "Error al obetener comercios." }
                 .subscribe(this.showError)
+
+            val favoriteEvent = favoriteMerchantPressed
+                .flatMap {
+                    this.updateFavoriteMerchant(it.merchantId,it.isFavorite)
+                }
+                .share()
+
+            favoriteEvent
+                .filter { !it.isFail() }
+                .map { it.successValue() }
+                .map { Unit }
+                .subscribe(this.fetchCommerces)
         }
 
         override fun fetchCommerces() {
@@ -151,6 +166,10 @@ interface CommercesFragmentVM {
             return this.searchButtonPressed.onNext(searchText)
         }
 
+        override fun favoriteMerchantPressed(state: FavoriteMerchant) {
+            return this.favoriteMerchantPressed.onNext(state)
+        }
+
         override fun filterButtonAction(): Observable<Unit> = this.filterButtonAction
 
         override fun categorySelectedAction(): Observable<Category> = this.categorySelectedAction
@@ -169,16 +188,8 @@ interface CommercesFragmentVM {
                .doOnSubscribe { this.loadingActive.onNext(true) }
         }
 
-        private fun searchCommerces(limit: Int?, skip: Int?,searchText: String) : Observable<Result<CommercesResult>>{
-            return environment.userUseCase().getCommerces(limit,skip,null,searchText)
-                .doOnComplete { this.loadingActive.onNext(false) }
-                .doOnSubscribe { this.loadingActive.onNext(true) }
-        }
-
-        private fun filterCommercesByCategory(limit: Int?, skip: Int?,category : Category) : Observable<Result<CommercesResult>>{
-            return environment.userUseCase().getCommerces(limit,skip,category.id,null)
-                .doOnComplete { this.loadingActive.onNext(false) }
-                .doOnSubscribe { this.loadingActive.onNext(true) }
+        private fun updateFavoriteMerchant(merchantId: String, isFavorite: Boolean) : Observable<Result<Boolean>> {
+            return environment.userUseCase().updateFavoriteMerchant(merchantId, isFavorite)
         }
 
         private fun generalSearch(limit: Int?, skip: Int?,searchText: String?,category : Category?) : Observable<Result<CommercesResult>>{

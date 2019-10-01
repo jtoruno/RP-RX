@@ -58,7 +58,8 @@ interface PointsFragmentVM {
                     val userInformation = it.second
                     if (userInformation==null){
                         val list = mutableListOf<PaymentMethod>()
-                        val redCard = PaymentMethod("rediPuntos-card","", "",
+                        val points = environment.currentUser().getCurrentUser()?.rewards ?: 0.0
+                        val redCard = PaymentMethod("rediPuntos-card",points.toString(), "",
                             "RediPuntos")
                         list.add(redCard)
                         return@flatMap Observable.fromArray<Result<List<PaymentMethod>>>(Result.success(list))
@@ -130,7 +131,8 @@ interface PointsFragmentVM {
                 if(paymentMethods!=null){
                     paymentArray.addAll(paymentMethods)
                 }
-                paymentArray.add(PaymentMethod("rediPuntos-card","", "",
+                val points = environment.currentUser().getCurrentUser()?.rewards ?: 0.0
+                paymentArray.add(PaymentMethod("rediPuntos-card",points.toString(), "",
                     "RediPuntos"))
                 single.onSuccess(Result.success(paymentArray.toList()))
 

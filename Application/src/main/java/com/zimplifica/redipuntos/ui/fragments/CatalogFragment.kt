@@ -113,9 +113,11 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
         recyclerView = view.commerce_recycler_view
         val manager = GridLayoutManager(activity, 2)
         recyclerView.layoutManager = manager
-        adapter = CommerceAdapter{
-            viewModel.inputs.commerceSelected(it)
-        }
+        adapter = CommerceAdapter( {
+                commerce -> viewModel.inputs.commerceSelected(commerce)
+        },{
+            favoriteMerchant -> viewModel.inputs.favoriteMerchantPressed(favoriteMerchant)
+        })
         recyclerView.adapter = adapter
         viewModel.inputs.fetchCommerces()
 

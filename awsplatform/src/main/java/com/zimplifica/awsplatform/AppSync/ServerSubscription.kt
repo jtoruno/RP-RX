@@ -15,6 +15,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import android.text.format.DateUtils.getRelativeTimeSpanString
+import com.amazonaws.rediPuntosAPI.type.GetNotificationsInput
 import java.lang.Exception
 
 class ServerSubscription(val userId : String) : RediSubscription {
@@ -31,8 +32,10 @@ class ServerSubscription(val userId : String) : RediSubscription {
 
     private fun initSync(userId : String): Cancelable? {
         val s = SubscribeToEventsSubscription.builder().user(userId).build()
-        val d = GetNotificationsQuery.builder().build()
-        val b = GetNotificationsQuery.builder().build()
+        val dInput = GetNotificationsInput.builder().limit(null).nextToken(null).build()
+        val d = GetNotificationsQuery.builder().input(dInput).build()
+        val bInput = GetNotificationsInput.builder().limit(null).nextToken(null).build()
+        val b = GetNotificationsQuery.builder().input(bInput).build()
         return CustomSync(appSyncClient).sync(b,object : GraphQLCall.Callback<GetNotificationsQuery.Data>(){
             override fun onFailure(e: ApolloException) {
                 Log.e("🔴","[ServerSubscription] [init] Error. Description: $e")
@@ -45,7 +48,7 @@ class ServerSubscription(val userId : String) : RediSubscription {
                 if (trx!=null){
                     val notifications = trx.items().map { n ->
                         val date = getRelativeTimeSpanString(n.createdAt().toLong())
-                        return@map ServerEvent(n.id(),n.type(),n.title(),n.message(),date.toString(),n.data(),n.actionable(),n.triggered(),n.hidden())
+                        return@map ServerEvent(n.id(),n.origin(),n.type(),n.title(),n.message(),date.toString(),n.data(),n.actionable(),n.triggered(),n.hidden())
                     }
                     baseEvent.onNext(Result.success(notifications))
                 }
@@ -60,7 +63,7 @@ class ServerSubscription(val userId : String) : RediSubscription {
                 val result = response.data()?.subscribeToEvents()
                 if (result!=null){
                     val date = getRelativeTimeSpanString(result.createdAt().toLong())
-                    val event = ServerEvent(result.id(),result.type(),result.title(),result.message(),date.toString(), result.data(),
+                    val event = ServerEvent(result.id(),result.origin(),result.type(),result.title(),result.message(),date.toString(), result.data(),
                         result.actionable(),result.triggered(),result.hidden())
                     events.onNext(Result.success(event))
                 }
@@ -85,7 +88,7 @@ class ServerSubscription(val userId : String) : RediSubscription {
                 if (trx!=null){
                     val notifications = trx.items().map { n ->
                         val date = getRelativeTimeSpanString(n.createdAt().toLong())
-                        return@map ServerEvent(n.id(),n.type(),n.title(),n.message(),date.toString(),n.data(),n.actionable(),n.triggered(),n.hidden())
+                        return@map ServerEvent(n.id(),n.origin(),n.type(),n.title(),n.message(),date.toString(),n.data(),n.actionable(),n.triggered(),n.hidden())
                     }
                     baseEvent.onNext(Result.success(notifications))
                 }

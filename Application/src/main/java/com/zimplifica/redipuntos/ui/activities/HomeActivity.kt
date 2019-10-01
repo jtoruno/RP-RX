@@ -22,7 +22,9 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
+import com.hsalf.smilerating.SmileRating
 import com.tapadoo.alerter.Alerter
+import com.zimplifica.domain.entities.CommercesRate
 import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.libs.utils.SharedPreferencesUtils
@@ -85,39 +87,48 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
 
         nav_view.setNavigationItemSelectedListener(this)
         */
+        compositeDisposable.add(viewModel.outputs.showRateCommerceAlert().observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                val model = it
+                val alertDialog = AlertDialog.Builder(this)
+                val row = layoutInflater.inflate(R.layout.dialog_rate_commerce,null)
+                val smileRate = row.findViewById<SmileRating>(R.id.smile_rating)
+                alertDialog.setView(row)
+                alertDialog.setTitle(it.commerceName)
+                alertDialog.setNegativeButton("Saltar"){
+                    _,_ ->
+                    viewModel.inputs.rateCommerceInput(model)
+                }
+                val alert = alertDialog.create()
+                alert.show()
+                smileRate.setOnSmileySelectionListener { smiley, reselected ->
+                    when(smiley){
+                        SmileRating.BAD ->{
+                            model.rate = CommercesRate.POOR
+                        }
+                        SmileRating.GOOD ->{
+                            model.rate = CommercesRate.GOOD
+                        }
+                        SmileRating.GREAT ->{
+                            model.rate = CommercesRate.EXCELLENT
+                        }
+                        SmileRating.OKAY ->{
+                            model.rate = CommercesRate.REGULAR
+                        }
+                        SmileRating.TERRIBLE ->{
+                            model.rate = CommercesRate.BAD
+                        }
+                    }
+                    viewModel.inputs.rateCommerceInput(model)
+                    alert.dismiss()
+                }
+            })
 
         compositeDisposable.add(this.viewModel.outputs.signOutAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, WalkThrough::class.java)
                 startActivity(intent)
                 finishAffinity()
-            })
-
-        compositeDisposable.add(viewModel.outputs.showIdentityVerificationSuccess().observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Alerter.create(this@HomeActivity)
-                    .setTitle(it.first)
-                    .setText(it.second)
-                    //.setTitle("¡Bienvenido a RediPuntos!")
-                    //.setText("Tu identidad ha sido verificada y tu cuenta ha sido activada correctamente")
-                    .setBackgroundColorRes(R.color.customGreen)
-                    .enableSwipeToDismiss()
-                    //.setDuration(3000)
-                    .enableInfiniteDuration(true)
-                    .setIcon(R.drawable.ic_check_circle_black_24dp)
-                    .show()
-            })
-
-        compositeDisposable.add(viewModel.outputs.showIdentityVerificationFailure().observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                Alerter.create(this@HomeActivity)
-                .setTitle("Lo sentimos")
-                .setText("No hemos podido verificar tu identidad, póngase en contacto con soporte@zimplifica.com para solucionar este problema")
-                .setBackgroundColorRes(R.color.red)
-                .enableSwipeToDismiss()
-                .enableInfiniteDuration(true)
-                .setIcon(R.drawable.ic_mtrl_chip_close_circle)
-                .show()
             })
 
         compositeDisposable.add(viewModel.outputs.showAlert().observeOn(AndroidSchedulers.mainThread())
@@ -130,73 +141,6 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
                     .enableInfiniteDuration(true)
                     .show()
             })
-
-        /*
-        home_log_out.setOnClickListener {
-            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                drawer_layout.closeDrawer(GravityCompat.START)
-            }
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("Cerrar Sesión")
-            builder.setMessage("¿Desea salir de la aplicación?")
-            builder.setPositiveButton("Aceptar"){
-                    _,_ ->
-                this.viewModel.inputs.signOutButtonPressed()
-            }
-            builder.setNegativeButton("Cancelar", null)
-            val dialog = builder.create()
-            dialog.show()
-        }
-        home_about_us.setOnClickListener {
-            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                drawer_layout.closeDrawer(GravityCompat.START)
-            }
-            val intent = Intent(this,AboutActivity::class.java)
-            startActivity(intent)
-        }
-        home_terms_and_conditions.setOnClickListener {
-            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                drawer_layout.closeDrawer(GravityCompat.START)
-            }
-            val intent = Intent(this, TermsActivity::class.java)
-            startActivity(intent)
-        }
-        home_change_password.setOnClickListener {
-            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                drawer_layout.closeDrawer(GravityCompat.START)
-            }
-        }
-        home_privacy.setOnClickListener {
-            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                drawer_layout.closeDrawer(GravityCompat.START)
-            }
-            val intent = Intent(this, PrivacyActivity::class.java)
-            startActivity(intent)
-        }
-        home_account_info.setOnClickListener {
-            if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-                drawer_layout.closeDrawer(GravityCompat.START)
-            }
-            val intent = Intent(this,AccountInfoActivity::class.java)
-            startActivity(intent)
-        }
-        */
-        /*
-        compositeDisposable.add(this.viewModel.outputs.accountInformationResult().observeOn(AndroidSchedulers.mainThread())
-            .subscribe{
-                val name1 = (it.userFirstName?:"").toLowerCase()
-                val name2 = (it.userLastName?:"").toLowerCase()
-                val completeName = ("$name1 $name2").capitalizeWords()
-                /*
-                if(completeName.isEmpty() || completeName == " "){
-                    header.home_header_name.text = "Usuario Invitado"
-                }else{
-                    header.home_header_name.text = completeName
-                }
-                header.home_header_points.text = "₡ "+String.format("%,.2f", it.rewards?:0.0) +" RediPuntos"
-                */
-            })*/
-
 
         compositeDisposable.add(this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {

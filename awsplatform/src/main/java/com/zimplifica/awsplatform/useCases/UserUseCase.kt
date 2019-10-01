@@ -516,7 +516,7 @@ class UserUseCase : UserUseCase {
         val single = Single.create<Result<CommercesResult>> create@{ single ->
             val input = GetCommercesInput.builder().limit(limit).skip(skip) .categoryId(categoryId).textSearch(textSearch).build()
             val query = GetCommercesQuery.builder().input(input).build()
-            this.appSyncClient!!.query(query).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
+            this.appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.NETWORK_ONLY).enqueue(object:GraphQLCall.Callback<GetCommercesQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
                     Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [getCommerces] Error.",e)
                     single.onSuccess(Result.failure(e))                }
@@ -597,7 +597,7 @@ class UserUseCase : UserUseCase {
                     if (trx!=null){
                         val notifications = trx.items().map { n ->
                             val date = DateUtils.getRelativeTimeSpanString(n.createdAt().toLong())
-                            return@map ServerEvent(n.id(),n.type(),n.title(),n.message(),date.toString(),n.data(),n.actionable(),n.triggered(),n.hidden())
+                            return@map ServerEvent(n.id(),n.origin(),n.type(),n.title(),n.message(),date.toString(),n.data(),n.actionable(),n.triggered(),n.hidden())
                         }
                         single.onSuccess(Result.success(notifications))
                     }else{
@@ -650,7 +650,7 @@ class UserUseCase : UserUseCase {
             val offer = Offer(commerce.cashback())
             return@map Commerce(commerce.id(),commerce.name(),commerce.posterImage(), commerce.website()?:"",commerce.facebook()?:"",
                 commerce.whatsapp()?:"",commerce.instagram()?:"",commerce.category(),commerceStores,"El descuento no aplica para otros descuentos.",
-                "El descuento es válido solo pagando con RediPuntos.",commerce.description(), offer, commerce.cashback())
+                "El descuento es válido solo pagando con RediPuntos.",commerce.description(), offer, commerce.cashback(), commerce.isFavorite)
         }
         return commerces
 

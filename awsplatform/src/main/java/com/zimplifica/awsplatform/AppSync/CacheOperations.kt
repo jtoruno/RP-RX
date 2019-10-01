@@ -6,6 +6,9 @@ import com.amazonaws.rediPuntosAPI.GetCommercesQuery
 import com.amazonaws.rediPuntosAPI.GetNotificationsQuery
 import com.amazonaws.rediPuntosAPI.GetTransactionsByUserQuery
 import com.amazonaws.rediPuntosAPI.GetUserQuery
+import com.amazonaws.rediPuntosAPI.type.GetCommercesInput
+import com.amazonaws.rediPuntosAPI.type.GetNotificationsInput
+import com.amazonaws.rediPuntosAPI.type.GetTransactionsByUserInput
 import com.apollographql.apollo.GraphQLCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
@@ -118,8 +121,9 @@ class CacheOperations{
     }
 
     fun updateTransactions(withExistingTransaction : Transaction){
-
-        val query = GetTransactionsByUserQuery.builder().build()
+        val input = GetTransactionsByUserInput.builder().nextToken(null).limit(null).build()
+        val query = GetTransactionsByUserQuery.builder().input(input
+        ).build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -155,7 +159,8 @@ class CacheOperations{
                 } })
     }
     fun updateNewTransactions(newTransaction: Transaction){
-        val query = GetTransactionsByUserQuery.builder().build()
+        val input = GetTransactionsByUserInput.builder().nextToken(null).limit(null).build()
+        val query = GetTransactionsByUserQuery.builder().input(input).build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -183,7 +188,8 @@ class CacheOperations{
     }
 
     fun updateNotificationStatus(id: String){
-        val query = GetNotificationsQuery.builder().build()
+        val input =  GetNotificationsInput.builder().nextToken(null).limit(null).build()
+        val query = GetNotificationsQuery.builder().input(input).build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object: GraphQLCall.Callback<GetNotificationsQuery.Data>(){
                 override fun onFailure(e: ApolloException) {
@@ -208,7 +214,8 @@ class CacheOperations{
     }
 
     fun updateCommerce(favorite: Boolean, merchantId: String) {
-        val query = GetCommercesQuery.builder().build()
+        val input = GetCommercesInput.builder().categoryId(null).limit(null).skip(null).textSearch(null).build()
+        val query = GetCommercesQuery.builder().input(input).build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object: GraphQLCall.Callback<GetCommercesQuery.Data>(){
                 override fun onFailure(e: ApolloException) {

@@ -5,20 +5,18 @@ import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.amulyakhare.textdrawable.TextDrawable
 import com.google.android.material.snackbar.Snackbar
-import com.tapadoo.alerter.Alerter
+import com.hsalf.smilerating.SmileRating
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.VerificationStatus
 
 import com.zimplifica.redipuntos.R
-import com.zimplifica.redipuntos.extensions.capitalizeWords
 import com.zimplifica.redipuntos.libs.qualifiers.BaseFragment
 import com.zimplifica.redipuntos.libs.qualifiers.RequiresFragmentViewModel
 import com.zimplifica.redipuntos.libs.utils.ProfileStep
@@ -68,6 +66,40 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             viewModel.inputs.termsAndConditionsButtonPressed()
         }
 
+        profile_change_password.setOnClickListener {
+            class MyDialogFragment2 : DialogFragment() {
+                override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+                    val inflater = activity?.layoutInflater
+                    val view = inflater?.inflate(R.layout.dialog_rate_commerce,null)
+                    val smileRate = view?.findViewById<SmileRating>(R.id.smile_rating)
+                    smileRate?.setOnSmileySelectionListener { smiley, reselected ->
+                        when(smiley){
+                            SmileRating.BAD ->{
+                                Log.e("Smile","2")
+                            }
+                            SmileRating.GOOD ->{
+                                Log.e("Smile","4")
+                            }
+                            SmileRating.GREAT ->{
+                                Log.e("Smile","5")
+                            }
+                            SmileRating.OKAY ->{
+                                Log.e("Smile","3")
+                            }
+                            SmileRating.TERRIBLE ->{
+                                Log.e("Smile","1")
+                            }
+                        }
+                    }
+                    return androidx.appcompat.app.AlertDialog.Builder(activity!!)
+                        .setTitle("Comercio")
+                        .setView(view)
+                        .setNegativeButton("Saltar", null)
+                        .create()
+                }
+            }
+            MyDialogFragment2().show(fragmentManager!!,"pbadialog")
+        }
 
         profile_log_out.setOnClickListener {
             class MyDialogFragment : DialogFragment() {
@@ -195,26 +227,27 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
     }
 
     private fun showProgressBar(progress : Int){
-        profile_actual_step_count.text = "Progreso en tu perfil ($progress de 3)"
+        profile_actual_step_count.text = "Progreso en tu perfil ($progress de 2)"
         if(progress == 0){
             profile_progress_1.setBackgroundColor(resources.getColor(R.color.navDisableColor, null))
             profile_progress_2.setBackgroundColor(resources.getColor(R.color.navDisableColor, null))
-            profile_progress_3.setBackgroundColor(resources.getColor(R.color.navDisableColor, null))
+            //profile_progress_3.setBackgroundColor(resources.getColor(R.color.navDisableColor, null))
         }
         if(progress == 1){
             profile_progress_1.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
         }
+        /*
         if(progress == 2){
             profile_progress_1.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
             profile_progress_2.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
 
-        }
-        if(progress == 3){
+        }*/
+        if(progress == 2){
             profile_progress_text.visibility = View.GONE
             profile_complete_account_info.visibility = View.GONE
             profile_progress_1.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
             profile_progress_2.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
-            profile_progress_3.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
+            //profile_progress_3.setBackgroundColor(resources.getColor(R.color.colorAccent, null))
         }
     }
 

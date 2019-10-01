@@ -21,6 +21,7 @@ interface HomeViewModel {
         fun signOutButtonPressed()
         fun addPaymentButtonPressed()
         fun token(token: String)
+        fun rateCommerceInput(model: RateCommerceModel)
     }
     interface Outputs {
         fun showCompletePersonalInfoAlert() : Observable<VerificationStatus>
@@ -30,16 +31,14 @@ interface HomeViewModel {
 
         fun signOutAction() : Observable<Unit>
         fun addPaymentMethodAction() : Observable<Unit>
-        fun showIdentityVerificationFailure() : Observable<Unit>
-        fun showIdentityVerificationSuccess() : Observable<Pair<String,String>>
         fun showAlert() : Observable<Pair<String,String>>
+        fun showRateCommerceAlert() : Observable<RateCommerceModel>
 
         //fun accountInformationResult() : Observable<UserInformationResult>
 
     }
     @SuppressLint("CheckResult")
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<HomeViewModel>(environment), Inputs, Outputs{
-
         val inputs : Inputs = this
         val outputs : Outputs = this
 
@@ -49,6 +48,7 @@ interface HomeViewModel {
         private val completePersonalInfoButtonPressed = PublishSubject.create<Unit>()
         private val addPaymentButtonPressed = PublishSubject.create<Unit>()
         private val tokenInput = PublishSubject.create<String>()
+        private val rateCommerceInput = PublishSubject.create<RateCommerceModel>()
 
 
         //Outputs
@@ -56,13 +56,18 @@ interface HomeViewModel {
         private val showCompletePersonalInfoAlert = PublishSubject.create<VerificationStatus>()
         private val goToCompletePersonalInfoScreen : Observable<Unit>
         private val addPaymentMethodAction : Observable<Unit>
-
-        private val showIdentityVerificationFailure = BehaviorSubject.create<Unit>()
-        private val showIdentityVerificationSuccess = BehaviorSubject.create<Pair<String,String>>()
         private val showAlert = BehaviorSubject.create<Pair<String,String>>()
+        private val showRateCommerceAlert = BehaviorSubject.create<RateCommerceModel>()
         //private val accountInformationResult = BehaviorSubject.create<UserInformationResult>()
 
         init {
+
+            onCreate
+                .map { environment.currentUser().getCurrentUser() }
+                .subscribe { userInfo ->
+                    if(userInfo == null) return@subscribe
+                    environment.userUseCase().initServerSubscription(userInfo.id)
+                }
 
             val tokenEvent = tokenInput
                 .flatMap { return@flatMap this.registDeviceToken(it) }
@@ -96,7 +101,7 @@ interface HomeViewModel {
                     Log.e("🔵", "[HomeVM] [init] New actionable event $event")
                     when {
                         event.type == "PaymentRequested" -> {
-                            val paymentId = event.id
+                            val paymentId = event.origin
                             environment.userUseCase().getTransactionById(paymentId)
                                 .filter { !it.isFail() }
                                 .map { it.successValue() }
@@ -106,7 +111,7 @@ interface HomeViewModel {
                                 }
                         }
                         event.type == "PaymentProcessed" -> {
-                            val paymentId = event.id
+                            val paymentId = event.origin
                             Observables.zip(environment.userUseCase().getTransactionById(paymentId),environment.userUseCase().getUserInformation(false))
                                 .map { it.first }
                                 .filter { !it.isFail() }
@@ -114,6 +119,8 @@ interface HomeViewModel {
                                 .subscribe { transition ->
                                     if (transition == null) return@subscribe
                                     environment.userUseCase().registerNewPayment(transition)
+                                    val rateCommerceModel = RateCommerceModel(transition.id,transition.transactionDetail.vendorName,transition.date)
+                                    this.showRateCommerceAlert.onNext(rateCommerceModel)
                                 }
                         }
                         event.type == "Alert" -> {
@@ -121,8 +128,14 @@ interface HomeViewModel {
                             this.showAlert.onNext(Pair(event.title,event.message))
                         }
                     }
-
                 }
+
+            this.rateCommerceInput
+                .flatMap {
+                    Log.e("RateCommerce",it.commerceName + it.rate.name)
+                    this.handleReviewMerchant(it)
+                }
+                .filter { !it.isFail() }
 
 
         }
@@ -165,11 +178,14 @@ interface HomeViewModel {
             return environment.authenticationUseCase().signOut()
         }
 
-        override fun showIdentityVerificationFailure(): Observable<Unit> = this.showIdentityVerificationFailure
-
-        override fun showIdentityVerificationSuccess(): Observable<Pair<String, String>> = this.showIdentityVerificationSuccess
-
         override fun showAlert(): Observable<Pair<String, String>> = this.showAlert
+
+        override fun rateCommerceInput(model: RateCommerceModel) {
+            Log.e("rateCommerceInput",model.rate.name)
+            return this.rateCommerceInput.onNext(model)
+        }
+
+        override fun showRateCommerceAlert(): Observable<RateCommerceModel> = this.showRateCommerceAlert
 
         private fun registDeviceToken(token : String) : Observable<Result<String>>{
             val userId = environment.currentUser().getCurrentUser()?.id
@@ -177,6 +193,7 @@ interface HomeViewModel {
         }
 
         private fun handleReviewMerchant(rateCommerceModel: RateCommerceModel) : Observable<Result<Boolean>>{
+            Log.e("handleReviewMerchant",rateCommerceModel.rate.name)
             return environment.userUseCase().reviewMerchant(rateCommerceModel)
         }
     }

@@ -37,7 +37,7 @@ class Promotion(val id: String, val promotionType: String, val title: String, va
     }
 }
 
-class Commerce(val commerceId: String,val name: String,val posterImage: String/*,val promotions: List<Promotion>*/,val website: String,val facebook: String,val whatsapp: String,val instagram: String,val category: String?,val stores: List<Store>, val restrictions : String,val waysToUse : String, val description: String, val offer : Offer?,val cashback : Int) : Serializable
+class Commerce(val commerceId: String,val name: String,val posterImage: String/*,val promotions: List<Promotion>*/,val website: String,val facebook: String,val whatsapp: String,val instagram: String,val category: String?,val stores: List<Store>, val restrictions : String,val waysToUse : String, val description: String, val offer : Offer?,val cashback : Int, val isFavorite: Boolean) : Serializable
 
 class CommercesResult(val commerces : List<Commerce>, val total : Int) : Serializable
 

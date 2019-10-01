@@ -125,6 +125,9 @@ dependencies {
 
     //Alerter lib -> UI Dialog library
     implementation 'com.tapadoo.android:alerter:4.0.2'
+
+    //Smile rate
+    implementation 'com.github.sujithkanna:smileyrating:1.6.8'
 }
 
 apply plugin: 'com.google.gms.google-services'

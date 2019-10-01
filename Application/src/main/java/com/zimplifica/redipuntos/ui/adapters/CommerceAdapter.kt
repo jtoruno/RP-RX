@@ -9,8 +9,9 @@ import android.widget.TextView
 import com.squareup.picasso.Picasso
 import com.zimplifica.domain.entities.Commerce
 import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.models.FavoriteMerchant
 
-class CommerceAdapter(val callback : (Commerce) -> Unit ) : androidx.recyclerview.widget.RecyclerView.Adapter<CommerceAdapter.CommerceVH>(){
+class CommerceAdapter(val callback : (Commerce) -> Unit, val favoriteAction: (FavoriteMerchant) -> Unit ) : androidx.recyclerview.widget.RecyclerView.Adapter<CommerceAdapter.CommerceVH>(){
     private var items : List<Commerce> = listOf()
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): CommerceVH {
         return CommerceVH(LayoutInflater.from(p0.context).inflate(R.layout.commerce_row,p0,false))
@@ -24,9 +25,23 @@ class CommerceAdapter(val callback : (Commerce) -> Unit ) : androidx.recyclervie
         val commerce = items[p1]
         p0.name.text = commerce.name
         p0.cashBack.text = commerce.cashback.toString() + "%"
-        p0.favoriteImg.setOnClickListener {
+        if (commerce.isFavorite){
             p0.favoriteImg.setImageResource(R.drawable.ic_favorite_black_24dp)
             p0.favoriteImg.setColorFilter(p0.itemView.context.getColor(R.color.red))
+        }
+        p0.favoriteImg.setOnClickListener {
+            val newState = !commerce.isFavorite
+            val model = FavoriteMerchant(commerce.commerceId,newState)
+            favoriteAction(model)
+
+            if(newState){
+                p0.favoriteImg.setImageResource(R.drawable.ic_favorite_black_24dp)
+                p0.favoriteImg.setColorFilter(p0.itemView.context.getColor(R.color.red))
+            }else{
+                p0.favoriteImg.setImageResource(R.drawable.ic_favorite_border_black_24dp)
+                p0.favoriteImg.setColorFilter(p0.itemView.context.getColor(android.R.color.white))
+
+            }
         }
         Picasso.get().load(commerce.posterImage).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(p0.image)
         p0.itemView.setOnClickListener {

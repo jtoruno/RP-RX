@@ -1,6 +1,6 @@
 package com.zimplifica.domain.entities
 
-class ServerEvent(val id: String,val type: String,val title: String, val message: String, val createdAt: String,
+class ServerEvent(val id: String,val origin: String,val type: String,val title: String, val message: String, val createdAt: String,
                   val data: String?, val actionable : Boolean, val triggered: Boolean, val hidden : Boolean) {
     override fun equals(other: Any?): Boolean {
         if(other == null || other !is ServerEvent) return false
@@ -9,6 +9,7 @@ class ServerEvent(val id: String,val type: String,val title: String, val message
 
     override fun hashCode(): Int {
         var result = id.hashCode()
+        result = 31 * result + origin.hashCode()
         result = 31 * result + type.hashCode()
         result = 31 * result + title.hashCode()
         result = 31 * result + message.hashCode()
@@ -19,4 +20,5 @@ class ServerEvent(val id: String,val type: String,val title: String, val message
         result = 31 * result + hidden.hashCode()
         return result
     }
+
 }
