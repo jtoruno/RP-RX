@@ -5,6 +5,7 @@ import com.zimplifica.domain.entities.UserStatus
 import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.mocks.userInformationMock
 import com.zimplifica.redipuntos.models.CurrentUser
 import io.reactivex.observers.TestObserver
 import org.junit.Test
@@ -30,13 +31,22 @@ class AccountEditEmailVMTest : RPTestCase() {
     }
 
     private fun setUpTest(email : String, state : Boolean){
-        val status = UserStatus(VerificationStatus.Pending,null)
-        val currentUser = UserInformationResult("", "",
-            "PEDRO", "FONSECA SANCHEZ",
-            "10/10/1994", email, "",
-            false,  state,null, null, mutableListOf(), status)
+        var userInformationResult : UserInformationResult
+        if(email != "" && state){
+            userInformationResult = userInformationMock(userEmail = email, userEmailVerified = state)
+        }else{
+            if(email!= ""){
+                userInformationResult = userInformationMock(userEmail = email)
+            } else{
+                if (state){
+                    userInformationResult = userInformationMock(userEmailVerified = state)
+                }else{
+                    userInformationResult = userInformationMock()
+                }
+            }
+        }
         val currentU = CurrentUser
-        currentU.setCurrentUser((currentUser))
+        currentU.setCurrentUser((userInformationResult))
         setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())
     }
 
@@ -74,7 +84,7 @@ class AccountEditEmailVMTest : RPTestCase() {
     fun testShowError(){
         setUpTest("",false)
         vm.inputs.onCreated()
-        vm.inputs.emailValueChanged( "zimple@zimplifica.com")
+        vm.inputs.emailValueChanged( "zimpleWrongEmail@zimplifica.com")
         vm.inputs.verifyEmailPressed()
         showError.assertValueCount(1)
     }

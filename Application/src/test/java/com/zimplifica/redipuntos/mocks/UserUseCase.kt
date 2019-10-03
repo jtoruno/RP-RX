@@ -1,17 +1,80 @@
 package com.zimplifica.redipuntos.mocks
 
-import com.zimplifica.awsplatform.AppSync.ServerSubscription
 import com.zimplifica.domain.entities.*
 import com.zimplifica.domain.useCases.UserUseCase
 import io.reactivex.Observable
 import io.reactivex.Single
-import org.junit.runner.Request
 import java.lang.Exception
 
 class UserUseCase : UserUseCase{
-    override fun initIdentitiyVerification(): Observable<Result<Boolean>> {
-        return Observable.never()
+
+    override fun updateFavoriteMerchant(merchantId: String, isFavorite: Boolean): Observable<Result<Boolean>> {
+        return Observable.create<Result<Boolean>> { observer ->
+            if(merchantId == "1234"){
+                observer.onNext(Result.failure(Exception()))
+                observer.onComplete()
+            }else{
+                observer.onNext(Result.success(true))
+                observer.onComplete()
+            }
+        }
     }
+
+    override fun reviewMerchant(rateCommerceModel: RateCommerceModel): Observable<Result<Boolean>> {
+        return Observable.create<Result<Boolean>> { observer ->
+            if(rateCommerceModel.commerceName == "WrongCommerce"){
+                observer.onNext(Result.failure(Exception()))
+                observer.onComplete()
+            }else{
+                observer.onNext(Result.success(true))
+                observer.onComplete()
+            }
+        }
+    }
+
+    override fun createPin(securityCode: SecurityCode): Observable<Result<Boolean>> {
+        return Observable.create<Result<Boolean>> { observer ->
+            observer.onNext(Result.success(true))
+            observer.onComplete()
+        }
+    }
+
+    override fun verifyPin(securityCode: SecurityCode): Observable<Result<Boolean>> {
+        return Observable.create<Result<Boolean>> { observer ->
+            if(securityCode.pin == "1234"){
+                observer.onNext(Result.failure(Exception()))
+                observer.onComplete()
+            }else{
+                observer.onNext(Result.success(true))
+                observer.onComplete()
+            }
+        }
+    }
+
+    override fun verifyPhoneNumber(): Observable<Result<Boolean>> {
+        return Observable.create<Result<Boolean>> { observer ->
+            observer.onNext(Result.success(true))
+            observer.onComplete()
+        }    }
+
+    override fun updatePin(securityCode: SecurityCode): Observable<Result<Boolean>> {
+        return Observable.create<Result<Boolean>> { observer ->
+            observer.onNext(Result.success(true))
+            observer.onComplete()
+        }
+    }
+
+    override fun changePassword(changePasswordModel: ChangePasswordModel): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            if(changePasswordModel.verificationCode == "666666"){
+                single.onSuccess(Result.failure(Exception()))
+            }else{
+                single.onSuccess(Result.success(true))
+            }
+        }
+        return single.toObservable()
+    }
+
 
     override fun subscribeToServerEvents(user: String): RediSubscription {
         return ServerSubscriptionTest(user)
@@ -37,11 +100,10 @@ class UserUseCase : UserUseCase{
     }
 
 
-    override fun disablePaymentMethod(owner: String, cardId: String): Observable<Result<PaymentMethod>> {
+    override fun disablePaymentMethod(cardId: String): Observable<Result<PaymentMethod>> {
         val single = Single.create<Result<PaymentMethod>> create@{ single ->
-            println("disable ${owner}")
-            if(owner == "1234" && cardId == "1234"){
-                val paymentM = PaymentMethod("XXXXXX-XXXXX-XXX", "9944", "10/20","VISA", 10.0,  true)
+            if(cardId == "1234"){
+                val paymentM = PaymentMethod("XXXXXX-XXXXX-XXX", "9944", "10/20","VISA")
                 single.onSuccess(Result.success(paymentM))
             }
             else{
@@ -54,12 +116,7 @@ class UserUseCase : UserUseCase{
 
     override fun getUserInformation(useCache: Boolean): Observable<Result<UserInformationResult>> {
         val single = Single.create<Result<UserInformationResult>> create@{
-            val status = UserStatus(VerificationStatus.VerifiedValid,null)
-            val userInfo = UserInformationResult( "e5a06e84-73f4-4a04-bcbc-a70552a4d92a", "115650044",
-                "PEDRO",  "FONSECA ARGUEDAS",  "10/10/1993",
-                 "pedro@redi.com",  "+50699443322",
-                 true,  true, null,  0.0,  mutableListOf(),status)
-            it.onSuccess(Result.success(userInfo))
+            it.onSuccess(Result.success(userInformationMock()))
         }
         return single.toObservable()
     }
@@ -85,14 +142,10 @@ class UserUseCase : UserUseCase{
         return single.toObservable()
     }
 
-    override fun updateUserInfo(citizen: CitizenInput): Observable<Result<Citizen>> {
-        return Observable.never()
-    }
-
     override fun addPaymentMethod(paymentMethod: PaymentMethodInput): Observable<Result<PaymentMethod>> {
         val single = Single.create<Result<PaymentMethod>> create@{ single ->
             if(paymentMethod.cardNumber == "4539169425022428"){
-                val paymentM = PaymentMethod("XXXXXX-XXXXX-XXX","9944","10/20","VISA",10.0,true)
+                val paymentM = PaymentMethod("XXXXXX-XXXXX-XXX","9944","10/20","VISA")
                 single.onSuccess(Result.success(paymentM))
             }
             else{
@@ -104,17 +157,15 @@ class UserUseCase : UserUseCase{
     }
 
     override fun checkoutPayloadSitePay(
-        username: String,
         amount: Float,
-        vendorId: String,
-        description: String
+        vendorId: String
     ): Observable<Result<PaymentPayload>> {
         val single = Single.create<Result<PaymentPayload>> create@{ single ->
             if (vendorId == "7120-39345-1023841023-123434"){
                 val item = Item("",5555.5)
                 val order = Order("3c288f1b-e95f-40a2-8f53-40b61d356156", item, 0.0, 5555.5,5555.5,5555.5,10,13)
                 val paymentMethods = mutableListOf<PaymentMethod>()
-                paymentMethods.add(PaymentMethod("1234321412341234","1234","","visa",4505.0,false))
+                paymentMethods.add(PaymentMethod("1234321412341234","1234","","visa"))
                 val paymentPayload = PaymentPayload(1000.0,order,paymentMethods)
                 single.onSuccess(Result.success(paymentPayload))
             }else{
@@ -165,14 +216,14 @@ class UserUseCase : UserUseCase{
             }else if(categoryId == "54321"){
                 val commerces = mutableListOf<Commerce>()
                 commerces.add(Commerce("12345","Pizza Hut","","www.pizzahut.com","www.facebook.com/pizzahut","+50688889999","www.instagram.com/pizzahut","Food",
-                    mutableListOf(), "", "", "",  Offer( 10),  10))
+                    mutableListOf(), "", "", "",  Offer( 10),  10,true))
                 commerces.add(Commerce("54321`","Pizza Hut 2",  "","www.pizzahut2.com","www.facebook.com/pizzahut2", "+50688889999",  "www.instagram.com/pizzahut2", "Food",
-                    mutableListOf(), "",  "",  "",  Offer( 10),  10))
+                    mutableListOf(), "",  "",  "",  Offer( 10),  10,true))
                 commercesResult = CommercesResult(commerces,2)
             }else{
                 val commerces = mutableListOf<Commerce>()
                 commerces.add(Commerce("12345","Pizza Hut","","www.pizzahut.com","www.facebook.com/pizzahut","+50688889999","www.instagram.com/pizzahut","Food",
-                    mutableListOf(), "", "", "",  Offer( 10),  10))
+                    mutableListOf(), "", "", "",  Offer( 10),  10,true))
                 commercesResult = CommercesResult(commerces,8)
             }
 
@@ -184,7 +235,10 @@ class UserUseCase : UserUseCase{
 
     override fun fetchCategories(): Observable<Result<List<Category>>> {
         val single = Single.create<Result<List<Category>>> create@{ single ->
-            single.onSuccess(Result.success(mutableListOf()))
+            val categoryResult = mutableListOf<Category>()
+            categoryResult.add(Category("1234","Food",""))
+            categoryResult.add(Category("4321","Health",""))
+            single.onSuccess(Result.success(categoryResult))
         }
         return single.toObservable()
     }

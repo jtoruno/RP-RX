@@ -6,6 +6,7 @@ import com.zimplifica.domain.entities.UserStatus
 import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.mocks.userInformationMock
 import com.zimplifica.redipuntos.models.CurrentUser
 import io.reactivex.observers.TestObserver
 import org.junit.Test
@@ -38,11 +39,8 @@ class PointsFragmentVMTest : RPTestCase() {
     fun testPaymentMethods(){
         val status = UserStatus(VerificationStatus.VerifiedValid,null)
         val paymentList = mutableListOf<PaymentMethod>()
-        paymentList.add(PaymentMethod("1",  "1234", "", "visa", 3000.0, false))
-        val currentUser = UserInformationResult("550e8400-e29b-41d4-a716-446655440000", "11565O433",
-            "José", "Sanchez",
-            "10/10/1994", "josedani.04.24@gmail.com", "+50686137284",
-            true,  false,null, 1000.0, paymentList,status)
+        paymentList.add(PaymentMethod("1",  "1234", "", "visa"))
+        val currentUser = userInformationMock(paymentMethods = paymentList)
         val currentU = CurrentUser
         currentU.setCurrentUser((currentUser))
         setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())
@@ -54,11 +52,8 @@ class PointsFragmentVMTest : RPTestCase() {
     fun testShowDisablePaymentMethodAlertAction(){
         val status = UserStatus(VerificationStatus.VerifiedValid,null)
         val paymentList = mutableListOf<PaymentMethod>()
-        paymentList.add(PaymentMethod("1",  "1234", "", "visa", 3000.0, false))
-        val currentUser = UserInformationResult("550e8400-e29b-41d4-a716-446655440000", "11565O433",
-            "José", "Sanchez",
-            "10/10/1994", "josedani.04.24@gmail.com", "+50686137284",
-            true,  false,null, 1000.0, paymentList,status)
+        paymentList.add(PaymentMethod("1",  "1234", "", "visa"))
+        val currentUser = userInformationMock(paymentMethods = paymentList)
         val currentU = CurrentUser
         currentU.setCurrentUser((currentUser))
         setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())
@@ -70,15 +65,12 @@ class PointsFragmentVMTest : RPTestCase() {
     fun testDisablePaymentMethodAction(){
         val status = UserStatus(VerificationStatus.VerifiedValid,null)
         val paymentList = mutableListOf<PaymentMethod>()
-        paymentList.add(PaymentMethod("1234",  "1234", "", "visa", 3000.0, false))
-        val currentUser = UserInformationResult("1234", "11565O433",
-            "José", "Sanchez",
-            "10/10/1994", "josedani.04.24@gmail.com", "+50686137284",
-            true,  false,null, 1000.0, paymentList,status)
+        paymentList.add(PaymentMethod("1234",  "1234", "", "visa"))
+        val currentUser = userInformationMock(paymentMethods = paymentList)
         val currentU = CurrentUser
         currentU.setCurrentUser((currentUser))
         setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())
-        val paymentMethod = PaymentMethod("1234",  "1234",  "", "visa", 4505.0, false)
+        val paymentMethod = PaymentMethod("1234",  "1234",  "", "visa")
         vm.inputs.disablePaymentMethodPressed(paymentMethod)
         disablePaymentMethodAction.assertValueCount(1)
 
@@ -86,17 +78,13 @@ class PointsFragmentVMTest : RPTestCase() {
 
     @Test
     fun testShowError(){
-        val status = UserStatus(VerificationStatus.VerifiedValid,null)
         val paymentList = mutableListOf<PaymentMethod>()
-        paymentList.add(PaymentMethod("1234",  "1234", "", "visa", 3000.0, false))
-        val currentUser = UserInformationResult("1234", "11565O433",
-            "José", "Sanchez",
-            "10/10/1994", "josedani.04.24@gmail.com", "+50686137284",
-            true,  false,null, 1000.0, paymentList,status)
+        paymentList.add(PaymentMethod("1234",  "1234", "", "visa"))
+        val currentUser = userInformationMock(paymentMethods = paymentList)
         val currentU = CurrentUser
         currentU.setCurrentUser((currentUser))
         setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())
-        val paymentMethod = PaymentMethod("3333",  "1234",  "", "visa", 4505.0, false)
+        val paymentMethod = PaymentMethod("3333",  "1234",  "", "visa")
         vm.inputs.disablePaymentMethodPressed(paymentMethod)
         disablePaymentMethodAction.assertValueCount(0)
         showError.assertValueCount(1)
@@ -108,15 +96,12 @@ class PointsFragmentVMTest : RPTestCase() {
     fun testLoading(){
         val status = UserStatus(VerificationStatus.VerifiedValid,null)
         val paymentList = mutableListOf<PaymentMethod>()
-        paymentList.add(PaymentMethod("1234",  "1234", "", "visa", 3000.0, false))
-        val currentUser = UserInformationResult("1234", "11565O433",
-            "José", "Sanchez",
-            "10/10/1994", "josedani.04.24@gmail.com", "+50686137284",
-            true,  false,null, 1000.0, paymentList,status)
+        paymentList.add(PaymentMethod("1234",  "1234", "", "visa"))
+        val currentUser = userInformationMock(paymentMethods = paymentList)
         val currentU = CurrentUser
         currentU.setCurrentUser((currentUser))
         setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())
-        val paymentMethod = PaymentMethod("3333",  "1234",  "", "visa", 4505.0, false)
+        val paymentMethod = PaymentMethod("3333",  "1234",  "", "visa")
         vm.inputs.disablePaymentMethodPressed(paymentMethod)
         loading.assertValues(true,false)
     }

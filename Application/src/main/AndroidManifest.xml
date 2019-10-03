@@ -122,10 +122,6 @@
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-                android:name=".ui.activities.CitizenInfoActivity"
-                android:screenOrientation="portrait">
-        </activity>
-        <activity
                 android:name=".ui.activities.LaunchActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppThemeNoActionBar">

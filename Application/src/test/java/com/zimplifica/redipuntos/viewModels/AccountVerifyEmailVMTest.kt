@@ -5,6 +5,7 @@ import com.zimplifica.domain.entities.UserStatus
 import com.zimplifica.domain.entities.VerificationStatus
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.mocks.userInformationMock
 import com.zimplifica.redipuntos.models.CurrentUser
 import io.reactivex.observers.TestObserver
 import org.junit.Test
@@ -26,11 +27,7 @@ class AccountVerifyEmailVMTest : RPTestCase() {
     }
 
     private fun setUpTest(){
-        val status = UserStatus(VerificationStatus.Pending,null)
-        val currentUser = UserInformationResult("", "",
-            "PEDRO", "FONSECA SANCHEZ",
-            "10/10/1994","dsanchez@zimplifica", "",
-            false,  false,null, null, mutableListOf(),status)
+        val currentUser = userInformationMock()
         val currentU = CurrentUser
         currentU.setCurrentUser((currentUser))
         setUpEnvironment(environment()!!.toBuilder().currentUser(currentU).build())

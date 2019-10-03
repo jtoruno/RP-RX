@@ -7,37 +7,37 @@ import org.junit.Test
 
 class WalkThroughViewModelTest : RPTestCase() {
     lateinit var vm : WalkThroughViewModel.ViewModel
-    val startNextActivity = TestObserver<Unit>()
-    val startMainActivity = TestObserver<Unit>()
-    val startBackActivity = TestObserver<Unit>()
+    val startHelpActivity = TestObserver<Unit>()
+    val startSignInActivity = TestObserver<Unit>()
+    val startSignUpActivity = TestObserver<Unit>()
 
     private fun setUpEnvironment(environment : Environment){
         this.vm = WalkThroughViewModel.ViewModel(environment)
 
-        this.vm.outputs.startMainActivity().subscribe(this.startMainActivity)
-        this.vm.outputs.startNextActivity().subscribe(this.startNextActivity)
-        this.vm.outputs.startBackActivity().subscribe(this.startBackActivity)
+        this.vm.outputs.startHelpActivity().subscribe(this.startHelpActivity)
+        this.vm.outputs.startSignInActivity().subscribe(this.startSignInActivity)
+        this.vm.outputs.startSignUpActivity().subscribe(this.startSignUpActivity)
     }
 
     @Test
-    fun startMainActivity(){
+    fun startHelpActivity(){
         setUpEnvironment(environment()!!)
-        this.vm.inputs.skipButtonClicked()
-        this.startMainActivity.assertValueCount(1)
+        this.vm.inputs.helpButtonClicked()
+        this.startHelpActivity.assertValueCount(1)
     }
 
     @Test
-    fun startBackActivity(){
+    fun startSignInActivity(){
         setUpEnvironment(environment()!!)
-        this.vm.inputs.backButtonClicked()
-        this.startBackActivity.assertValueCount(1)
+        this.vm.inputs.signInButtonClicked()
+        this.startSignInActivity.assertValueCount(1)
     }
 
     @Test
-    fun startNextActivity(){
+    fun startSignUpActivity(){
         setUpEnvironment(environment()!!)
-        this.vm.inputs.nextButtonClicked()
-        this.startNextActivity.assertValueCount(1)
+        this.vm.inputs.signUpButtonClicked()
+        this.startSignUpActivity.assertValueCount(1)
     }
 
 }

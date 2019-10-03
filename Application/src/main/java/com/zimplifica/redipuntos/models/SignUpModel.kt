@@ -7,4 +7,9 @@ class SignUpModel(val userId : String, val phoneNumber : String, val password: S
     fun phoneNumberWithExtension() : String{
         return ValidationService.normalizePhoneNumber(phoneNumber)?:""
     }
+
+    override fun equals(other: Any?): Boolean {
+        if(other == null || other !is SignUpModel) return false
+        return userId == other.userId
+    }
 }

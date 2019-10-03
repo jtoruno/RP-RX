@@ -41,4 +41,9 @@ class CheckAndPayModel(val orderId: String,val subtotal: Double,val fee: Double,
         return floor(amountWithoutRps*c)
     }
 
+    override fun equals(other: Any?): Boolean {
+        if((other == null || other !is CheckAndPayModel)) return false
+        return orderId == other.orderId
+    }
+
 }

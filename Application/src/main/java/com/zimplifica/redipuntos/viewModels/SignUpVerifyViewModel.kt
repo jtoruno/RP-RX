@@ -84,9 +84,9 @@ interface SignUpVerifyViewModel {
                 .map { ErrorHandler.handleError(it,AuthenticationErrorType.SIGN_UP_ERROR) }
                 .subscribe(this.showError)
 
-            val resendEvent = modelAndCode
+            val resendEvent = model
                 .takeWhen(this.resendVerificationCodePressed)
-                .flatMap { this.resendVerificationCode(it.second.first.phoneNumber) }
+                .flatMap { this.resendVerificationCode(it.second.phoneNumber) }
                 .share()
 
             resendEvent
