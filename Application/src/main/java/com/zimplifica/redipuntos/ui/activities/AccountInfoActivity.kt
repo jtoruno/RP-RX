@@ -29,6 +29,8 @@ class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.userInformationAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                val name = (it?.nickname?.toLowerCase()?.capitalizeWords()) ?: ""
+                account_info_name.setText(name)
                 account_info_email.setText(it?.userEmail?:"")
                 if (it?.userEmailVerified == true){
                     account_info_state.text = "Verificado"

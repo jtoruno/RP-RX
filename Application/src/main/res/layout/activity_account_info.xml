@@ -12,7 +12,7 @@
             android:textColorHint="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
             android:id="@+id/textInputLayout15">
@@ -29,76 +29,13 @@
                 android:layout_height="wrap_content"
                 android:hint="Nombre"/>
     </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
-            android:textColorHint="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout15" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:id="@+id/textInputLayout16">
-
-        <com.google.android.material.textfield.TextInputEditText
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white"
-                android:id="@+id/account_info_last_name"
-                android:focusable="false"
-                android:enabled="false"
-                android:text="Apelido1 Apellido2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Apellidos"/>
-    </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
-            android:textColorHint="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout16" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:id="@+id/textInputLayout17">
-
-        <com.google.android.material.textfield.TextInputEditText
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white"
-                android:id="@+id/account_info_id_card"
-                android:focusable="false"
-                android:text="123456789"
-                android:enabled="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Identificación"/>
-    </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
-            android:textColorHint="@android:color/white"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout17" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-            android:id="@+id/textInputLayout20">
-
-        <com.google.android.material.textfield.TextInputEditText
-                android:backgroundTint="@android:color/white"
-                android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white"
-                android:focusable="false"
-                android:id="@+id/account_info_date"
-                android:text="01/01/2001"
-                android:enabled="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Fecha de Nacimiento"/>
-    </com.google.android.material.textfield.TextInputLayout>
     <LinearLayout
             android:id="@+id/account_info_ll"
             android:orientation="horizontal"
             android:layout_marginStart="8dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginTop="15dp"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout20" app:layout_constraintStart_toStartOf="parent"
+            android:layout_height="wrap_content" android:layout_marginTop="30dp"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout15" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp">
         <com.google.android.material.textfield.TextInputLayout
                 android:textColorHint="@android:color/white"

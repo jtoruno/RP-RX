@@ -26,10 +26,6 @@
         <activity android:name=".ui.activities.NotificationsActivity">
         </activity>
         <activity
-                android:name=".ui.activities.VerifyWalkThActivity"
-                android:screenOrientation="portrait">
-        </activity>
-        <activity
                 android:name=".ui.activities.FirstActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/noAnimTheme">
@@ -39,22 +35,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.JumioActivity">
-        </activity>
-
         <receiver
                 android:name="com.amazonaws.mobileconnectors.pinpoint.targeting.notification.PinpointNotificationReceiver"
                 android:exported="false">
             <intent-filter>
                 <action android:name="com.amazonaws.intent.fcm.NOTIFICATION_OPEN"/>
             </intent-filter>
-        </receiver> <!-- Jumio Activities -->
-        <activity
-                android:name="com.jumio.nv.NetverifyActivity"
-                android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-                android:hardwareAccelerated="true"
-                android:theme="@style/Theme.Netverify"
-                android:windowSoftInputMode="adjustResize"/> <!-- end -->
+        </receiver>
         <activity
                 android:name=".ui.activities.PromotionDetailActivity"
                 android:screenOrientation="portrait">
