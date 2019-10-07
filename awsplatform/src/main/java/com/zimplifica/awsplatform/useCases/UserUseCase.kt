@@ -24,8 +24,57 @@ import java.lang.Exception
 
 class UserUseCase : UserUseCase {
 
+    private val appSyncClientPublic = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PUBLIC)
     private val appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
     private val cacheOperations = CacheOperations()
+
+    override fun initForgotPassword(phoneNumber: String): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val input = InitForgotPasswordInput.builder().phoneNumber(phoneNumber).build()
+            val mutation = InitForgotPasswordMutation.builder().input(input).build()
+            this.appSyncClientPublic!!.mutate(mutation).enqueue(object : GraphQLCall.Callback<InitForgotPasswordMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [initForgotPassword] Error.",e)
+                    single.onSuccess(Result.failure(e))
+                }
+
+                override fun onResponse(response: Response<InitForgotPasswordMutation.Data>) {
+                    val result = response.data()?.initForgotPassword()
+                    if(result!=null){
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
+
+    override fun confirmForgotPassword(forgotPasswordModel: ForgotPasswordModel): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            val jsonString = forgotPasswordModel.getJson() ?: return@create
+            val encryptedData = PlatformUtils.encrypt(jsonString)?.replace("\n","") ?: return@create
+            val input = ConfirmForgotPasswordInput.builder().data(encryptedData).build()
+            val mutation = ConfirmForgotPasswordMutation.builder().input(input).build()
+            this.appSyncClientPublic!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<ConfirmForgotPasswordMutation.Data>(){
+                override fun onFailure(e: ApolloException) {
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [initForgotPassword] Error.",e)
+                    single.onSuccess(Result.failure(e))
+                }
+
+                override fun onResponse(response: Response<ConfirmForgotPasswordMutation.Data>) {
+                    val result = response.data()?.confirmForgotPassword()
+                    if(result!=null){
+                        single.onSuccess(Result.success(result.success()))
+                    }else{
+                        single.onSuccess(Result.failure(Exception()))
+                    }
+                }
+            })
+        }
+        return single.toObservable()
+    }
 
 
     override fun updateFavoriteMerchant(merchantId: String, isFavorite: Boolean): Observable<Result<Boolean>> {

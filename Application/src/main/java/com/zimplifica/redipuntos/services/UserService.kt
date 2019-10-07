@@ -172,13 +172,13 @@ class UserService(private val userUseCase: UserUseCase, private val state: Globa
     }
 
     fun initForgotPassword(phoneNumber: String) : Observable<Result<Boolean>> {
-        return Observable.never()
+        return userUseCase.initForgotPassword(phoneNumber)
     }
 
-    /*
+
     fun confirmForgotPassword(forgotPasswordModel: ForgotPasswordModel) : Observable<Result<Boolean>> {
         return userUseCase.confirmForgotPassword(forgotPasswordModel)
-    }*/
+    }
 
 
     //Global State Subscriptions

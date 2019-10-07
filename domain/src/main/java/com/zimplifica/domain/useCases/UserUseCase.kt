@@ -27,4 +27,6 @@ interface UserUseCase{
     fun verifyPhoneNumber() : Observable<Result<Boolean>>
     fun updatePin(securityCode: SecurityCode) : Observable<Result<Boolean>>
     fun changePassword(changePasswordModel: ChangePasswordModel) : Observable<Result<Boolean>>
+    fun initForgotPassword(phoneNumber: String) : Observable<Result<Boolean>>
+    fun confirmForgotPassword(forgotPasswordModel: ForgotPasswordModel) : Observable<Result<Boolean>>
 }

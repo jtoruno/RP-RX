@@ -16,7 +16,12 @@ class Coupon(val beforeDiscount: Double, val afterDiscount: Double) : Serializab
 
 class Offer(val discount: Int) : Serializable
 
-class Category(val id: String, val name: String,val posterImage: String) : Serializable
+class Category(val id: String, val name: String,val posterImage: String) : Serializable{
+    override fun equals(other: Any?): Boolean {
+        if(other == null || other !is Category) return false
+        return id == other.id
+    }
+}
 
 class Promotion(val id: String, val promotionType: String, val title: String, val description: String,val promotionImage: String,val commerceName: String,validFrom: String,validTo: String,
                 val restrictions: String,val waysToUse: String,val stores: List<Store>,val coupon: Coupon?,val offer: Offer?,val website: String,val facebook: String,val whatsapp: String,
@@ -37,7 +42,12 @@ class Promotion(val id: String, val promotionType: String, val title: String, va
     }
 }
 
-class Commerce(val commerceId: String,val name: String,val posterImage: String/*,val promotions: List<Promotion>*/,val website: String,val facebook: String,val whatsapp: String,val instagram: String,val category: String?,val stores: List<Store>, val restrictions : String,val waysToUse : String, val description: String, val offer : Offer?,val cashback : Int, val isFavorite: Boolean) : Serializable
+class Commerce(val commerceId: String,val name: String,val posterImage: String/*,val promotions: List<Promotion>*/,val website: String,val facebook: String,val whatsapp: String,val instagram: String,val category: String?,val stores: List<Store>, val restrictions : String,val waysToUse : String, val description: String, val offer : Offer?,val cashback : Int, val isFavorite: Boolean) : Serializable{
+    override fun equals(other: Any?): Boolean {
+        if(other == null || other !is Commerce) return false
+        return commerceId == other.commerceId
+    }
+}
 
 class CommercesResult(val commerces : List<Commerce>, val total : Int) : Serializable
 

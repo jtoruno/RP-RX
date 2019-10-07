@@ -21,7 +21,7 @@ interface ForgotPasswordViewModel {
         fun nextButtonEnabled() : Observable<Boolean>
         fun loadingEnabled() : Observable<Boolean>
         fun showError() : Observable<ErrorWrapper>
-        fun forgotPasswordStatus() : Observable<Unit>
+        fun forgotPasswordStatus() : Observable<String>
     }
 
     class ViewModel(@NonNull val environment: Environment): ActivityViewModel<ForgotPasswordViewModel>(environment),Inputs,Outputs{
@@ -30,14 +30,14 @@ interface ForgotPasswordViewModel {
         val outputs : Outputs = this
 
         //Inputs
-        private val usernameChanged = PublishSubject.create<String>()
+        private val usernameChanged = BehaviorSubject.create<String>()
         private val nextButtonPressed = PublishSubject.create<Unit>()
 
         //Outputs
         private var nextButtonEnabled = BehaviorSubject.create<Boolean>()
         private var loadingEnabled = BehaviorSubject.create<Boolean>()
         private var showError = PublishSubject.create<ErrorWrapper>()
-        private var forgotPasswordStatus = PublishSubject.create<Unit>()
+        private var forgotPasswordStatus = PublishSubject.create<String>()
 
         init {
 
@@ -45,32 +45,36 @@ interface ForgotPasswordViewModel {
                 .map { ValidationService.validateUsername(it) }
                 .subscribe(nextButtonEnabled)
 
-            val forgotPasswordAcion = usernameChanged
+            val forgotPasswordAction = usernameChanged
                 .takeWhen(nextButtonPressed)
                 .flatMap { result ->
-                    return@flatMap this.forgotPassword(result.second)
+                    return@flatMap this.initForgotPassword(result.second)
                 }
                 .share()
-            forgotPasswordAcion
+
+            forgotPasswordAction
                 .filter { it.isFail() }
-                .map{it ->
+                .map{
                     when(it){
                         is Result.success -> return@map null
                         is Result.failure -> it.cause as? ForgotPasswordError
                     }
-                }.filter { it!= null }
+                }
                 .map { ErrorHandler.handleError(it , AuthenticationErrorType.FORGOT_PASSWORD_ERROR) }
                 .subscribe(this.showError)
 
-            forgotPasswordAcion
+            forgotPasswordAction
                 .filter { !it.isFail() }
-                .map { it->
+                .map {
                     when(it){
-                        is Result.success -> return@map it.value as ForgotPasswordResult
+                        is Result.success -> return@map it.value
                         is Result.failure -> return@map null
                     }
-                }.filter { it!=null }
-                .map { it-> Unit }
+                }
+                .map {
+                    val username = this.usernameChanged.value ?: ""
+                    return@map ValidationService.normalizePhoneNumber(username)?: ""
+                }
                 .subscribe(this.forgotPasswordStatus)
 
 
@@ -87,16 +91,16 @@ interface ForgotPasswordViewModel {
 
         override fun showError(): Observable<ErrorWrapper> = this.showError
 
-        override fun forgotPasswordStatus(): Observable<Unit> = this.forgotPasswordStatus
+        override fun forgotPasswordStatus(): Observable<String> = this.forgotPasswordStatus
 
-        private fun forgotPassword(username: String) : Observable<Result<ForgotPasswordResult>>{
+        private fun initForgotPassword(username: String) : Observable<Result<Boolean>>{
             var usernameFormated = ""
             val credentialType = ValidationService.userCredentialType(username)
             usernameFormated = when(credentialType){
                 UserCredentialType.PHONE_NUMBER -> "+506$username"
                 UserCredentialType.EMAIL -> username
             }
-            return environment.authenticationUseCase().forgotPassword(usernameFormated)
+            return environment.userUseCase().initForgotPassword(usernameFormated)
                 .doOnComplete { this.loadingEnabled.onNext(false) }
                 .doOnSubscribe { this.loadingEnabled.onNext(true) }
         }
