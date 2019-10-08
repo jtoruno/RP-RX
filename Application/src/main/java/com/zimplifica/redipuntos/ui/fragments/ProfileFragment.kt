@@ -72,7 +72,7 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
                     val inflater = activity?.layoutInflater
                     val view = inflater?.inflate(R.layout.dialog_rate_commerce,null)
                     val smileRate = view?.findViewById<SmileRating>(R.id.smile_rating)
-                    smileRate?.setOnSmileySelectionListener { smiley, reselected ->
+                    smileRate?.setOnSmileySelectionListener { smiley, _ ->
                         when(smiley){
                             SmileRating.BAD ->{
                                 Log.e("Smile","2")
@@ -153,7 +153,7 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
                         }
                         VerificationStatus.VerifiedInvalid -> {
                             showAlert("Lo sentimos","No hemos podido verificar tu identidad, póngase en contacto con soporte@zimplifica.com para solucionar este problema")
-                        }
+                        }else -> {}
                     }
                 }
                 is Result.failure -> {

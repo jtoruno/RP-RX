@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          package="com.zimplifica.redipuntos">
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.zimplifica.redipuntos">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
             android:name=".RPApplication"
@@ -23,178 +23,148 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:replace="android:allowBackup">
-        <activity android:name=".ui.activities.NotificationsActivity">
-        </activity>
+        <activity android:name=".ui.activities.CreatePinActivity"></activity>
+        <activity android:name=".ui.activities.ChangePasswordActivity" />
+        <activity android:name=".ui.activities.NotificationsActivity" />
         <activity
                 android:name=".ui.activities.FirstActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/noAnimTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <receiver
                 android:name="com.amazonaws.mobileconnectors.pinpoint.targeting.notification.PinpointNotificationReceiver"
                 android:exported="false">
             <intent-filter>
-                <action android:name="com.amazonaws.intent.fcm.NOTIFICATION_OPEN"/>
+                <action android:name="com.amazonaws.intent.fcm.NOTIFICATION_OPEN" />
             </intent-filter>
         </receiver>
+
         <activity
                 android:name=".ui.activities.PromotionDetailActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.CommercePromotionsActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.CategoriesActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.AboutActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.AccountVerifyEmailActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.AccountEditEmailActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.MovementDetailActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.AccountInfoActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.PaymentSelectionActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppThemeWithoutDivider">
-        </activity>
+                android:theme="@style/AppThemeWithoutDivider" />
         <activity
                 android:name=".ui.activities.AddPaymentMethodActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.AddPaymentActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.CompletePaymentActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.ConfirmEmailActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.CompleteEmailActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.ConfirmCitizenInfoActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.ScannerIdActivity"
                 android:screenOrientation="landscape"
-                android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+                android:theme="@style/AppTheme.NoActionBar" />
         <activity
                 android:name=".ui.activities.LaunchActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppThemeNoActionBar">
-        </activity>
+                android:theme="@style/AppThemeNoActionBar" />
         <activity
                 android:name=".ui.activities.SPScanQRActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+                android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name="org.eclipse.paho.android.service.MqttService"/>
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
         <service android:name=".services.notifications.PushListenerService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <activity
                 android:name=".ui.activities.SPSelectionActivity"
                 android:screenOrientation="portrait"
-                android:windowSoftInputMode="adjustResize">
-        </activity>
+                android:windowSoftInputMode="adjustResize" />
         <activity
                 android:name=".ui.activities.HomeActivity"
                 android:label="@string/title_activity_home"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+                android:theme="@style/AppTheme.NoActionBar" />
         <activity
                 android:name=".ui.activities.SplashActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppThemeNoActionBar">
-        </activity>
+                android:theme="@style/AppThemeNoActionBar" />
         <activity
                 android:name=".ui.activities.ConfirmForgotPasswordActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.ForgotPasswordActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.SignUpVerifyActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.SignInFailureActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.PrivacyActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.TermsActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.HelpActivity"
                 android:parentActivityName=".ui.activities.MainActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.WalkThrough"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppThemeNoActionBar">
-        </activity>
+                android:theme="@style/AppThemeNoActionBar" />
         <activity
                 android:name=".ui.activities.TakePhoneActivity"
                 android:parentActivityName=".ui.activities.MainActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.PasswordActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.SignInActivity"
                 android:parentActivityName=".ui.activities.MainActivity"
-                android:screenOrientation="portrait">
-        </activity>
+                android:screenOrientation="portrait" />
         <activity
                 android:name=".ui.activities.MainActivity"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppThemeNoActionBar">
-        </activity>
+                android:theme="@style/AppThemeNoActionBar" />
     </application>
 
 </manifest>
