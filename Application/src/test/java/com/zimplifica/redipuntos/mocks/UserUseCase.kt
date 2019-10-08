@@ -7,6 +7,27 @@ import io.reactivex.Single
 import java.lang.Exception
 
 class UserUseCase : UserUseCase{
+    override fun initForgotPassword(phoneNumber: String): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            if(phoneNumber == "+50688888888"){
+                single.onSuccess(Result.failure(Exception()))
+            }else{
+                single.onSuccess(Result.success(true))
+            }
+        }
+        return single.toObservable()
+    }
+
+    override fun confirmForgotPassword(forgotPasswordModel: ForgotPasswordModel): Observable<Result<Boolean>> {
+        val single = Single.create<Result<Boolean>> create@{ single ->
+            if(forgotPasswordModel.phoneNumber  == "+50688888888" || forgotPasswordModel.password == "123abc#"){
+                single.onSuccess(Result.failure(Exception()))
+            }else{
+                single.onSuccess(Result.success(true))
+            }
+        }
+        return single.toObservable()
+    }
 
     override fun updateFavoriteMerchant(merchantId: String, isFavorite: Boolean): Observable<Result<Boolean>> {
         return Observable.create<Result<Boolean>> { observer ->

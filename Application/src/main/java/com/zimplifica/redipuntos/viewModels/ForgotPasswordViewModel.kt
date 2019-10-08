@@ -20,7 +20,7 @@ interface ForgotPasswordViewModel {
     interface Outputs{
         fun nextButtonEnabled() : Observable<Boolean>
         fun loadingEnabled() : Observable<Boolean>
-        fun showError() : Observable<ErrorWrapper>
+        fun showError() : Observable<String>
         fun forgotPasswordStatus() : Observable<String>
     }
 
@@ -36,7 +36,7 @@ interface ForgotPasswordViewModel {
         //Outputs
         private var nextButtonEnabled = BehaviorSubject.create<Boolean>()
         private var loadingEnabled = BehaviorSubject.create<Boolean>()
-        private var showError = PublishSubject.create<ErrorWrapper>()
+        private var showError = PublishSubject.create<String>()
         private var forgotPasswordStatus = PublishSubject.create<String>()
 
         init {
@@ -54,13 +54,17 @@ interface ForgotPasswordViewModel {
 
             forgotPasswordAction
                 .filter { it.isFail() }
+                    /*
                 .map{
                     when(it){
                         is Result.success -> return@map null
-                        is Result.failure -> it.cause as? ForgotPasswordError
+                        is Result.failure -> return@map it.cause as? ForgotPasswordError
                     }
                 }
                 .map { ErrorHandler.handleError(it , AuthenticationErrorType.FORGOT_PASSWORD_ERROR) }
+
+                     */
+                .map { "Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com" }
                 .subscribe(this.showError)
 
             forgotPasswordAction
@@ -89,7 +93,7 @@ interface ForgotPasswordViewModel {
 
         override fun loadingEnabled(): Observable<Boolean> = this.loadingEnabled
 
-        override fun showError(): Observable<ErrorWrapper> = this.showError
+        override fun showError(): Observable<String> = this.showError
 
         override fun forgotPasswordStatus(): Observable<String> = this.forgotPasswordStatus
 

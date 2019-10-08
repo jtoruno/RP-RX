@@ -13,8 +13,8 @@ class ForgotPasswordViewModelTest : RPTestCase() {
     lateinit var vm : ForgotPasswordViewModel.ViewModel
     val  nextButtonEnabled = TestObserver<Boolean>()
     val  loadingEnabled = TestObserver<Boolean>()
-    val  showError = TestObserver<ErrorWrapper>()
-    val  forgotPasswordStatus =  TestObserver<Unit>()
+    val  showError = TestObserver<String>()
+    val  forgotPasswordStatus =  TestObserver<String>()
 
     fun setUpEnvironment(environment: Environment){
         vm = ForgotPasswordViewModel.ViewModel(environment)
@@ -46,11 +46,11 @@ class ForgotPasswordViewModelTest : RPTestCase() {
     @Test
     fun testShowError(){
         setUpEnvironment(environment()!!)
-        vm.inputs.usernameChanged("99998888")
+        vm.inputs.usernameChanged("88888888")
         vm.inputs.nextButtonPressed()
-        val error = ForgotPasswordError.userNotFound
-        val wrapper = ErrorWrapper(error, "El usuario ingresado no se encuetra registrado. Por favor intentar con un usuario válido.")
-        showError.assertValues(wrapper)
+        //val error = ForgotPasswordError.unknown
+        //val wrapper = ErrorWrapper(error, "Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com)
+        showError.assertValueCount(1)
     }
 
     @Test

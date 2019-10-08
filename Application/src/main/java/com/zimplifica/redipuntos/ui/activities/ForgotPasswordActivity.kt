@@ -60,12 +60,13 @@ class ForgotPasswordActivity : BaseActivity<ForgotPasswordViewModel.ViewModel>()
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos",it.friendlyMessage)
+                showDialog("Lo sentimos",it)
             })
 
         compositeDisposable.add(this.viewModel.outputs.forgotPasswordStatus().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val intent = Intent(this, ConfirmForgotPasswordActivity::class.java)
+                intent.putExtra("username",it)
                 startActivity(intent)
                 finish()
             })

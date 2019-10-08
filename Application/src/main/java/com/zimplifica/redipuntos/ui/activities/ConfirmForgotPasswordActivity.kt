@@ -66,7 +66,7 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos",it.friendlyMessage)
+                showDialog("Lo sentimos",it)
             })
 
         compositeDisposable.add(this.viewModel.outputs.validPasswordCapitalLowerLetters().observeOn(AndroidSchedulers.mainThread()).subscribe {

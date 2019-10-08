@@ -33,7 +33,7 @@ import kotlinx.android.synthetic.main.fragment_catalog.view.*
 
 @RequiresFragmentViewModel(CommercesFragmentVM.ViewModel::class)
 class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
-    lateinit var recyclerView : androidx.recyclerview.widget.RecyclerView
+    lateinit var recyclerView : RecyclerView
     lateinit var group : ChipGroup
     lateinit var adapter : CommerceAdapter
     private val compositeDisposable = CompositeDisposable()

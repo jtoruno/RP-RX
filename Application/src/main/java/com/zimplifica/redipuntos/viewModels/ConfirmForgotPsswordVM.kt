@@ -2,6 +2,7 @@ package com.zimplifica.redipuntos.viewModels
 
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.ForgotPasswordError
+import com.zimplifica.domain.entities.ForgotPasswordModel
 import com.zimplifica.domain.entities.ForgotPasswordResult
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.redipuntos.extensions.takeWhen
@@ -14,6 +15,7 @@ import com.zimplifica.redipuntos.libs.utils.ValidationService
 import io.reactivex.Observable
 import io.reactivex.Observable.combineLatest
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.regex.Pattern
@@ -27,8 +29,8 @@ interface ConfirmForgotPsswordVM {
 
     interface Outputs {
         fun nextButtonEnabled() : Observable<Boolean>
-        fun passwordChangedAction() : Observable<Unit>
-        fun showError() : Observable<ErrorWrapper>
+        fun passwordChangedAction() : Observable<Boolean>
+        fun showError() : Observable<String>
         fun loadingEnabled() : Observable<Boolean>
 
         fun validPasswordLenght() : Observable<Boolean>
@@ -41,7 +43,6 @@ interface ConfirmForgotPsswordVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
-        var username : String = ""
 
         //Inputs
         private val passwordChanged = PublishSubject.create<String>()
@@ -54,17 +55,21 @@ interface ConfirmForgotPsswordVM {
         private val validPasswordLenght = BehaviorSubject.create<Boolean>()
         private val validPasswordNumbers = BehaviorSubject.create<Boolean>()
         private val validPasswordSpecialCharacters = BehaviorSubject.create<Boolean>()
-        private val passwordChangedAction = PublishSubject.create<Unit>()
-        private val showError = PublishSubject.create<ErrorWrapper>()
+        private val passwordChangedAction = PublishSubject.create<Boolean>()
+        private val showError = PublishSubject.create<String>()
         private val loadingEnabled = BehaviorSubject.create<Boolean>()
 
         init {
-            val formData = combineLatest<String, String, Pair<String, String>>(
-                confirmationCodeTextChanged,passwordChanged, BiFunction { t1, t2 ->
-                    Pair(t1, t2) }
-            )
+            val username = intent()
+                .filter { it.hasExtra("username") }
+                .map { return@map it.getStringExtra("username") }
+
+
+            val formData = Observables.combineLatest(
+                confirmationCodeTextChanged,passwordChanged)
+
             formData
-                .map { ValidationService.validateConfirmForgotPassword(it.first, it.second) }
+                .map { ValidationService.validateConfirmForgotPassword(it.first,it.second) }
                 .subscribe(this.nextButtonEnabled)
 
 
@@ -84,33 +89,21 @@ interface ConfirmForgotPsswordVM {
                 .map { validatePasswordSpecialCharacters(it)}
                 .subscribe(this.validPasswordSpecialCharacters)
 
-            val confirmEvent = formData
+            val allInputsForm = Observables.combineLatest(formData,username)
+
+            val confirmEvent = allInputsForm
                 .takeWhen(this.nextButtonPressed)
-                .flatMap { this.confirmForgotPassword(username,it.second.first, it.second.second) }
+                .flatMap { this.confirmForgotPassword(it.second.second,it.second.first.first,it.second.first.second) }
                 .share()
 
             confirmEvent
                 .filter { it.isFail() }
-                .map { it ->
-                    when(it){
-                        is Result.failure -> return@map it.cause as ForgotPasswordError
-                        is Result.success -> return@map null
-                    }
-                }
-                .filter { it!= null }
-                .map { ErrorHandler.handleError(it , AuthenticationErrorType.FORGOT_PASSWORD_ERROR) }
+                .map { return@map "Ocurrió un error al tratarde confirmar la contraseña. Por favor asegurate de que el código de verificacion sea el correcto e intenta de nuevo." }
                 .subscribe(this.showError)
 
             confirmEvent
                 .filter { !it.isFail() }
-                .map { it ->
-                    when(it){
-                        is Result.success -> return@map it.value as ForgotPasswordResult
-                        is Result.failure -> return@map null
-                    }
-                }
-                .filter { it!= null }
-                .map{ it -> Unit}
+                .map { it.successValue() }
                 .subscribe(this.passwordChangedAction)
         }
 
@@ -122,9 +115,9 @@ interface ConfirmForgotPsswordVM {
 
         override fun nextButtonEnabled(): Observable<Boolean> = this.nextButtonEnabled
 
-        override fun passwordChangedAction(): Observable<Unit> = this.passwordChangedAction
+        override fun passwordChangedAction(): Observable<Boolean> = this.passwordChangedAction
 
-        override fun showError(): Observable<ErrorWrapper> = this.showError
+        override fun showError(): Observable<String> = this.showError
 
         override fun loadingEnabled(): Observable<Boolean> = this.loadingEnabled
 
@@ -136,8 +129,9 @@ interface ConfirmForgotPsswordVM {
 
         override fun validPasswordSpecialCharacters(): Observable<Boolean> = this.validPasswordSpecialCharacters
 
-        private fun confirmForgotPassword(username: String, confirmationCode: String, newPassword: String) : Observable<Result<ForgotPasswordResult>>{
-            return environment.authenticationUseCase().confirmForgotPassword(username,confirmationCode, newPassword)
+        private fun confirmForgotPassword(username: String, confirmationCode: String, newPassword: String) : Observable<Result<Boolean>>{
+            val forgotPasswordModel = ForgotPasswordModel(confirmationCode,newPassword,username)
+            return environment.userUseCase().confirmForgotPassword(forgotPasswordModel)
                 .doOnComplete { this.loadingEnabled.onNext(false) }
                 .doOnSubscribe { this.loadingEnabled.onNext(true) }
         }

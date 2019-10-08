@@ -1,5 +1,6 @@
 package com.zimplifica.redipuntos.viewModels
 
+import android.content.Intent
 import com.zimplifica.domain.entities.ForgotPasswordError
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
@@ -10,8 +11,8 @@ import org.junit.Test
 class ConfirmForgotPsswordVMTest : RPTestCase() {
     lateinit var vm : ConfirmForgotPsswordVM.ViewModel
     val nextButtonEnabled = TestObserver<Boolean>()
-    val passwordChangedAction = TestObserver<Unit>()
-    val showError = TestObserver<ErrorWrapper>()
+    val passwordChangedAction = TestObserver<Boolean>()
+    val showError = TestObserver<String>()
     val loadingEnabled = TestObserver<Boolean>()
 
     val validPasswordLenght = TestObserver<Boolean>()
@@ -21,7 +22,7 @@ class ConfirmForgotPsswordVMTest : RPTestCase() {
 
     private fun setUpEnviroment(environment: Environment){
         this.vm = ConfirmForgotPsswordVM.ViewModel(environment)
-        vm.username = "+50688889999"
+        vm.intent(Intent().putExtra("username","+50688889999"))
         this.vm.outputs.nextButtonEnabled().subscribe(this.nextButtonEnabled)
         this.vm.outputs.passwordChangedAction().subscribe(this.passwordChangedAction)
         this.vm.outputs.showError().subscribe(this.showError)
@@ -57,12 +58,10 @@ class ConfirmForgotPsswordVMTest : RPTestCase() {
     @Test
     fun testShowError(){
         setUpEnviroment(environment()!!)
-        vm.inputs.passwordChanged("123Jose_2")
+        vm.inputs.passwordChanged("123abc#")
         this.vm.inputs.confirmationCodeTextChanged("123456")
         vm.inputs.nextButtonPressed()
-        val error = ForgotPasswordError.userNotFound
-        val wrapper = ErrorWrapper(error,"El usuario ingresado no se encuetra registrado. Por favor intentar con un usuario válido.")
-        showError.assertValues(wrapper)
+        showError.assertValueCount(1)
     }
 
     @Test

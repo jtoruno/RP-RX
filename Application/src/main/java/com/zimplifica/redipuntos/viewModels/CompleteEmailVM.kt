@@ -1,7 +1,6 @@
 package com.zimplifica.redipuntos.viewModels
 
 import androidx.annotation.NonNull
-import com.zimplifica.domain.entities.ForgotPasswordError
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
