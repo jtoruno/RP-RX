@@ -3,10 +3,7 @@ package com.zimplifica.redipuntos.viewModels
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.annotation.NonNull
-import com.zimplifica.domain.entities.Result
-import com.zimplifica.domain.entities.UserInformationResult
-import com.zimplifica.domain.entities.UserStateResult
-import com.zimplifica.domain.entities.VerificationStatus
+import com.zimplifica.domain.entities.*
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
 import io.reactivex.Observable
@@ -29,6 +26,18 @@ interface AccountVM {
 
         /// Call when about us button is pressed.
         fun aboutUsButtonPressed()
+
+        // Call when change user password button is pressed.
+        fun goToChangePasswordScreen()
+
+        /// Call when change user passoword button is pressed.
+        fun changePasswordButtonPressed()
+
+        /// Call when pin button is pressed.
+        fun pinButtonPressed()
+
+        /// Call when user selects to update the pin in the alert.
+        fun showUpdatePinScreen()
     }
     interface Outputs {
         fun accountInformationAction() : Observable<Boolean>
@@ -45,6 +54,19 @@ interface AccountVM {
         /// Emits when about us button is pressed.
         fun aboutUsButton() : Observable<Unit>
 
+        /// Emits when change user passoword is triggered.
+        fun changePasswordButtonAction() : Observable<Unit>
+
+        /// Emits when change user passoword is triggered and user confirms.
+        fun goToChangePasswordScreenAction() : Observable<Unit>
+
+        /// Emits when user already has a security code to alert the user.
+        fun showUpdatePinAlert() : Observable<Unit>
+
+        /// Emits when pin button is pressed.
+        fun pinButtonAction() : Observable<PinRequestMode>
+
+
     }
     @SuppressLint("CheckResult")
     class ViewModel(@NonNull val environment: Environment) : FragmentViewModel<AccountVM>(environment),Inputs,Outputs{
@@ -60,6 +82,10 @@ interface AccountVM {
         private val termsAndConditionsButtonPressed = PublishSubject.create<Unit>()
         private val privacyPolicyButtonPressed = PublishSubject.create<Unit>()
         private val aboutUsButtonPressed = PublishSubject.create<Unit>()
+        private val goToChangePasswordScreen = PublishSubject.create<Unit>()
+        private val pinButtonPressed = PublishSubject.create<Unit>()
+        private val showUpdatePinScreen = PublishSubject.create<Unit>()
+        private val changePasswordButtonPressed = PublishSubject.create<Unit>()
 
 
         //Outputs
@@ -71,6 +97,10 @@ interface AccountVM {
         private val termsAndConditionsButton = BehaviorSubject.create<Unit>()
         private val privacyPolicyButton = BehaviorSubject.create<Unit>()
         private val aboutUsButton = BehaviorSubject.create<Unit>()
+        private val changePasswordButtonAction = BehaviorSubject.create<Unit>()
+        private val showUpdatePinAlert = BehaviorSubject.create<Unit>()
+        private val pinButtonAction = BehaviorSubject.create<PinRequestMode>()
+        private val goToChangePasswordScreenAction = BehaviorSubject.create<Unit>()
 
         init {
             onCreate
@@ -82,7 +112,6 @@ interface AccountVM {
                 .subscribe(this.accountInformationAction)
 
             completeAccountInfoButtonPressed
-                .debounce(100,TimeUnit.MILLISECONDS,AndroidSchedulers.mainThread())
                 .flatMap { fetchUserInfo() }
                 .subscribe {
                     when(it){
@@ -104,6 +133,20 @@ interface AccountVM {
                 .map {  return@map  }
                 .subscribe(this.signOutAction)
 
+            pinButtonPressed
+                .map { environment.currentUser().getCurrentUser()?.securityCodeCreated }
+                .subscribe {userHasPin ->
+                    if (userHasPin == true){
+                        this.showUpdatePinScreen.onNext(Unit)
+                    }else{
+                        this.pinButtonAction.onNext(PinRequestMode.CREATE)
+                    }
+                }
+
+            showUpdatePinScreen
+                .map { PinRequestMode.UPDATE }
+                .subscribe(this.pinButtonAction)
+
             this.termsAndConditionsButtonPressed
                 .subscribe(this.termsAndConditionsButton)
 
@@ -112,6 +155,12 @@ interface AccountVM {
 
             this.aboutUsButtonPressed
                 .subscribe(this.aboutUsButton)
+
+            this.goToChangePasswordScreen
+                .subscribe(this.goToChangePasswordScreenAction)
+
+            this.changePasswordButtonPressed
+                .subscribe(this.changePasswordButtonAction)
         }
 
 
@@ -130,6 +179,30 @@ interface AccountVM {
         override fun signOutButtonPressed() {
             return this.signOutButtonPressed.onNext(Unit)
         }
+
+        override fun goToChangePasswordScreen() {
+            return this.goToChangePasswordScreen.onNext(Unit)
+        }
+
+        override fun pinButtonPressed() {
+            return this.pinButtonPressed.onNext(Unit)
+        }
+
+        override fun showUpdatePinScreen() {
+            return this.showUpdatePinScreen.onNext(Unit)
+        }
+
+        override fun changePasswordButtonPressed() {
+            return this.changePasswordButtonPressed.onNext(Unit)
+        }
+
+        override fun goToChangePasswordScreenAction(): Observable<Unit> = this.goToChangePasswordScreenAction
+
+        override fun showUpdatePinAlert(): Observable<Unit> = this.showUpdatePinAlert
+
+        override fun pinButtonAction(): Observable<PinRequestMode> = this.pinButtonAction
+
+        override fun changePasswordButtonAction(): Observable<Unit> = this.changePasswordButtonAction
 
         override fun accountInformationAction(): Observable<Boolean> = this.accountInformationAction
 

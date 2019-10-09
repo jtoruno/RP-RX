@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.hardware.biometrics.BiometricPrompt
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
@@ -22,10 +23,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_pay.*
 import android.widget.Toast
 import com.zimplifica.redipuntos.models.ManagerNav
+import com.zimplifica.redipuntos.models.SitePayNavigation
+import com.zimplifica.redipuntos.ui.activities.CreatePinActivity
 import com.zimplifica.redipuntos.ui.activities.SPScanQRActivity
 import com.zimplifica.redipuntos.ui.activities.SPSelectionActivity
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.number_keyboard.*
+
+
+
 
 
 @RequiresFragmentViewModel(PayFragmentVM.ViewModel::class)
@@ -69,9 +75,16 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
         compositeDisposable.add(this.viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 //val intent = Intent(activity!!,SPSelectionActivity::class.java)
-                val intent = Intent(activity!!,SPScanQRActivity::class.java)
-                intent.putExtra("amount", it)
-                startActivity(intent)
+                val securityCodeBoolean = viewModel.environment.currentUser().getCurrentUser()?.securityCodeCreated ?: false
+                if(securityCodeBoolean){
+                    val intent = Intent(activity!!,SPScanQRActivity::class.java)
+                    intent.putExtra("amount", it)
+                    startActivity(intent)
+                }else{
+                    val intent = Intent(activity!!, CreatePinActivity::class.java)
+                    startActivity(intent)
+                }
+
             })
 
         compositeDisposable.add(this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())

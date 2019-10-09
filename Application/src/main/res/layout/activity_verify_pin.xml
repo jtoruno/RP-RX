@@ -3,19 +3,20 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:background="@color/colorPrimary"
-        tools:context=".ui.activities.CreatePinActivity">
+        android:layout_height="match_parent"
+        tools:context=".ui.activities.VerifyPinActivity">
 
     <TextView
-            android:textColor="@android:color/white"
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Crear PIN"
+            android:textAlignment="center"
             android:textStyle="bold"
             android:textSize="24sp"
+            android:layout_marginTop="20dp"
+            android:textColor="@android:color/white"
+            android:id="@+id/textView52"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Código de Seguridad (PIN)"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -23,55 +24,54 @@
     <TextView
             android:textSize="16sp"
             android:textColor="@android:color/white"
-            android:id="@+id/textView15"
+            android:layout_marginTop="20dp"
+            android:textAlignment="center"
+            android:id="@+id/textView58"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:text="El PIN debe estar formado por 4 números"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/textView52" />
 
     <EditText
-            android:textColor="@android:color/white"
-            android:hint="****"
-            android:textColorHint="@android:color/white"
-            android:textAlignment="center"
             android:background="@drawable/border_white"
-            android:id="@+id/create_pin_code"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:layout_marginStart="80dp"
             android:layout_marginEnd="80dp"
+            android:textColor="@android:color/white"
+            android:hint="****"
+            android:textColorHint="@android:color/white"
+            android:id="@+id/verify_pin_code"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
             android:inputType="numberPassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView15" />
+            app:layout_constraintTop_toBottomOf="@+id/textView58" />
 
     <ProgressBar
-            android:id="@+id/create_pin_progress_bar"
+            android:id="@+id/verify_pin_progress_bar"
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_pin_code" />
+            app:layout_constraintTop_toBottomOf="@+id/verify_pin_code" />
 
     <Button
-            android:enabled="false"
-            android:background="@drawable/btn_state"
-            android:id="@+id/create_pin_btn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
+            android:enabled="false"
+            android:background="@drawable/btn_state"
+            android:id="@+id/verify_pin_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Siguiente"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/create_pin_progress_bar" />
-
-
+            app:layout_constraintTop_toBottomOf="@+id/verify_pin_progress_bar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

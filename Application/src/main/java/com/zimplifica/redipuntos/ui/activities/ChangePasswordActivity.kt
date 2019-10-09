@@ -77,6 +77,11 @@ class ChangePasswordActivity : BaseActivity<ChangePasswordVM.ViewModel>() {
         finish()
     }
 
+    override fun onDestroy() {
+        compositeDisposable.dispose()
+        super.onDestroy()
+    }
+
     private fun showDialog(title : String, message : String){
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)

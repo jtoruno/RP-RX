@@ -12,6 +12,7 @@ import androidx.fragment.app.DialogFragment
 import com.amulyakhare.textdrawable.TextDrawable
 import com.google.android.material.snackbar.Snackbar
 import com.hsalf.smilerating.SmileRating
+import com.zimplifica.domain.entities.PinRequestMode
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.VerificationStatus
@@ -31,6 +32,13 @@ import kotlinx.android.synthetic.main.fragment_profile.*
 @RequiresFragmentViewModel(AccountVM.ViewModel::class)
 class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
+
+    companion object {
+        val requestCreatePin = 1200
+        val responseCreatePin = 1201
+        val requestUpdatePin = 1300
+        val responseUpdatePin = 1301
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,6 +75,11 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         }
 
         profile_change_password.setOnClickListener {
+            viewModel.inputs.changePasswordButtonPressed()
+        }
+
+        /*
+        profile_change_password.setOnClickListener {
             class MyDialogFragment2 : DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
                     val inflater = activity?.layoutInflater
@@ -99,7 +112,7 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
                 }
             }
             MyDialogFragment2().show(fragmentManager!!,"pbadialog")
-        }
+        }*/
 
         profile_log_out.setOnClickListener {
             class MyDialogFragment : DialogFragment() {
@@ -141,6 +154,47 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         compositeDisposable.add(viewModel.outputs.updateUserInfo().observeOn(AndroidSchedulers.mainThread()).subscribe {
             refreshUI(it)
             refreshProgressBar(it)
+        })
+
+        compositeDisposable.add(viewModel.outputs.showUpdatePinAlert().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            class MyDialogFragment : DialogFragment() {
+                override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+                    return androidx.appcompat.app.AlertDialog.Builder(activity!!)
+                        .setTitle("PIN Encontrado")
+                        .setMessage("Actualmente existe un PIN para tu cuenta. ¿Deseas actualizarlo? Un código de confirmación será enviado a tu número de teléfono.")
+                        .setPositiveButton("Aceptar"){
+                                _,_ -> viewModel.inputs.showUpdatePinScreen()
+                        }
+                        .setNegativeButton("Cancelar", null)
+                        .create()
+                }
+            }
+            MyDialogFragment().show(fragmentManager!!,"updatePinAlert")
+        })
+
+        compositeDisposable.add(viewModel.outputs.changePasswordButtonAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            class MyDialogFragment : DialogFragment() {
+                override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+                    return androidx.appcompat.app.AlertDialog.Builder(activity!!)
+                        .setTitle("Alerta")
+                        .setMessage("¿Estás seguro que deseas cambiar tu contraseña? Un código de confirmación será enviado a tu número de teléfono.")
+                        .setPositiveButton("Aceptar"){
+                                _,_ -> viewModel.inputs.goToChangePasswordScreen()
+                        }
+                        .setNegativeButton("Cancelar", null)
+                        .create()
+                }
+            }
+            MyDialogFragment().show(fragmentManager!!,"changePasswordAlert")
+        })
+
+        compositeDisposable.add(viewModel.outputs.pinButtonAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            startPinActivity(it)
+        })
+
+        compositeDisposable.add(viewModel.outputs.goToChangePasswordScreenAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            val intent = Intent(activity,ChangePasswordActivity::class.java)
+            startActivity(intent)
         })
 
         compositeDisposable.add(viewModel.outputs.showAlert().observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -288,8 +342,42 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         MyDialogFragment2().show(fragmentManager!!,"showAlert")
     }
 
+    private fun startPinActivity(pinRequestMode: PinRequestMode){
+        when(pinRequestMode){
+            PinRequestMode.CREATE -> {
+                val intent = Intent(context, CreatePinActivity::class.java)
+                startActivityForResult(intent,requestCreatePin)
+            }
+            PinRequestMode.UPDATE -> {
+                val intent = Intent(context, UpdatePinActivity::class.java)
+                startActivityForResult(intent, requestUpdatePin)
+            }
+            PinRequestMode.VERIFY -> {
+                val intent = Intent(context, VerifyPinActivity::class.java)
+                startActivity(intent)
+            }
+
+        }
+    }
+
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == requestCreatePin && resultCode == responseCreatePin){
+            val flag = data?.getBooleanExtra("successful",false)
+            if(flag == true){
+               showAlert("PIN Actualizado","Código de seguridad actualizado correctamente.")
+            }
+        }
+        if(requestCode == requestUpdatePin && resultCode == responseUpdatePin){
+            val flag = data?.getBooleanExtra("successful",false)
+            if(flag == true){
+                showAlert("PIN Actualizado","Código de seguridad actualizado correctamente.")
+            }
+        }
     }
 }

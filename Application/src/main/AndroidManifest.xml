@@ -23,7 +23,9 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:replace="android:allowBackup">
-        <activity android:name=".ui.activities.CreatePinActivity"></activity>
+        <activity android:name=".ui.activities.VerifyPinActivity"></activity>
+        <activity android:name=".ui.activities.UpdatePinActivity" />
+        <activity android:name=".ui.activities.CreatePinActivity" />
         <activity android:name=".ui.activities.ChangePasswordActivity" />
         <activity android:name=".ui.activities.NotificationsActivity" />
         <activity
