@@ -2,12 +2,10 @@ package com.zimplifica.redipuntos.viewModels
 
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.*
-import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.CheckAndPayModel
 import io.reactivex.Observable
-import io.reactivex.rxkotlin.Observables
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
@@ -79,9 +77,8 @@ interface PaymentSelectionVM {
             val modelIntent = intent()
                 .filter { it.hasExtra("CheckAndPayModel") }
                 .map {
-                    val result = it.getSerializableExtra("CheckAndPayModel") as CheckAndPayModel
                     //this.checkAndPayModel = result
-                    return@map result
+                    return@map it.getSerializableExtra("CheckAndPayModel") as CheckAndPayModel
                 }
 
             modelIntent
@@ -184,6 +181,28 @@ interface PaymentSelectionVM {
         override fun addPaymentMethodAction(): Observable<Unit> = this.addPaymentMethodAction
 
         override fun reloadPaymentMethodsAction(): Observable<CheckAndPayModel?> = this.reloadPaymentMethodsAction
+
+        private fun handleSecurityVerification(securityMode: SecurityMode){
+            when(securityMode){
+                SecurityMode.biometricAuth -> {
+                    //BiometricAuth
+                }SecurityMode.pinSecurityCode -> {
+                    //pinSecurityCodeRequestProperty.onNext(Unit)
+                }SecurityMode.none -> {
+                    //pinSecurityCodeRequestProperty.onNext(Unit)
+                }
+            }
+        }
+
+        private fun checkSecurityMode() : SecurityMode {
+            val biometricValue = environment.sharedPreferences().getBoolean(environment.currentUser().getCurrentUser()?.id ?: "", false)
+            val pinCreated = environment.currentUser().getCurrentUser()?.securityCodeCreated ?: false
+            return when {
+                biometricValue -> SecurityMode.biometricAuth
+                pinCreated -> SecurityMode.pinSecurityCode
+                else -> SecurityMode.none
+            }
+        }
 
 
         private fun requestPayment(input : RequestPaymentInput) : Observable<Result<Transaction>>{

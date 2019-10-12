@@ -43,6 +43,8 @@ class AuthenticationUseCase : AuthenticationUseCase {
 
                 override fun onResponse(response: Response<InitPhoneVerificationMutation.Data>) {
                     Log.i("🔵","Verification code sent")
+                    Log.e("verifyNumber",response.data().toString())
+                    Log.e("verifyNumber",response.errors().toString())
                     single.onSuccess(Result.success(true))
                 }
 

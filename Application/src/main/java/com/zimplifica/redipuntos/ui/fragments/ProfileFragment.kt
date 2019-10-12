@@ -1,6 +1,7 @@
 package com.zimplifica.redipuntos.ui.fragments
 
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -8,10 +9,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.DialogFragment
 import com.amulyakhare.textdrawable.TextDrawable
 import com.google.android.material.snackbar.Snackbar
-import com.hsalf.smilerating.SmileRating
 import com.zimplifica.domain.entities.PinRequestMode
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult
@@ -28,16 +31,17 @@ import com.zimplifica.redipuntos.viewModels.AccountVM
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_profile.*
+import java.util.concurrent.Executor
 
 @RequiresFragmentViewModel(AccountVM.ViewModel::class)
 class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
+    private val executor = Executor{}
 
     companion object {
         val requestCreatePin = 1200
-        val responseCreatePin = 1201
         val requestUpdatePin = 1300
-        val responseUpdatePin = 1301
+        val requestVerifyPin = 1400
     }
 
     override fun onCreateView(
@@ -53,7 +57,18 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+
+        //VerifyBiometricAvailable
+        if(!biometricAuthAvailable()){
+            profile_touch_id.visibility = View.GONE
+        }
+
+
         //Inputs
+        profile_pin.setOnClickListener {
+            viewModel.inputs.pinButtonPressed()
+        }
+
         profile_account_info.setOnClickListener {
             viewModel.inputs.accountInformationSelected()
         }
@@ -77,6 +92,13 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         profile_change_password.setOnClickListener {
             viewModel.inputs.changePasswordButtonPressed()
         }
+
+        profile_touch_id.setOnClickListener {
+            //showBiometricPromp()
+            val state = profile_touch_id_switch.isChecked
+            viewModel.inputs.biometricAuthChanged(!state)
+        }
+
 
         /*
         profile_change_password.setOnClickListener {
@@ -156,6 +178,26 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             refreshProgressBar(it)
         })
 
+        compositeDisposable.add(viewModel.outputs.biometricAuthEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            profile_touch_id_switch.isChecked = viewModel.biometricAuthValue()
+        })
+
+        compositeDisposable.add(viewModel.outputs.showBiometricAuthActivationAlert().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            class MyDialogFragment : DialogFragment() {
+                override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+                    return androidx.appcompat.app.AlertDialog.Builder(activity!!)
+                        .setTitle("Alerta")
+                        .setMessage("¿Deseas utilizar Autenticación Biométrica en vez de tú código PIN?")
+                        .setPositiveButton("Aceptar"){
+                                _,_ -> viewModel.inputs.biometricAuthChangeAccepted(it)
+                        }
+                        .setNegativeButton("Cancelar", null)
+                        .create()
+                }
+            }
+            MyDialogFragment().show(fragmentManager!!,"BiometricActivationAlert")
+        })
+
         compositeDisposable.add(viewModel.outputs.showUpdatePinAlert().observeOn(AndroidSchedulers.mainThread()).subscribe {
             class MyDialogFragment : DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -190,6 +232,10 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.pinButtonAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
             startPinActivity(it)
+        })
+
+        compositeDisposable.add(viewModel.outputs.verifyPinSecurityCode().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            startPinActivity(PinRequestMode.VERIFY)
         })
 
         compositeDisposable.add(viewModel.outputs.goToChangePasswordScreenAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -323,9 +369,14 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         if(splitedUsername.isEmpty()){
             return response
         }
-        val firstInitial = splitedUsername[0].first()
-        val secondInitial = splitedUsername[1].first()
-        return "$firstInitial$secondInitial"
+        return if (splitedUsername.size <= 1) {
+            splitedUsername[0].first().toString()
+        } else {
+            val firstInitial = splitedUsername[0].first()
+            val secondInitial = splitedUsername[1].first()
+            "$firstInitial$secondInitial"
+        }
+
 
     }
 
@@ -354,10 +405,70 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             }
             PinRequestMode.VERIFY -> {
                 val intent = Intent(context, VerifyPinActivity::class.java)
-                startActivity(intent)
+                startActivityForResult(intent, requestVerifyPin)
             }
 
         }
+    }
+
+    private fun biometricAuthAvailable() : Boolean{
+        val biometricManager = BiometricManager.from(activity!!)
+        when(biometricManager.canAuthenticate()){
+            BiometricManager.BIOMETRIC_SUCCESS ->{
+                Log.i("BiometricManager","App can authenticate using biometrics.")
+                return true
+            }
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->{
+                Log.e("BiometricManager","No biometric features available on this device.")
+                return false
+            }
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->{
+                Log.e("BiometricManager","Biometric features are currently unavailable.")
+                return false
+            }
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->{
+                Log.e("BiometricManager","The user hasn't associated any biometric credentials " +
+                        "with their account.")
+                return false
+            }else -> return false
+        }
+    }
+
+    private fun showBiometricPromp(){
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Confirmar pago")
+            .setSubtitle("Por favor confirme su acción de pago")
+            .setNegativeButtonText("Cancelar")
+            .setConfirmationRequired(false)
+            .build()
+
+        val biometricPrompt = BiometricPrompt(activity!!,executor,object : BiometricPrompt.AuthenticationCallback(){
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON){
+                    //User clicked negative action
+                    Toast.makeText(activity,"Cancel",Toast.LENGTH_SHORT).show()
+                }
+                super.onAuthenticationError(errorCode, errString)
+
+            }
+
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                Toast.makeText(activity,"Success",Toast.LENGTH_SHORT).show()
+
+                super.onAuthenticationSucceeded(result)
+
+            }
+
+            override fun onAuthenticationFailed() {
+                Toast.makeText(activity,"Fail",Toast.LENGTH_SHORT).show()
+
+                super.onAuthenticationFailed()
+
+            }
+        })
+
+        biometricPrompt.authenticate(promptInfo)
+
     }
 
     override fun onDestroy() {
@@ -367,16 +478,25 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == requestCreatePin && resultCode == responseCreatePin){
+        if(requestCode == requestCreatePin && resultCode == Activity.RESULT_OK){
             val flag = data?.getBooleanExtra("successful",false)
+            Log.e("AccountVM","Code $flag")
             if(flag == true){
                showAlert("PIN Actualizado","Código de seguridad actualizado correctamente.")
             }
         }
-        if(requestCode == requestUpdatePin && resultCode == responseUpdatePin){
+        if(requestCode == requestUpdatePin && resultCode == Activity.RESULT_OK){
             val flag = data?.getBooleanExtra("successful",false)
+            Log.e("AccountVM","Code $flag")
             if(flag == true){
                 showAlert("PIN Actualizado","Código de seguridad actualizado correctamente.")
+            }
+        }
+        if(requestCode == requestVerifyPin && resultCode == Activity.RESULT_OK){
+            val flag = data?.getBooleanExtra("successful",false)
+            Log.e("AccountVM","Code $flag")
+            if(flag == true){
+                viewModel.pinSecurityCodeStatusAction.onNext(Unit)
             }
         }
     }

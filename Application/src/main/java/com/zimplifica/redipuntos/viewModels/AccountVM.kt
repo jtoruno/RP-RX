@@ -38,6 +38,12 @@ interface AccountVM {
 
         /// Call when user selects to update the pin in the alert.
         fun showUpdatePinScreen()
+
+        /// Call when biometric authentication switch is changed.
+        fun biometricAuthChanged(enabled: Boolean)
+
+        /// Call when biometric authentication change is accepted.
+        fun biometricAuthChangeAccepted(enabled: Boolean)
     }
     interface Outputs {
         fun accountInformationAction() : Observable<Boolean>
@@ -66,6 +72,15 @@ interface AccountVM {
         /// Emits when pin button is pressed.
         fun pinButtonAction() : Observable<PinRequestMode>
 
+        /// Emits when an error ocurred.
+        fun showBiometricAuthActivationAlert() : Observable<Boolean>
+
+        /// Emits when the biometric authentication changes.
+        fun biometricAuthEnabled() : Observable<Unit>
+
+        /// Emits when the pin is requested.
+        fun verifyPinSecurityCode() : Observable<Unit>
+
 
     }
     @SuppressLint("CheckResult")
@@ -87,6 +102,9 @@ interface AccountVM {
         private val showUpdatePinScreen = PublishSubject.create<Unit>()
         private val changePasswordButtonPressed = PublishSubject.create<Unit>()
 
+        private val biometricAuthChanged = PublishSubject.create<Boolean>()
+        private val biometricAuthChangeAccepted = PublishSubject.create<Boolean>()
+
 
         //Outputs
         private val accountInformationAction = BehaviorSubject.create<Boolean>()
@@ -101,6 +119,13 @@ interface AccountVM {
         private val showUpdatePinAlert = BehaviorSubject.create<Unit>()
         private val pinButtonAction = BehaviorSubject.create<PinRequestMode>()
         private val goToChangePasswordScreenAction = BehaviorSubject.create<Unit>()
+
+        private val showBiometricAuthActivationAlert = BehaviorSubject.create<Boolean>()
+        private val biometricAuthEnabled = BehaviorSubject.create<Unit>()
+        private val verifyPinSecurityCode = BehaviorSubject.create<Unit>()
+
+        //Helper
+        val pinSecurityCodeStatusAction = PublishSubject.create<Unit>()
 
         init {
             onCreate
@@ -137,7 +162,7 @@ interface AccountVM {
                 .map { environment.currentUser().getCurrentUser()?.securityCodeCreated }
                 .subscribe {userHasPin ->
                     if (userHasPin == true){
-                        this.showUpdatePinScreen.onNext(Unit)
+                        this.showUpdatePinAlert.onNext(Unit)
                     }else{
                         this.pinButtonAction.onNext(PinRequestMode.CREATE)
                     }
@@ -146,6 +171,33 @@ interface AccountVM {
             showUpdatePinScreen
                 .map { PinRequestMode.UPDATE }
                 .subscribe(this.pinButtonAction)
+
+            //Biometric
+
+            biometricAuthChangeAccepted
+                .map { Unit }
+                .subscribe(verifyPinSecurityCode)
+
+            biometricAuthChanged
+                .subscribe {enabled ->
+                    this.biometricAuthEnabled.onNext(Unit)
+                    if(enabled){
+                        this.showBiometricAuthActivationAlert.onNext(enabled)
+                    } else {
+                        this.verifyPinSecurityCode.onNext(Unit)
+                    }
+                }
+
+            pinSecurityCodeStatusAction
+                .subscribe{
+                    this.setupBiometricAuthentication()
+                }
+
+            onCreate
+                .subscribe(this.biometricAuthEnabled)
+
+
+            ///
 
             this.termsAndConditionsButtonPressed
                 .subscribe(this.termsAndConditionsButton)
@@ -196,6 +248,20 @@ interface AccountVM {
             return this.changePasswordButtonPressed.onNext(Unit)
         }
 
+        override fun biometricAuthChanged(enabled: Boolean) {
+            return this.biometricAuthChanged.onNext(enabled)
+        }
+
+        override fun biometricAuthChangeAccepted(enabled: Boolean) {
+            return this.biometricAuthChangeAccepted.onNext(enabled)
+        }
+
+        override fun showBiometricAuthActivationAlert(): Observable<Boolean> = this.showBiometricAuthActivationAlert
+
+        override fun biometricAuthEnabled(): Observable<Unit> = this.biometricAuthEnabled
+
+        override fun verifyPinSecurityCode(): Observable<Unit> = this.verifyPinSecurityCode
+
         override fun goToChangePasswordScreenAction(): Observable<Unit> = this.goToChangePasswordScreenAction
 
         override fun showUpdatePinAlert(): Observable<Unit> = this.showUpdatePinAlert
@@ -242,6 +308,22 @@ interface AccountVM {
 
         private fun fetchUserInfo() : Observable<Result<UserInformationResult>>{
             return environment.userUseCase().getUserInformation(false)
+        }
+
+        //BiometricAuth
+        private fun setupBiometricAuthentication(){
+            val currentUser = environment.currentUser().getCurrentUser() ?: return
+            val enabled = environment.sharedPreferences().getBoolean(currentUser.id, false)
+            val editor = environment.sharedPreferences().edit()
+            with (editor){
+                putBoolean(currentUser.id, !enabled)
+                    .apply()
+            }
+            biometricAuthEnabled.onNext(Unit)
+        }
+
+        fun biometricAuthValue() : Boolean{
+            return environment.sharedPreferences().getBoolean(environment.currentUser().getCurrentUser()?.id ?: "", false)
         }
 
     }

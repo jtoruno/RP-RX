@@ -1,5 +1,7 @@
 package com.zimplifica.redipuntos.ui.activities
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -22,7 +24,7 @@ class VerifyPinActivity : BaseActivity<VerifyPinVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify_pin)
-        supportActionBar?.title = "Actualizar PIN"
+        supportActionBar?.title = "Verificar PIN"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
@@ -52,6 +54,9 @@ class VerifyPinActivity : BaseActivity<VerifyPinVM.ViewModel>() {
         })
 
         compositeDisposable.add(viewModel.outputs.nextButtonAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            val returnIntent = Intent()
+            returnIntent.putExtra("successful", it)
+            setResult(Activity.RESULT_OK,returnIntent)
             finish()
         })
     }

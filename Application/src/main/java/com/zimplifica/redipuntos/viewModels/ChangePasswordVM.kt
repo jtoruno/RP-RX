@@ -76,7 +76,6 @@ interface ChangePasswordVM {
 
             verifyPhoneEvent
                 .filter { !it.isFail() }
-                .map { it.successValue() }
                 .subscribe{Unit}
 
             val validPasswordForm = Observables.combineLatest(
@@ -214,8 +213,8 @@ interface ChangePasswordVM {
 
         private fun verifyPhoneNumber() : Observable<Result<Boolean>>  {
             return environment.userUseCase().verifyPhoneNumber()
-                .doOnComplete { this.loadingEnabled.onNext(false) }
-                .doOnSubscribe { this.loadingEnabled.onNext(true) }
+                //.doOnComplete { this.loadingEnabled.onNext(false) }
+                //.doOnSubscribe { this.loadingEnabled.onNext(true) }
         }
 
     }

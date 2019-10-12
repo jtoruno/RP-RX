@@ -1,8 +1,11 @@
 package com.zimplifica.redipuntos.viewModels
 
+import com.zimplifica.domain.entities.PinRequestMode
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.mocks.userInformationMock
+import com.zimplifica.redipuntos.models.CurrentUser
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 
@@ -15,7 +18,15 @@ class AccountVMTest : RPTestCase() {
     private val privacyPolicyButton = TestObserver<Unit>()
     private val aboutUsButton = TestObserver<Unit>()
 
+    private val goToChangePasswordScreenAction = TestObserver<Unit>()
+    private val changePasswordButtonAction =  TestObserver<Unit>()
+    private val pinButtonAction =  TestObserver<PinRequestMode>()
+    private val showUpdatePinAlert =  TestObserver<Unit>()
+    private val biometricAuthEnabled = TestObserver<Unit>()
+    private var verifyPinSecurityCode = TestObserver<Unit>()
+
     private fun setUpEnvironment(environment: Environment){
+
         vm = AccountVM.ViewModel(environment)
         vm.outputs.completeAccountInfoAction().subscribe(this.completeAccountInfoAction)
         vm.outputs.updateUserInfo().subscribe(this.updateUserInfo)
@@ -23,6 +34,14 @@ class AccountVMTest : RPTestCase() {
         vm.outputs.termsAndConditionsButton().subscribe(this.termsAndConditionsButton)
         vm.outputs.privacyPolicyButton().subscribe(this.privacyPolicyButton)
         vm.outputs.aboutUsButton().subscribe(this.aboutUsButton)
+
+        vm.outputs.goToChangePasswordScreenAction().subscribe(this.goToChangePasswordScreenAction)
+        vm.outputs.changePasswordButtonAction().subscribe(this.goToChangePasswordScreenAction)
+        vm.outputs.changePasswordButtonAction().subscribe(this.changePasswordButtonAction)
+        vm.outputs.pinButtonAction().subscribe(this.pinButtonAction)
+        vm.outputs.showUpdatePinAlert().subscribe(this.showUpdatePinAlert)
+        vm.outputs.biometricAuthEnabled().subscribe(this.biometricAuthEnabled)
+        vm.outputs.verifyPinSecurityCode().subscribe(this.verifyPinSecurityCode)
     }
 
     @Test
@@ -55,5 +74,70 @@ class AccountVMTest : RPTestCase() {
         vm.inputs.onCreate()
         vm.inputs.aboutUsButtonPressed()
         aboutUsButton.assertValueCount(1)
+    }
+
+    @Test
+    fun testChangePasswordAction(){
+        setUpEnvironment(environment()!!)
+        vm.inputs.onCreate()
+        vm.inputs.goToChangePasswordScreen()
+        goToChangePasswordScreenAction.assertValueCount(1)
+    }
+
+    @Test
+    fun testShowUpdatePinAlert(){
+        setUpEnvironment(true)
+        vm.inputs.onCreate()
+        vm.inputs.pinButtonPressed()
+        showUpdatePinAlert.assertValueCount(1)
+    }
+
+    @Test
+    fun testShowCreatePinScreen(){
+        setUpEnvironment(false)
+        vm.inputs.onCreate()
+        vm.inputs.pinButtonPressed()
+        pinButtonAction.assertValue(PinRequestMode.CREATE)
+    }
+
+    @Test
+    fun testPinButtonAction(){
+        setUpEnvironment(true)
+        vm.inputs.onCreate()
+        vm.inputs.showUpdatePinScreen()
+        pinButtonAction.assertValue(PinRequestMode.UPDATE)
+    }
+
+    @Test
+    fun testChangeBiometricAuth(){
+        setUpEnvironment(environment()!!)
+        vm.inputs.onCreate()
+        biometricAuthEnabled.assertValueCount(1)
+        vm.inputs.biometricAuthChanged(true)
+        biometricAuthEnabled.assertValueCount(2)
+    }
+
+    @Test
+    fun testVerifyPinSecurityCode(){
+        setUpEnvironment(environment()!!)
+        vm.inputs.onCreate()
+        vm.inputs.biometricAuthChangeAccepted(true)
+        verifyPinSecurityCode.assertValueCount(1)
+    }
+
+    @Test
+    fun testPinSecurityCodeStatusAction(){
+        setUpEnvironment(environment()!!)
+        vm.inputs.onCreate()
+        vm.pinSecurityCodeStatusAction.onNext(Unit)
+        biometricAuthEnabled.assertValueCount(2)
+    }
+
+    private fun setUpEnvironment(verifiedStatus : Boolean){
+        val userInformation = userInformationMock(userEmailVerified = verifiedStatus,securityCodeCreated = verifiedStatus)
+        val environment = environment()!!
+        environment.currentUser().setCurrentUser(userInformation)
+        setUpEnvironment(environment)
+
     }
 }

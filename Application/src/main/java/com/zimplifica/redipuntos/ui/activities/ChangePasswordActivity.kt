@@ -66,6 +66,8 @@ class ChangePasswordActivity : BaseActivity<ChangePasswordVM.ViewModel>() {
         compositeDisposable.add(viewModel.outputs.validPasswordSpecialCharacters().observeOn(AndroidSchedulers.mainThread()).subscribe {
             passOption(imageView21, it)
         })
+
+        viewModel.inputs.onCreate()
     }
 
     override fun onSupportNavigateUp(): Boolean {

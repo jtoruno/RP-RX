@@ -183,15 +183,16 @@ interface SignUpVerifyViewModel {
                 .doOnComplete { this.loadingEnabled.onNext(false) }
                 .doOnSubscribe { this.loadingEnabled.onNext(true) }
         }
-        /*
 
-        fun getUserName() : String{
-            return this.username
+        private fun storeBiometricAuthTemporarily(enabled: Boolean){
+            if (enabled){
+                val editor = environment.sharedPreferences().edit()
+                with (editor){
+                    putBoolean("biometricStatusTemp", enabled)
+                        .apply()
+                }
+            }
         }
-
-        fun getUserUUid() : String {
-            return this.userId
-        }*/
 
     }
 }

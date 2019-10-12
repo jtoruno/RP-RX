@@ -49,6 +49,8 @@ final rx_lifecycle_version = "0.3.0"
 
 //Test
 final robolectric_version = "3.8"
+final biometric_version = "1.0.0-rc01"
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -126,6 +128,10 @@ dependencies {
 
     //Smile rate
     implementation 'com.github.sujithkanna:smileyrating:1.6.8'
+
+    //Biometric
+    implementation "androidx.biometric:biometric:$biometric_version"
+
 }
 
 apply plugin: 'com.google.gms.google-services'
