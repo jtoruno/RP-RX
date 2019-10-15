@@ -17,6 +17,7 @@ interface SignUpVerifyViewModel {
         fun verificationButtonPressed()
         fun verificationCodeTextChanged(verificationCode: String)
         fun resendVerificationCodePressed()
+        fun biometricAuthChanged(enabled: Boolean)
     }
     interface Outputs {
         fun verificationButtonEnabled() : Observable<Boolean>
@@ -28,7 +29,6 @@ interface SignUpVerifyViewModel {
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<SignUpVerifyViewModel>(environment), Inputs, Outputs{
 
-
         val inputs : Inputs = this
         val outputs : Outputs = this
         var username = ""
@@ -38,6 +38,7 @@ interface SignUpVerifyViewModel {
         private val verificationButtonPressed = PublishSubject.create<Unit>()
         private val verificationCodeTextChanged = PublishSubject.create<String>()
         private val resendVerificationCodePressed = PublishSubject.create<Unit>()
+        private val biometricAuthChanged = BehaviorSubject.createDefault(false)
 
         //Outputs
         private val verificationButtonEnabled = BehaviorSubject.create<Boolean>()
@@ -113,6 +114,10 @@ interface SignUpVerifyViewModel {
 
         override fun resendVerificationCodePressed() = this.resendVerificationCodePressed.onNext(Unit)
 
+        override fun biometricAuthChanged(enabled: Boolean) {
+            return this.biometricAuthChanged.onNext(enabled)
+        }
+
         override fun verificationButtonEnabled(): Observable<Boolean> = this.verificationButtonEnabled
 
         override fun verifiedAction(): Observable<Unit> = this.verifiedAction
@@ -133,7 +138,7 @@ interface SignUpVerifyViewModel {
 
                 verifyEvent
                     .filter { it.isFail() }
-                    .map { it ->
+                    .map {
                         when(it){
                             is Result.success -> return@map null
                             is Result.failure -> return@map it.cause as? SignUpError
@@ -165,6 +170,7 @@ interface SignUpVerifyViewModel {
                     .filter { !it.isFail() }
                     .map { return@map it.successValue() }
                     .subscribe {
+                        this.storeBiometricAuthTemporarily(this.biometricAuthChanged.value)
                         observable.onNext(Result.success(it))
                         observable.onComplete()
                     }

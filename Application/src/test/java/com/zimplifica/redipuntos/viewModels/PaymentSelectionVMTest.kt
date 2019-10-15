@@ -4,136 +4,115 @@ import android.content.Intent
 import com.zimplifica.domain.entities.*
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
+import com.zimplifica.redipuntos.mocks.creditCardMock
+import com.zimplifica.redipuntos.models.CheckAndPayModel
 import com.zimplifica.redipuntos.models.SitePaySellerSelectionObject
 import io.reactivex.observers.TestObserver
 import org.junit.Test
-/*
+
 class PaymentSelectionVMTest : RPTestCase() {
     lateinit var vm : PaymentSelectionVM.ViewModel
     private val paymentMethodChangedAction = TestObserver<PaymentMethod>()
     private val showError = TestObserver<String>()
     private val finishPaymentProcessingAction = TestObserver<Transaction>()
     private val nextButtonLoadingIndicator = TestObserver<Boolean>()
-    private val paymentInformationChangedAction = TestObserver<PaymentInformation>()
-    private val showVendor = TestObserver<Vendor>()
+    private val applyRewards =  TestObserver<Boolean>()
+    private val checkAndPayModelAction = TestObserver<CheckAndPayModel>()
+    private val reloadPaymentMethodsAction = TestObserver<CheckAndPayModel?>()
+    private val addPaymentMethodAction = TestObserver<Unit>()
 
     private fun setUpEnvironment(environment: Environment){
-
-        val payList = mutableListOf<PaymentMethod>()
-        payList.add(PaymentMethod("1234321412341234",  "1234", "",  "visa",  4505.0, false))
-        val vendor = Vendor("7120-39345-1023841023-123434", "Manpuku Sushi",  "Jaco")
-        val item = Item("",5555.5)
-        val order = Order("3c288f1b-e95f-40a2-8f53-40b61d356156", item, 0.0, 10.0,5555.5,5565.5,10,13)
-        val paymentPayload = PaymentPayload(1000.0, order, payList)
-        val obj = SitePaySellerSelectionObject(vendor,paymentPayload)
+        val vendor = Vendor( "7120-39345-1023841023-123434",  "Manpuku Sushi",  "Jaco")
+        val model = CheckAndPayModel( "3c288f1b-e95f-40a2-8f53-40b61d356156",  1000.0,  100.0,  120.0,  2220.0, 0.0,  10,  13,  creditCardMock,  vendor)
 
         vm = PaymentSelectionVM.ViewModel(environment)
-        val intent = Intent()
-        intent.putExtra("amount",5555.5F)
-        intent.putExtra("SPSelectionObject",obj)
-        vm.intent(intent)
-        //vm = PaymentSelectionVM.ViewModel(environment)
-        vm.outputs.paymentMethodChangedAction().subscribe(this.paymentMethodChangedAction)
-        vm.outputs.showError().subscribe(this.showError)
-        vm.outputs.finishPaymentProcessingAction().subscribe(this.finishPaymentProcessingAction)
-        vm.outputs.nextButtonLoadingIndicator().subscribe(this.nextButtonLoadingIndicator)
-        vm.outputs.paymentInformationChangedAction().subscribe(this.paymentInformationChangedAction)
-        vm.outputs.showVendor().subscribe(this.showVendor)
-        vm.outputs.paymentInformationChangedAction().subscribe {
-            println(it.rediPoints.toString() + " rewards" + it.cardAmountToPay +" total" +it.total )
-        }
+        vm.intent(Intent().putExtra("CheckAndPayModel",model))
+        vm.outputs.addPaymentMethodAction().subscribe(addPaymentMethodAction)
+        vm.outputs.paymentMethodChangedAction().subscribe(paymentMethodChangedAction)
+        vm.outputs.showError().subscribe(showError)
+        vm.outputs.finishPaymentProcessingAction().subscribe(finishPaymentProcessingAction)
+        vm.outputs.nextButtonLoadingIndicator().subscribe(nextButtonLoadingIndicator)
+        vm.outputs.applyRewards().subscribe(applyRewards)
+        vm.outputs.checkAndPayModelAction().subscribe(checkAndPayModelAction)
+        vm.outputs.reloadPaymentMethodsAction().subscribe(reloadPaymentMethodsAction)
     }
 
     @Test
     fun testPaymentMethodChangedAction(){
+        val creditCard = PaymentMethod("123412312412312",  "1234",  "11/22",  "VISA")
         setUpEnvironment(environment()!!)
-        val paymentMethod = PaymentMethod("22334455", "5530", "",  "mastercard",  2000.0,  false)
-        vm.inputs.paymentMethodChanged(paymentMethod)
-        paymentMethodChangedAction.assertValue(paymentMethod)
+        vm.inputs.paymentMethodChanged(creditCard)
+        paymentMethodChangedAction.assertValue(creditCard)
     }
 
     @Test
-    fun testPaymentInformationChangedAction(){
+    fun testApplyRewards(){
         setUpEnvironment(environment()!!)
-        val  paymentMethod = PaymentMethod("22334455", "5530",  "","mastercard", 2000.0, false)
-        vm.inputs.paymentMethodChanged(paymentMethod)
-
-        val  amount = vm.getAmount()
-
-        //val  paymentInformation = PaymentInformation( 1000.0, paymentMethod.rewards,amount.toDouble())
-
-        paymentInformationChangedAction.assertValueCount(1)
-
+        vm.inputs.applyRewardsRowPressed(true)
+        applyRewards.assertValue(true)
     }
 
     @Test
-    fun testShowError(){
-        setUpFail(environment()!!)
-        val defaultPm = PaymentMethod("1234321412341234",  "1234", "",  "visa",  4505.0, false)
-        vm.inputs.paymentMethodChanged(defaultPm)
-        vm.inputs.nextButtonPressed()
-        showError.assertValue("Ocurrió un error al procesar el pago. Por favor intente de nuevo.")
-    }
-
-    @Test
-    fun testNextButtonLoadingIndicator(){
+    fun testCheckAndPayModelAction(){
+        val vendor = Vendor( "7120-39345-1023841023-123434",  "Manpuku Sushi",  "Jaco")
+        val model = CheckAndPayModel( "3c288f1b-e95f-40a2-8f53-40b61d356156",  1000.0,  100.0,  120.0,  2220.0, 0.0,  10,  13,  creditCardMock,  vendor)
         setUpEnvironment(environment()!!)
-        val defaultPm = PaymentMethod("1234321412341234",  "1234", "",  "visa",  4505.0, false)
-        vm.inputs.paymentMethodChanged(defaultPm)
-        vm.inputs.nextButtonPressed()
-        nextButtonLoadingIndicator.assertValues(true,false)
+        checkAndPayModelAction.assertValue(model)
     }
 
     @Test
     fun testFinishPaymentProcessingAction(){
         setUpEnvironment(environment()!!)
-        val defaultPm = PaymentMethod("1234321412341234",  "1234", "",  "visa",  4505.0, false)
-        vm.inputs.paymentMethodChanged(defaultPm)
+        val wayToPay = WayToPay( 0.0,  null,2113.0)
+        val  transactionDetail = TransactionDetail( "debit",  2113.0,  "1234532",  "Zimplifica")
+        val transaction = Transaction( "123451234",  "1235123612",  "debit", transactionDetail,  0.0,   0.0,  0.0,  2113.0,  0.0,  TransactionStatus.success,  wayToPay,  "")
         vm.inputs.nextButtonPressed()
-        finishPaymentProcessingAction.assertValueCount(1)
-    }
-
-
-    @Test
-    fun testShowVendor(){
-        setUpEnvironment(environment()!!)
-        showVendor.assertValueCount(1)
+        vm.pinSecurityCodeStatusAction.onNext(Unit)
+        finishPaymentProcessingAction.assertValue(transaction)
     }
 
     @Test
-    fun testAmount(){
+    fun testReloadPaymentMethodsAction(){
+        val paymentMethods: MutableList<PaymentMethod> = mutableListOf()
+        paymentMethods.add(PaymentMethod( "123412312412312",  "1234",  "11/22",  "VISA"))
+        paymentMethods.add(PaymentMethod( "3232323232",  "3232",  "12/23",  "MASTERCARD"))
+        val vendor = Vendor( "7120-39345-1023841023-123434",  "Manpuku Sushi",  "Jaco")
+        val model = CheckAndPayModel( "3c288f1b-e95f-40a2-8f53-40b61d356156",  1000.0,  100.0,  120.0,  2220.0,  0.0,  10,  13,  paymentMethods, vendor)
         setUpEnvironment(environment()!!)
-        val amount = vm.getAmount()
-        assertEquals(5555.5F,amount)
+        vm.inputs.reloadPaymentMethods(PaymentMethod("3232323232",  "3232",  "12/23",  "MASTERCARD"))
+        reloadPaymentMethodsAction.assertValue(model)
     }
 
     @Test
-    fun testGetPaymentMethods(){
+    fun testAddPaymentMethodAction(){
         setUpEnvironment(environment()!!)
-        val paymentMethods = vm.getPaymentMethods()
-        assertNotNull(paymentMethods)
+        vm.inputs.addPaymentMethodButtonPressed()
+        addPaymentMethodAction.assertValueCount(1)
     }
 
-    private fun setUpFail(environment: Environment){
-        val payList = mutableListOf<PaymentMethod>()
-        payList.add(PaymentMethod("1234321412341234",  "1234", "",  "visa",  4505.0, false))
-        val vendor = Vendor("7120-39345-1023841023-123434", "Manpuku Sushi",  "Jaco")
-        val item = Item("", 5555.5)
-        val order = Order("53448394-e95f-40a2-8f53-3343234", item, 0.0, 10.0,5555.5,5565.5,10,13)
-        val paymentPayload = PaymentPayload(1000.0, order, payList)
-        val obj = SitePaySellerSelectionObject(vendor,paymentPayload)
+    @Test
+    fun testShowErrorNoCreditCard(){
+        setUpFailEnvironment(environment()!!)
+        vm.inputs.nextButtonPressed()
+        showError.assertValue("Por favor seleccione un método de pago.")
+    }
+
+
+
+
+    private fun setUpFailEnvironment(environment: Environment){
+        val vendor = Vendor( "7120-39345-1023841023-123434",  "Manpuku Sushi",  "Jaco")
+        val model = CheckAndPayModel( "3c288f1b-e95f-40a2-8f53-40b61d356156",  1000.0,  100.0,  120.0,  2220.0, 0.0,  10,  13,  mutableListOf(),  vendor)
 
         vm = PaymentSelectionVM.ViewModel(environment)
-        val intent = Intent()
-        intent.putExtra("amount",5555.5F)
-        intent.putExtra("SPSelectionObject",obj)
-        vm.intent(intent)
-        //vm = PaymentSelectionVM.ViewModel(environment)
-        vm.outputs.paymentMethodChangedAction().subscribe(this.paymentMethodChangedAction)
-        vm.outputs.showError().subscribe(this.showError)
-        vm.outputs.finishPaymentProcessingAction().subscribe(this.finishPaymentProcessingAction)
-        vm.outputs.nextButtonLoadingIndicator().subscribe(this.nextButtonLoadingIndicator)
-        vm.outputs.paymentInformationChangedAction().subscribe(this.paymentInformationChangedAction)
-        vm.outputs.showVendor().subscribe(this.showVendor)
+        vm.intent(Intent().putExtra("CheckAndPayModel",model))
+        vm.outputs.addPaymentMethodAction().subscribe(addPaymentMethodAction)
+        vm.outputs.paymentMethodChangedAction().subscribe(paymentMethodChangedAction)
+        vm.outputs.showError().subscribe(showError)
+        vm.outputs.finishPaymentProcessingAction().subscribe(finishPaymentProcessingAction)
+        vm.outputs.nextButtonLoadingIndicator().subscribe(nextButtonLoadingIndicator)
+        vm.outputs.applyRewards().subscribe(applyRewards)
+        vm.outputs.checkAndPayModelAction().subscribe(checkAndPayModelAction)
+        vm.outputs.reloadPaymentMethodsAction().subscribe(reloadPaymentMethodsAction)
     }
-}*/
+}

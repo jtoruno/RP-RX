@@ -39,6 +39,12 @@ interface PaymentSelectionVM {
 
         fun applyRewards() : Observable<Boolean>
 
+        /// Emits when the pin is requested.
+        fun pinSecurityCodeRequest() : Observable<Unit>
+
+        /// Emits when the BiometricAuth is requested.
+        fun biometricAuthRequest() : Observable<Unit>
+
     }
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<PaymentSelectionVM>(environment), Inputs, Outputs{
@@ -46,6 +52,7 @@ interface PaymentSelectionVM {
         val inputs : Inputs = this
         val outputs : Outputs = this
 
+        private val securityMode = checkSecurityMode()
         private var _checkAndPayModel : CheckAndPayModel? = null
         private var checkAndPayModel : CheckAndPayModel
             set(value) {_checkAndPayModel = value; this.checkAndPayModelAction.onNext(value) }
@@ -56,7 +63,7 @@ interface PaymentSelectionVM {
         //Inputs
         private val paymentMethodChanged = PublishSubject.create<PaymentMethod>()
         private val nextButtonPressed = PublishSubject.create<Unit>()
-        private val applyRewardsRowPressed = BehaviorSubject.createDefault(false)
+        private val applyRewardsRowPressed = PublishSubject.create<Boolean>()
         private val descriptionTextFieldChanged = BehaviorSubject.createDefault("")
         private val addPaymentMethodButtonPressed = PublishSubject.create<Unit>()
         private val reloadPaymentMethods = PublishSubject.create<PaymentMethod>()
@@ -71,6 +78,12 @@ interface PaymentSelectionVM {
         private val applyRewards = BehaviorSubject.create<Boolean>()
         private val addPaymentMethodAction = BehaviorSubject.create<Unit>()
         private val reloadPaymentMethodsAction = BehaviorSubject.create<CheckAndPayModel?>()
+        private val pinSecurityCodeRequest = BehaviorSubject.create<Unit>()
+        private val biometricAuthRequest = BehaviorSubject.create<Unit>()
+
+        //Helpers
+        val pinSecurityCodeStatusAction = PublishSubject.create<Unit>()
+        val biometricAuthStatusAction = PublishSubject.create<Unit>()
 
 
         init {
@@ -103,8 +116,13 @@ interface PaymentSelectionVM {
                 .map { return@map "Por favor seleccione un método de pago." }
                 .subscribe(this.showError)
 
-            val requestPayment = nextButtonPressed
+            nextButtonPressed
                 .filter { checkAndPayModel.selectedPaymentMethod!=null }
+                .subscribe { return@subscribe this.handleSecurityVerification(securityMode) }
+
+
+
+            val requestPayment = Observable.merge(this.biometricAuthStatusAction, this.pinSecurityCodeStatusAction)
                 .flatMap {
                     val cardId = this.checkAndPayModel.selectedPaymentMethod?.cardId
                     var wayToPayInput = WayToPayInput(checkAndPayModel.rediPuntosToApply(),cardId,0.0,checkAndPayModel.chargeToApply())
@@ -182,14 +200,19 @@ interface PaymentSelectionVM {
 
         override fun reloadPaymentMethodsAction(): Observable<CheckAndPayModel?> = this.reloadPaymentMethodsAction
 
+        override fun pinSecurityCodeRequest(): Observable<Unit> = this.pinSecurityCodeRequest
+
+        override fun biometricAuthRequest(): Observable<Unit> = this.biometricAuthRequest
+
         private fun handleSecurityVerification(securityMode: SecurityMode){
             when(securityMode){
                 SecurityMode.biometricAuth -> {
                     //BiometricAuth
+                    this.biometricAuthRequest.onNext(Unit)
                 }SecurityMode.pinSecurityCode -> {
-                    //pinSecurityCodeRequestProperty.onNext(Unit)
+                    this.pinSecurityCodeRequest.onNext(Unit)
                 }SecurityMode.none -> {
-                    //pinSecurityCodeRequestProperty.onNext(Unit)
+                    this.pinSecurityCodeRequest.onNext(Unit)
                 }
             }
         }

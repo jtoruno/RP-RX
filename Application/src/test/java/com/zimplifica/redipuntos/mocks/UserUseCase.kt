@@ -200,13 +200,9 @@ class UserUseCase : UserUseCase{
     override fun requestPayment(requestPaymentInput: RequestPaymentInput): Observable<Result<Transaction>> {
         val single = Single.create<Result<Transaction>> create@{ single ->
             if(requestPaymentInput.orderId == "3c288f1b-e95f-40a2-8f53-40b61d356156"){
-                val cardDetail = CardDetail("12312412512","2324", "visa")
-                val wayToPay = WayToPay(4000.0,cardDetail, 4000.0)
-                val sitePaymentItem = SitePaymentItem("","Test",2000.0,"231421agewg24-2131-fwawefa-f2332",
-                    "Manpuku Sushi")
-                val transactionDetail = TransactionDetail(TransactionType.directPayment.toString(), 5550.0,"231421agewg24-2131-fwawefa-f2332", "Manpuku Sushi")
-                val transaction = Transaction("1234", "11-11-2019", "debit", transactionDetail, 0.0, 50.0,6500.0,6500.0,25.0,TransactionStatus.success, wayToPay,"")
-                //val requestPayment = RequestPayment(true,"Success")
+                val wayToPay = WayToPay(4000.0,null, 4000.0)
+                val transactionDetail = TransactionDetail("debit", 2113.0,  "1234532",  "Zimplifica")
+                val transaction = Transaction("123451234",  "1235123612",  "debit",  transactionDetail,  0.0,  0.0,  0.0,  2113.0,  0.0,  TransactionStatus.success, wayToPay,  "")
                 single.onSuccess(Result.success(transaction))
             }else{
                 val error = Exception("")

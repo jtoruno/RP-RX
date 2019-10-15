@@ -1,15 +1,15 @@
 package com.zimplifica.redipuntos.ui.activities
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Gravity
 import android.view.View
-import com.zimplifica.domain.entities.PaymentInformation
+import androidx.biometric.BiometricPrompt
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.OnItemClickListener
 import com.zimplifica.redipuntos.extensions.addOnItemClickListener
@@ -23,17 +23,22 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_payment_selection.*
 import kotlinx.android.synthetic.main.dialog_custom_card_picker.view.*
+import java.util.concurrent.Executors
 
 @RequiresActivityViewModel(PaymentSelectionVM.ViewModel::class)
 class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
     lateinit var adapter : RecyclerCardPoints
     private var applyAwards = false
+    private val executor = Executors.newSingleThreadExecutor()
 
     //lateinit var paymentInformation: PaymentInformation
     lateinit var model : CheckAndPayModel
 
-    @SuppressLint("CheckResult")
+    companion object {
+        val requestVerifyPin = 1600
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment_selection)
@@ -81,7 +86,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
                 showDialog("Lo sentimos", it)
             })
 
-        payment_s_checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
+        payment_s_checkBox.setOnCheckedChangeListener { _, isChecked ->
             this.viewModel.inputs.applyRewardsRowPressed(isChecked)
         }
 
@@ -100,6 +105,15 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
             })
 
         payment_selection_btn.setOnClickListener {  viewModel.inputs.nextButtonPressed() }
+
+        compositeDisposable.add(viewModel.outputs.biometricAuthRequest().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            this.showBiometricPromp()
+        })
+
+        compositeDisposable.add(viewModel.outputs.pinSecurityCodeRequest().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            val intent = Intent(this,VerifyPinActivity::class.java)
+            startActivityForResult(intent, requestVerifyPin)
+        })
 
         compositeDisposable.add(viewModel.outputs.nextButtonLoadingIndicator().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -167,9 +181,9 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         val alertDialog = AlertDialog.Builder(this,R.style.CustomDialogTheme)
         val row = layoutInflater.inflate(R.layout.dialog_custom_card_picker,null)
         val recyclerView = row.recyclerCardRow
-        val manager = androidx.recyclerview.widget.LinearLayoutManager(
+        val manager = LinearLayoutManager(
             this,
-            androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL,
+            LinearLayoutManager.HORIZONTAL,
             false
         )
         recyclerView.layoutManager = manager
@@ -219,5 +233,53 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    private fun showBiometricPromp(){
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Confirmar pago")
+            .setSubtitle("Por favor confirme su acción de pago")
+            .setNegativeButtonText("Cancelar")
+            .setConfirmationRequired(false)
+            .build()
+
+        val biometricPrompt = BiometricPrompt(this,executor,object : BiometricPrompt.AuthenticationCallback(){
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON){
+                    //User clicked negative action
+                }
+                super.onAuthenticationError(errorCode, errString)
+                Log.e("Biometric","Error")
+
+            }
+
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                Log.e("Biometric","Success")
+                viewModel.biometricAuthStatusAction.onNext(Unit)
+
+            }
+
+            override fun onAuthenticationFailed() {
+
+                super.onAuthenticationFailed()
+                Log.e("Biometric","Failed")
+
+            }
+        })
+
+        biometricPrompt.authenticate(promptInfo)
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == requestVerifyPin && resultCode == Activity.RESULT_OK){
+            val flag = data?.getBooleanExtra("successful",false)
+            Log.e("PaymentSelection","Code $flag")
+            if(flag == true){
+                viewModel.pinSecurityCodeStatusAction.onNext(Unit)
+            }
+        }
     }
 }

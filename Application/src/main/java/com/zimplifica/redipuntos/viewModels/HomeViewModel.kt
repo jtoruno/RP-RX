@@ -66,6 +66,7 @@ interface HomeViewModel {
                 .map { environment.currentUser().getCurrentUser() }
                 .subscribe { userInfo ->
                     if(userInfo == null) return@subscribe
+                    this.handleBiometricAuthSignUpEnabled(userInfo.id)
                     environment.userUseCase().initServerSubscription(userInfo.id)
                 }
 
@@ -195,6 +196,23 @@ interface HomeViewModel {
         private fun handleReviewMerchant(rateCommerceModel: RateCommerceModel) : Observable<Result<Boolean>>{
             Log.e("handleReviewMerchant",rateCommerceModel.rate.name)
             return environment.userUseCase().reviewMerchant(rateCommerceModel)
+        }
+
+        private fun handleBiometricAuthSignUpEnabled(userId: String){
+            val biometricStatusTemp = environment.sharedPreferences().contains("biometricStatusTemp")
+            if (biometricStatusTemp){
+                Log.e("HomeVM","handleBiometricAuthSignUpEnabled")
+                val biometricStatus = environment.sharedPreferences().getBoolean("biometricStatusTemp",false)
+                val editor = environment.sharedPreferences().edit()
+                with (editor){
+                    putBoolean(userId, biometricStatus)
+                        .apply()
+                }
+                with(editor){
+                    remove("biometricStatusTemp")
+                        .apply()
+                }
+            }
         }
     }
 }

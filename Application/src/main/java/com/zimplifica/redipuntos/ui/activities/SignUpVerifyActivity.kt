@@ -4,14 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
+import androidx.biometric.BiometricManager
 import com.zimplifica.redipuntos.R
 import com.zimplifica.redipuntos.extensions.onChange
 import com.zimplifica.redipuntos.libs.qualifiers.BaseActivity
@@ -31,6 +30,8 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
     lateinit var verifyBtn : Button
     lateinit var resendTxt : TextView
     lateinit var code : EditText
+    lateinit var checkBox: CheckBox
+    lateinit var biometricLayout : LinearLayout
 
     @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +45,21 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
         verifyBtn = findViewById(R.id.confirm_code_btn)
         resendTxt = findViewById(R.id.resend_code_txt)
         code = findViewById(R.id.code_editText)
+        checkBox = findViewById(R.id.sign_up_verify_check)
+        biometricLayout = findViewById(R.id.sign_up_verify_biometric_layout)
         progressBar.visibility = View.GONE
 
+        if(!biometricAuthAvailable()){
+            biometricLayout.visibility = View.GONE
+        }
+
+        //Inputs
         code.onChange { this.viewModel.inputs.verificationCodeTextChanged(it) }
+        checkBox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.inputs.biometricAuthChanged(isChecked)
+        }
+
+
 
         verifyBtn.setOnClickListener { this.viewModel.inputs.verificationButtonPressed() }
         resendTxt.setOnClickListener { this.viewModel.inputs.resendVerificationCodePressed() }
@@ -124,5 +137,28 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
+    }
+
+    private fun biometricAuthAvailable() : Boolean{
+        val biometricManager = BiometricManager.from(this)
+        when(biometricManager.canAuthenticate()){
+            BiometricManager.BIOMETRIC_SUCCESS ->{
+                Log.i("BiometricManager","App can authenticate using biometrics.")
+                return true
+            }
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->{
+                Log.e("BiometricManager","No biometric features available on this device.")
+                return false
+            }
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->{
+                Log.e("BiometricManager","Biometric features are currently unavailable.")
+                return false
+            }
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->{
+                Log.e("BiometricManager","The user hasn't associated any biometric credentials " +
+                        "with their account.")
+                return false
+            }else -> return false
+        }
     }
 }

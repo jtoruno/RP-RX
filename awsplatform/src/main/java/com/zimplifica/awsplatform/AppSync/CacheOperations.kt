@@ -20,32 +20,6 @@ import com.zimplifica.domain.entities.VerificationStatus
 class CacheOperations{
     private var appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
 
-    /*
-    fun updateCitizen(citizen: Citizen){
-        val query = GetUserQuery.builder().build()
-        appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
-            .enqueue(object: GraphQLCall.Callback<GetUserQuery.Data>(){
-                override fun onFailure(e: ApolloException) {
-                    Log.e("\uD83D\uDD34", "Platform, CacheOperations,Citizen Error:", e)
-                }
-
-                override fun onResponse(response: Response<GetUserQuery.Data>) {
-                    val user = response.data()?.user
-                    if(user!= null){
-                        val item = GetUserQuery.GetUser(user.__typename(),user.id(),citizen.firstName,
-                            citizen.lastName,citizen.getBirthDateAsString(),citizen.identityNumber,user.phoneNumber(),user.phoneNumberVerified(),
-                            user.email(), user.emailVerified(),user.rewards(),user.paymentMethods(), user.status(),user.gender(),user.address())
-
-                        val data = query.wrapData(GetUserQuery.Data(item))
-
-                        appSyncClient?.store?.write(query,data)?.enqueue(null)
-                        Log.i("🔵", "Cache updated at [CacheOperations] [updateCitizen]")
-                    }
-                }
-
-            })
-    }*/
-
     fun updateEmail(email : String){
         val query = GetUserQuery.builder().build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
@@ -159,7 +133,7 @@ class CacheOperations{
                 } })
     }
     fun updateNewTransactions(newTransaction: Transaction){
-        val input = GetTransactionsByUserInput.builder().nextToken(null).limit(null).build()
+        val input = GetTransactionsByUserInput.builder().nextToken(null).limit(12).build()
         val query = GetTransactionsByUserQuery.builder().input(input).build()
         appSyncClient!!.query(query).responseFetcher(AppSyncResponseFetchers.CACHE_ONLY)
             .enqueue(object : GraphQLCall.Callback<GetTransactionsByUserQuery.Data>(){
@@ -262,6 +236,14 @@ class CacheOperations{
                 }
 
             })
+    }
+
+    fun updateNewTransaction(newTransaction: Transaction){
+        val input = GetTransactionsByUserInput.builder().nextToken(null).limit(12).build()
+        val query = GetTransactionsByUserQuery.builder().input(input).build()
+        this.appSyncClient!!.store.writeTransaction {
+
+        }
     }
 
 }

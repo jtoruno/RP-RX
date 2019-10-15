@@ -36,7 +36,6 @@ import java.util.concurrent.Executor
 @RequiresFragmentViewModel(AccountVM.ViewModel::class)
 class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
-    private val executor = Executor{}
 
     companion object {
         val requestCreatePin = 1200
@@ -432,43 +431,6 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
                 return false
             }else -> return false
         }
-    }
-
-    private fun showBiometricPromp(){
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Confirmar pago")
-            .setSubtitle("Por favor confirme su acción de pago")
-            .setNegativeButtonText("Cancelar")
-            .setConfirmationRequired(false)
-            .build()
-
-        val biometricPrompt = BiometricPrompt(activity!!,executor,object : BiometricPrompt.AuthenticationCallback(){
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                if (errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON){
-                    //User clicked negative action
-                    Toast.makeText(activity,"Cancel",Toast.LENGTH_SHORT).show()
-                }
-                super.onAuthenticationError(errorCode, errString)
-
-            }
-
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                Toast.makeText(activity,"Success",Toast.LENGTH_SHORT).show()
-
-                super.onAuthenticationSucceeded(result)
-
-            }
-
-            override fun onAuthenticationFailed() {
-                Toast.makeText(activity,"Fail",Toast.LENGTH_SHORT).show()
-
-                super.onAuthenticationFailed()
-
-            }
-        })
-
-        biometricPrompt.authenticate(promptInfo)
-
     }
 
     override fun onDestroy() {

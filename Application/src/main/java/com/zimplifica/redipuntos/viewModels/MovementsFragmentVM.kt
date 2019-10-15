@@ -39,7 +39,8 @@ interface MovementsFragmentVM {
         var isLoading = false
         var itemCount = 0
         var token : String ? = null
-        private val PAGE_SIZE = 8
+        //private val PAGE_SIZE = 8
+        private val PAGE_SIZE = 12
 
         //Inputs
         private val fetchTransactions = PublishSubject.create<Boolean>()
