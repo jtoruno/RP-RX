@@ -44,6 +44,15 @@ interface AccountVM {
 
         /// Call when biometric authentication change is accepted.
         fun biometricAuthChangeAccepted(enabled: Boolean)
+
+        /// Call when refer a friend button is pressed.
+        fun referFriendButtonPressed()
+
+        /// Call when promo code button is pressed.
+        fun promoCodeButtonPressed()
+
+        /// Call when enable premium button is pressed.
+        fun enablePremiumButtonPressed()
     }
     interface Outputs {
         fun accountInformationAction() : Observable<Boolean>
@@ -81,6 +90,15 @@ interface AccountVM {
         /// Emits when the pin is requested.
         fun verifyPinSecurityCode() : Observable<Unit>
 
+        /// Emits when refer a friend button is pressed.
+        fun referFriendButtonAction() : Observable<Unit>
+
+        /// Emits when promo code button is pressed.
+        fun promoCodeButtonAction() : Observable<Unit>
+
+        /// Emits when enable premium button is pressed.
+        fun enablePremiumAction() : Observable<Unit>
+
 
     }
     @SuppressLint("CheckResult")
@@ -105,6 +123,10 @@ interface AccountVM {
         private val biometricAuthChanged = PublishSubject.create<Boolean>()
         private val biometricAuthChangeAccepted = PublishSubject.create<Boolean>()
 
+        private val referFriendButtonPressed = PublishSubject.create<Unit>()
+        private val promoCodeButtonPressed = PublishSubject.create<Unit>()
+        private val enablePremiumButtonPressed = PublishSubject.create<Unit>()
+
 
         //Outputs
         private val accountInformationAction = BehaviorSubject.create<Boolean>()
@@ -124,6 +146,9 @@ interface AccountVM {
         private val biometricAuthEnabled = BehaviorSubject.create<Unit>()
         private val verifyPinSecurityCode = BehaviorSubject.create<Unit>()
 
+        private val referFriendButtonAction = BehaviorSubject.create<Unit>()
+        private val promoCodeButtonAction = BehaviorSubject.create<Unit>()
+        private val enablePremiumAction = BehaviorSubject.create<Unit>()
         //Helper
         val pinSecurityCodeStatusAction = PublishSubject.create<Unit>()
 
@@ -213,6 +238,15 @@ interface AccountVM {
 
             this.changePasswordButtonPressed
                 .subscribe(this.changePasswordButtonAction)
+
+            this.enablePremiumButtonPressed
+                .subscribe(this.enablePremiumAction)
+
+            this.promoCodeButtonPressed
+                .subscribe(this.promoCodeButtonAction)
+
+            this.referFriendButtonPressed
+                .subscribe(this.referFriendButtonAction)
         }
 
 
@@ -255,6 +289,24 @@ interface AccountVM {
         override fun biometricAuthChangeAccepted(enabled: Boolean) {
             return this.biometricAuthChangeAccepted.onNext(enabled)
         }
+
+        override fun referFriendButtonPressed() {
+            return this.referFriendButtonPressed.onNext(Unit)
+        }
+
+        override fun promoCodeButtonPressed() {
+            return this.promoCodeButtonPressed.onNext(Unit)
+        }
+
+        override fun enablePremiumButtonPressed() {
+            return this.enablePremiumButtonPressed.onNext(Unit)
+        }
+
+        override fun referFriendButtonAction(): Observable<Unit> = this.referFriendButtonAction
+
+        override fun promoCodeButtonAction(): Observable<Unit> = this.promoCodeButtonAction
+
+        override fun enablePremiumAction(): Observable<Unit> = this.enablePremiumAction
 
         override fun showBiometricAuthActivationAlert(): Observable<Boolean> = this.showBiometricAuthActivationAlert
 
