@@ -43,7 +43,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar15.visibility = View.GONE
         mov_detail_info.setOnClickListener {  this.viewModel.inputs.paymentInfoButtonPressed() }
-        compositeDisposable.add(this.viewModel.outputs.transactionAction().observeOn(AndroidSchedulers.mainThread())
+        compositeDisposable.add(this.viewModel.outputs.transactionUpdated().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 drawTransaction(it)
             })

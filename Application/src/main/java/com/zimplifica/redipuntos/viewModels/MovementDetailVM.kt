@@ -20,7 +20,7 @@ interface MovementDetailVM {
     }
     interface Outputs {
         fun paymentInfoButtonAction() : Observable<WayToPay>
-        fun transactionAction() : Observable<Transaction>
+        fun transactionUpdated() : Observable<Transaction>
     }
 
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<MovementDetailVM>(environment),Inputs,Outputs{
@@ -33,10 +33,8 @@ interface MovementDetailVM {
 
         //Outputs
         private val paymentInfoButtonAction = BehaviorSubject.create<WayToPay>()
-        private val transactionObserver = BehaviorSubject.create<Transaction>()
+        private val transactionUpdated = BehaviorSubject.create<Transaction>()
 
-
-        private val statusObservable : PublishSubject<Unit> = PublishSubject.create()
 
         init {
             val transactionIntent = intent()
@@ -44,29 +42,23 @@ interface MovementDetailVM {
                 .map { return@map it.getSerializableExtra("transaction") as Transaction }
 
             transactionIntent
-                .subscribe(this.transactionObserver)
+                .subscribe(this.transactionUpdated)
 
             paymentInfoButtonPressed
-                .map { this.transactionObserver.value.wayToPay }
+                .map { this.transactionUpdated.value.wayToPay }
                 .subscribe(this.paymentInfoButtonAction)
 
-            /*
-             val event = transactionIntent
-                .filter { it.status == TransactionStatus.pending }
-                 .flatMap { return@flatMap Observable.interval(2,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
-                     .takeUntil(statusObservable)
-                     .flatMap { return@flatMap this.updateTransaction(transactionObserver.value.id) } }
+            environment.userUseCase().getPaymentsSubscription()
+                .filter { it.id == transactionUpdated.value.id }
+                .subscribe(this.transactionUpdated)
 
-            event
-                .subscribe {trx ->
-                    Log.e("status",trx.status.toString())
-                    if (trx.status != TransactionStatus.pending){
-                        this.statusObservable.onNext(Unit)
-                        this.statusObservable.onComplete()
-                        this.transactionObserver.onNext(trx)
-                    }
-                }
-                */
+            transactionIntent
+                .filter { it.status == TransactionStatus.pending }
+                .flatMap { return@flatMap environment.userUseCase().getTransactionById(it.id) }
+                .filter { !it.isFail() }
+                .map { return@map it.successValue() }
+                .subscribe(this.transactionUpdated)
+
 
         }
 
@@ -74,27 +66,8 @@ interface MovementDetailVM {
             return this.paymentInfoButtonPressed.onNext(Unit)
         }
 
-        override fun transactionAction(): Observable<Transaction> = this.transactionObserver
+        override fun transactionUpdated(): Observable<Transaction> = this.transactionUpdated
 
         override fun paymentInfoButtonAction(): Observable<WayToPay> = this.paymentInfoButtonAction
-
-        private fun updateTransaction(id : String) : Observable<Transaction>{
-            return Observable.create<Transaction> { disposable ->
-                val transactionEvent = environment.userUseCase().getTransactionById(id)
-                    .share()
-
-                transactionEvent
-                    .filter { !it.isFail() }
-                    .map { it.successValue()!! }
-                    .subscribe {trx ->
-                        if(trx.status != TransactionStatus.pending){
-                            environment.userUseCase().getUserInformation(false)
-                                .subscribe{
-                                    disposable.onNext(trx)
-                                }
-                        }else{
-                            disposable.onNext(trx)
-                        } } }
-        }
     }
 }

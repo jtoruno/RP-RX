@@ -8,7 +8,7 @@ import com.zimplifica.domain.entities.*
 import com.zimplifica.redipuntos.models.ServerSubscription
 import io.reactivex.Observable
 
-class UserService(private val userUseCase: UserUseCase, private val state: GlobalState) {
+class UserService(private val userUseCase: UserUseCase, val state: GlobalState) {
 
     fun getUserInformation(useCache: Boolean) : Observable<Result<UserInformationResult>> {
         return userUseCase.getUserInformation(useCache)

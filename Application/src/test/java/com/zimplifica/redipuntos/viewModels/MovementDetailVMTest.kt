@@ -9,23 +9,19 @@ import org.junit.Test
 
 class MovementDetailVMTest : RPTestCase() {
     lateinit var vm : MovementDetailVM.ViewModel
-    val paymentInfoButtonAction = TestObserver<WayToPay>()
-    val transactionAction = TestObserver<Transaction>()
+    private val paymentInfoButtonAction = TestObserver<WayToPay>()
+    private val transactionAction = TestObserver<Transaction>()
 
 
-    val cardDetail = CardDetail("12312412512","2324", "visa")
-    val wayToPay = WayToPay(4000.0,cardDetail, 4000.0)
-    val sitePaymentItem = SitePaymentItem("","Test",2000.0,"231421agewg24-2131-fwawefa-f2332",
-        "Manpuku Sushi")
-    val transactionDetail = TransactionDetail(TransactionType.directPayment.toString(), 5550.0,"231421agewg24-2131-fwawefa-f2332", "Manpuku Sushi")
-    val transaction = Transaction("1234", "1562005485489", "debit", transactionDetail, 0.0, 50.0,6500.0,6500.0,25.0,
-        TransactionStatus.success, wayToPay,"")
+    private val wayToPay = WayToPay(0.0,null, 2113.0)
+    private val transactionDetail = TransactionDetail("debit", 2113.0,"1234532", "Zimplifica")
+    private val transaction = Transaction("123451234",  "1235123612",  "debit",  transactionDetail,  0.0,  0.0,  0.0,  2113.0,  0.0,  TransactionStatus.pending, wayToPay, "")
 
     private fun setUpEnvironment(environment: Environment){
         vm = MovementDetailVM.ViewModel(environment)
         vm.outputs.paymentInfoButtonAction().subscribe(this.paymentInfoButtonAction)
         vm.intent(Intent().putExtra("transaction",transaction))
-        vm.outputs.transactionAction().subscribe(this.transactionAction)
+        vm.outputs.transactionUpdated().subscribe(this.transactionAction)
     }
 
     @Test

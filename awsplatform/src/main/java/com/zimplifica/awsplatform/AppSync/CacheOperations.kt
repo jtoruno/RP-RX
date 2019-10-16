@@ -151,6 +151,7 @@ class CacheOperations{
 
                         val transaction = GetTransactionsByUserQuery.Item("",newTransaction.id,newTransaction.datetime,newTransaction.transactionType,item,newTransaction.fee,
                             newTransaction.tax,newTransaction.subtotal,newTransaction.total,newTransaction.rewards,newTransaction.status.name,wtp,newTransaction.description)
+                        items.removeAll { trx -> trx.id() == newTransaction.id }
                         items.add(0,transaction)
                         Log.i("🔵", "Cache updated at [CacheOperations] [updateTransactions]")
                         val data = query.wrapData(GetTransactionsByUserQuery.Data(GetTransactionsByUserQuery.GetTransactionsByUser("PaginatedTransactions",items,null)))
@@ -236,14 +237,6 @@ class CacheOperations{
                 }
 
             })
-    }
-
-    fun updateNewTransaction(newTransaction: Transaction){
-        val input = GetTransactionsByUserInput.builder().nextToken(null).limit(12).build()
-        val query = GetTransactionsByUserQuery.builder().input(input).build()
-        this.appSyncClient!!.store.writeTransaction {
-
-        }
     }
 
 }

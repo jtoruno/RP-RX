@@ -59,11 +59,12 @@ class UserUseCase : UserUseCase {
             val mutation = ConfirmForgotPasswordMutation.builder().input(input).build()
             this.appSyncClientPublic!!.mutate(mutation).enqueue(object: GraphQLCall.Callback<ConfirmForgotPasswordMutation.Data>(){
                 override fun onFailure(e: ApolloException) {
-                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [initForgotPassword] Error.",e)
+                    Log.e("\uD83D\uDD34", "[Platform] [UserUseCase] [confirmForgotPassword] Error.",e)
                     single.onSuccess(Result.failure(e))
                 }
 
                 override fun onResponse(response: Response<ConfirmForgotPasswordMutation.Data>) {
+                    Log.e("confirmForgotPassword",response.errors().toString())
                     val result = response.data()?.confirmForgotPassword()
                     if(result!=null){
                         single.onSuccess(Result.success(result.success()))
@@ -425,6 +426,7 @@ class UserUseCase : UserUseCase {
 
                 override fun onResponse(response: Response<GetTransactionsByUserQuery.Data>) {
                     val result = response.data()?.transactionsByUser
+                    Log.e("UserUseCase","Is from cache ->"+response.fromCache())
                     Log.e("UserUseCase",result.toString())
                     if(result!=null){
                         val items = result.items()
@@ -547,6 +549,7 @@ class UserUseCase : UserUseCase {
                         val transaction = Transaction(result.id(),result.datetime(),result.transactionType(),transactionDetail,
                             result.fee(),result.tax(), result.subtotal(),result.total(),result.rewards(),status,way2pay,result.paymentDescription())
 
+                        cacheOperations.updateNewTransactions(newTransaction = transaction)
                         cacheOperations.updateTransactions(withExistingTransaction = transaction)
 
                         single.onSuccess(Result.success(transaction))

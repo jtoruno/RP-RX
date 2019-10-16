@@ -57,12 +57,12 @@ interface MovementsFragmentVM {
             val newPayment = environment.userUseCase().getPaymentsSubscription()
                 .flatMap {
                     Log.e("🔸", "Updating from cache")
-                    return@flatMap this.fetchTransactionsServer(true,null,null)
+                    return@flatMap this.fetchTransactionsServer(true,null,PAGE_SIZE)
                 }
                 .share()
 
             val fetchTransactionsEvent =  fetchTransactions
-                .flatMap { return@flatMap this.fetchTransactionsServer(it, null, null) }
+                .flatMap { return@flatMap this.fetchTransactionsServer(it, null, PAGE_SIZE) }
                 .share()
 
             Observable.merge(newPayment,fetchTransactionsEvent)
@@ -75,6 +75,7 @@ interface MovementsFragmentVM {
                 .map { it.successValue() }
                 .map { this.handleTransactionsData(it) }
                 .subscribe(this.fetchTransactionsAction)
+                //.subscribe(this.transactions)
 
             this.showMovementDetail
                 .subscribe(this.showMovementDetailAction)

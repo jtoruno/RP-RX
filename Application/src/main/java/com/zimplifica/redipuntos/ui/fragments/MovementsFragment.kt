@@ -117,19 +117,28 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.fetchTransactionsAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                adapter.clear()
                 if (it.isEmpty()){
                     mov_fragment_no_transaction.visibility = View.VISIBLE
                 }else{
                     mov_fragment_no_transaction.visibility = View.GONE
                 }
                 mov_fragment_swipe.isRefreshing = false
+                /*
                 sectionAdapter.removeAllSections()
                 for(item in it){
                     sectionAdapter.addSection(MovSection(item.first,item.second){ transaction ->
                         viewModel.inputs.showMovementDetail(transaction)
                     })
                 }
-                sectionAdapter.notifyDataSetChanged()
+                sectionAdapter.notifyDataSetChanged()*/
+                for (value in it){
+                    val transaction = Transaction()
+                    transaction.id = "header"
+                    transaction.date = value.first
+                    adapter.addHeader(transaction)
+                    adapter.addAll(value.second)
+                }
             })
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
@@ -149,10 +158,5 @@ class MovementsFragment : BaseFragment<MovementsFragmentVM.ViewModel>() {
     override fun onDestroy() {
         compositeDisposable.dispose()
         super.onDestroy()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        //this.viewModel.inputs.fetchTransactions(true)
     }
 }

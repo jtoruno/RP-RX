@@ -134,9 +134,11 @@ interface HomeViewModel {
             this.rateCommerceInput
                 .flatMap {
                     Log.e("RateCommerce",it.commerceName + it.rate.name)
-                    this.handleReviewMerchant(it)
+                    return@flatMap this.handleReviewMerchant(it)
                 }
                 .filter { !it.isFail() }
+                .map { it.successValue() }
+                .subscribe()
 
 
         }
