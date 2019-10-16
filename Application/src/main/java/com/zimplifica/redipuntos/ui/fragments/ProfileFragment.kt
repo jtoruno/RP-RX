@@ -98,6 +98,18 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             viewModel.inputs.biometricAuthChanged(!state)
         }
 
+        profile_enable_premium.setOnClickListener {
+            viewModel.inputs.enablePremiumButtonPressed()
+        }
+
+        profile_refer_a_friend.setOnClickListener {
+            viewModel.inputs.referFriendButtonPressed()
+        }
+
+        profile_promo_code.setOnClickListener {
+            viewModel.inputs.promoCodeButtonPressed()
+        }
+
 
         /*
         profile_change_password.setOnClickListener {
@@ -163,6 +175,21 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.termsAndConditionsButton().observeOn(AndroidSchedulers.mainThread()).subscribe{
             val intent = Intent(activity, TermsActivity::class.java)
+            startActivity(intent)
+        })
+
+        compositeDisposable.add(viewModel.outputs.enablePremiumAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            val intent = Intent(activity, PremiumActivity::class.java)
+            startActivity(intent)
+        })
+
+        compositeDisposable.add(viewModel.outputs.referFriendButtonAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            val intent = Intent(activity, ReferFriendActivity::class.java)
+            startActivity(intent)
+        })
+
+        compositeDisposable.add(viewModel.outputs.promoCodeButtonAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
+            val intent = Intent(activity, PromoCodeActivity::class.java)
             startActivity(intent)
         })
 

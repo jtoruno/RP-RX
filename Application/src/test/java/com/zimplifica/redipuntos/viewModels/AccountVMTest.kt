@@ -24,6 +24,9 @@ class AccountVMTest : RPTestCase() {
     private val showUpdatePinAlert =  TestObserver<Unit>()
     private val biometricAuthEnabled = TestObserver<Unit>()
     private var verifyPinSecurityCode = TestObserver<Unit>()
+    private val referFriendButtonAction = TestObserver<Unit>()
+    private val promoCodeButtonAction = TestObserver<Unit>()
+    private val enablePremiumAction = TestObserver<Unit>()
 
     private fun setUpEnvironment(environment: Environment){
 
@@ -42,6 +45,9 @@ class AccountVMTest : RPTestCase() {
         vm.outputs.showUpdatePinAlert().subscribe(this.showUpdatePinAlert)
         vm.outputs.biometricAuthEnabled().subscribe(this.biometricAuthEnabled)
         vm.outputs.verifyPinSecurityCode().subscribe(this.verifyPinSecurityCode)
+        vm.outputs.referFriendButtonAction().subscribe(this.referFriendButtonAction)
+        vm.outputs.promoCodeButtonAction().subscribe(this.promoCodeButtonAction)
+        vm.outputs.enablePremiumAction().subscribe(this.enablePremiumAction)
     }
 
     @Test
@@ -131,6 +137,30 @@ class AccountVMTest : RPTestCase() {
         vm.inputs.onCreate()
         vm.pinSecurityCodeStatusAction.onNext(Unit)
         biometricAuthEnabled.assertValueCount(2)
+    }
+
+    @Test
+    fun testReferFriendButtonAction(){
+        setUpEnvironment(environment()!!)
+        vm.inputs.onCreate()
+        vm.inputs.referFriendButtonPressed()
+        referFriendButtonAction.assertValueCount(1)
+    }
+
+    @Test
+    fun testPromoCodeButtonAction(){
+        setUpEnvironment(environment()!!)
+        vm.inputs.onCreate()
+        vm.inputs.promoCodeButtonPressed()
+        promoCodeButtonAction.assertValueCount(1)
+    }
+
+    @Test
+    fun testEnablePremiumAction(){
+        setUpEnvironment(environment()!!)
+        vm.inputs.onCreate()
+        vm.inputs.enablePremiumButtonPressed()
+        enablePremiumAction.assertValueCount(1)
     }
 
     private fun setUpEnvironment(verifiedStatus : Boolean){

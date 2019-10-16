@@ -162,6 +162,12 @@ object ValidationService {
         return false
     }
 
+    fun validatePromotionCode(promoCode: String) : Boolean{
+        val  numberRegEx  = Pattern.compile("[A-Z0-9]{6}")
+        if (numberRegEx.matcher(promoCode).matches()) { return true }
+        return false
+    }
+
     fun getNextStepToCompleteProfile(userInfo: UserInformationResult?) : ProfileStep?{
         if(userInfo==null){return ProfileStep.Unknown}
         if(userInfo.userEmail == null){

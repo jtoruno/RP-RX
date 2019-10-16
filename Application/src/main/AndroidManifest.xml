@@ -23,7 +23,10 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:replace="android:allowBackup">
-        <activity android:name=".ui.activities.VerifyPinActivity"></activity>
+        <activity android:name=".ui.activities.ReferFriendActivity"></activity>
+        <activity android:name=".ui.activities.PromoCodeActivity" />
+        <activity android:name=".ui.activities.PremiumActivity" />
+        <activity android:name=".ui.activities.VerifyPinActivity" />
         <activity android:name=".ui.activities.UpdatePinActivity" />
         <activity android:name=".ui.activities.CreatePinActivity" />
         <activity android:name=".ui.activities.ChangePasswordActivity" />
