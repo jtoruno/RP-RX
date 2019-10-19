@@ -34,7 +34,7 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirm_forgot_password)
-        this.supportActionBar?.title = "Recuperar Contraseña"
+        this.supportActionBar?.title = getString(R.string.Forgot_password)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         img1 = findViewById(R.id.forgot_img1)
@@ -66,7 +66,7 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos",it)
+                showDialog(getString(R.string.Sorry),it)
             })
 
         compositeDisposable.add(this.viewModel.outputs.validPasswordCapitalLowerLetters().observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -114,7 +114,7 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.help_action){
-            this.showDialog("Ayuda","El código de verificación fue enviado al número de teléfono o correo electrónico.")
+            this.showDialog(getString(R.string.Help),"El código de verificación fue enviado al número de teléfono")
         }
         return super.onOptionsItemSelected(item)
     }
@@ -123,7 +123,7 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

@@ -103,8 +103,8 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
 
     private fun showAlerter(){
         Alerter.create(this@SplashActivity)
-            .setTitle("Es una pena")
-            .setText("Tenemos problemas de comunicación, asegurate de tener conexión a internet y luego intenta de nuevo.")
+            .setTitle(getString(R.string.Sorry))
+            .setText(getString(R.string.Error_network_connection))
             .setBackgroundColorRes(R.color.red)
             .enableSwipeToDismiss()
             //.setDuration(3000)

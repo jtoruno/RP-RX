@@ -32,7 +32,7 @@ class ForgotPasswordActivity : BaseActivity<ForgotPasswordViewModel.ViewModel>()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
 
-        this.supportActionBar?.title = getString(R.string.Forgot_password)
+        this.supportActionBar?.title = getString(R.string.Forgot_password_recover_password)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar = findViewById(R.id.progressBar4)
@@ -60,7 +60,7 @@ class ForgotPasswordActivity : BaseActivity<ForgotPasswordViewModel.ViewModel>()
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos",it)
+                showDialog(getString(R.string.Sorry),it)
             })
 
         compositeDisposable.add(this.viewModel.outputs.forgotPasswordStatus().observeOn(AndroidSchedulers.mainThread())
@@ -79,7 +79,7 @@ class ForgotPasswordActivity : BaseActivity<ForgotPasswordViewModel.ViewModel>()
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.help_action){
-            this.showDialog("Ayuda","Ingresar número de teléfono o correo electrónico registrado.")
+            this.showDialog(getString(R.string.Help),"Ingresar número de teléfono o correo electrónico registrado.")
         }
         return super.onOptionsItemSelected(item)
     }
@@ -88,7 +88,7 @@ class ForgotPasswordActivity : BaseActivity<ForgotPasswordViewModel.ViewModel>()
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

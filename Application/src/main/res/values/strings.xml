@@ -80,7 +80,8 @@
     <string name="Alert" >Alerta</string>
     <string name="App_copyright" >© %1$s %2$d</string>
     <string name="App_version">Versión %1$s</string>
-    <string name="Apply" > Aplicar</string>
+    <string name="Apply" >Aplicar</string>
+    <string name="Back" >Volver</string>
     <string name="Biometric_auth_activation_message" >¿Deseas utilizar autenticación biométrica en vez de tú código PIN?</string>
     <string name="Biometric_authentication" >Autenticación Biométrica</string>
     <string name="Birthdate" >Fecha de Nacimiento</string>
@@ -272,6 +273,7 @@
     <string name="Resend" >Reenviar</string>
     <string name="Resend_verification_code_message" >¿Deseas que se reenvíe el código de verificación?</string>
     <string name="Restrictions" >Restricciones</string>
+    <string name="Retry" >Reintentar</string>
     <string name="Rewards" >Premios</string>
     <string name="Rewards_available" >Tienes %1$s disponibles</string>
     <string name="Rewards_to_get" >Puntos por obtener</string>
