@@ -99,7 +99,7 @@ interface HomeViewModel {
             environment.userUseCase().getActionableEventSubscription()
                 .subscribe {event ->
                     if (event == null) return@subscribe
-                    Log.e("🔵", "[HomeVM] [init] New actionable event $event")
+                    Log.e("🔵", "[HomeVM] [init] New actionable event origin :${event.origin}  id: ${event.id}")
                     when {
                         event.type == "PaymentRequested" -> {
                             val paymentId = event.origin

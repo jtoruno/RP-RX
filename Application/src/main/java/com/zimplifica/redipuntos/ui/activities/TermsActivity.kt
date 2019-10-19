@@ -20,7 +20,7 @@ class TermsActivity : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar?.title = "Términos y Condiciones"
+        supportActionBar?.title = getString(R.string.Privacy_policy)
     }
 
     override fun onSupportNavigateUp(): Boolean {

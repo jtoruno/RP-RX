@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:textColorHint="#a4a8b3"
                 android:id="@+id/user_edit_text_sign_in"
-                android:hint="Correo electrónico o Teléfono"/>
+                android:hint="@string/Sign_in_phone_number"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -42,10 +42,10 @@
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Contraseña"/>
+                android:hint="@string/Password"/>
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-            android:text="Siguiente"
+            android:text="@string/Continue"
             android:enabled="false"
             android:textAllCaps="false"
             android:background="@drawable/btn_state"

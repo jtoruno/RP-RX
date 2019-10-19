@@ -46,7 +46,6 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         supportActionBar?.title = ""
         progressBar13.visibility = View.GONE
-        textView29.visibility = View.INVISIBLE
 
         adapter = RecyclerCardPoints()
 
@@ -127,16 +126,6 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
                     payment_selection_btn.alpha = 1F
                 }
             })
-
-        payment_s_description.onChange {
-            viewModel.inputs.descriptionTextFieldChanged(it)
-            if(!it.isNullOrBlank()){
-                textView29.visibility = View.VISIBLE
-            }
-            else{
-                textView29.visibility = View.INVISIBLE
-            }
-        }
 
         payment_s_checkBox.isChecked = true
 

@@ -70,7 +70,6 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         progressBar15.visibility = View.GONE
         generateQR(transaction.id)
         mov_detail_id.text = transaction.id
-        mov_detail_description.text = transaction.description?:"Sin descripción"
         mov_detail_commerce.text = transaction.transactionDetail.vendorName
         mov_detail_amount.text = "₡ "+String.format("%,.2f", transaction.total)
         val name = viewModel.environment.currentUser().getCurrentUser()?.nickname?: ""

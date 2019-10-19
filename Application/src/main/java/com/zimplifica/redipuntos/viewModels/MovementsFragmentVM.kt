@@ -151,6 +151,7 @@ interface MovementsFragmentVM {
                     .filter { !it.isFail() }
                     .map { it.successValue() }
                     .map {
+                        Log.e("Pagination","Token "+ it.nextToken)
                         itemCount += it.transactions.size
                         token = it.nextToken
                         return@map handleTransactionsData(it)

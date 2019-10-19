@@ -14,7 +14,7 @@ class PrivacyActivity : AppCompatActivity() {
         setContentView(R.layout.activity_privacy)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar?.title = "Políticas de Privacidad"
+        supportActionBar?.title = getString(R.string.Privacy_policy)
 
         webView = findViewById(R.id.webViewPrivacy)
 

@@ -33,7 +33,7 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in)
-        this.supportActionBar?.title = "Iniciar Sesión"
+        this.supportActionBar?.title = getString(R.string.Sign_in)
         signInBtn = findViewById(R.id.sign_in_btn_screen)
         userEditText = findViewById(R.id.user_edit_text_sign_in)
         passEditText = findViewById(R.id.pass_edit_text_sign_in)
@@ -86,7 +86,7 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.help_action){
-            this.showDialog("Ayuda","Ingrese su usuario (número de teléfono o correo electrónico) y contraseña")
+            this.showDialog(getString(R.string.Help),getString(R.string.Sign_in_help_message))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -95,7 +95,7 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

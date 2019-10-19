@@ -426,6 +426,7 @@ class UserUseCase : UserUseCase {
 
                 override fun onResponse(response: Response<GetTransactionsByUserQuery.Data>) {
                     val result = response.data()?.transactionsByUser
+                    //Log.e("fetchTransactions","PaginationVal "+result?.nextToken() + " limit "+ limit)
                     Log.e("UserUseCase","Is from cache ->"+response.fromCache())
                     Log.e("UserUseCase",result.toString())
                     if(result!=null){
@@ -532,6 +533,7 @@ class UserUseCase : UserUseCase {
 
                 override fun onResponse(response: Response<GetTransactionByIdQuery.Data>) {
                     val result = response.data()?.transactionById
+                    Log.e("TransactionById",result.toString())
                     if(result != null){
                         var cardDetail : CardDetail ? = null
                         val card = result.wayToPay().creditCard()

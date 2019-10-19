@@ -24,7 +24,7 @@ class SignInFailureActivity : BaseActivity<SignInFailureViewModel.ViewModel>() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_in_failure)
 
-        this.supportActionBar?.title = "Iniciar Sesión"
+        this.supportActionBar?.title = getString(R.string.Sign_in)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         forgotBtn = findViewById(R.id.forgot_fail_btn)

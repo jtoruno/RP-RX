@@ -32,7 +32,7 @@ class ForgotPasswordActivity : BaseActivity<ForgotPasswordViewModel.ViewModel>()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_forgot_password)
 
-        this.supportActionBar?.title = "Recuperar Contraseña"
+        this.supportActionBar?.title = getString(R.string.Forgot_password)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar = findViewById(R.id.progressBar4)
