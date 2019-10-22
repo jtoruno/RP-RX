@@ -58,7 +58,7 @@ class CatalogFragment : BaseFragment<CommercesFragmentVM.ViewModel>() {
         chip.visibility = View.GONE
         searchView.isIconified = false
         searchView.clearFocus()
-        searchView.queryHint = "Buscar comercio..."
+        searchView.queryHint = getString(R.string.Find_commerce)
         val autoComplete = searchView.findViewById<SearchView.SearchAutoComplete>(R.id.search_src_text)
         autoComplete.setHintTextColor(activity!!.getColor(R.color.grayIconTint))
         autoComplete.setTextColor(activity!!.getColor(android.R.color.white))

@@ -47,7 +47,7 @@
                   android:textAlignment="center"
                   android:textSize="16sp"
                   android:id="@+id/spscan_qr_txt"
-                  android:text="Escanear código del comercio"
+                  android:text="@string/Scan_commerce_code"
                   android:layout_height="wrap_content"/>
 
     </LinearLayout>

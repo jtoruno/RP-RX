@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">RediPuntos</string>
-    <string name="signUpTermsText">l presionar \'Crear Cuenta\' aceptas los Términos y Condiciones y las Políticas de
+    <string name="signUpTermsText">Al presionar \'Crear Cuenta\' aceptas los Términos y Condiciones y las Políticas de
         Privacidad.
     </string>
     <string name="walk1">¡Explota tus puntos!</string>
@@ -81,21 +81,25 @@
     <string name="App_copyright" >© %1$s %2$d</string>
     <string name="App_version">Versión %1$s</string>
     <string name="Apply" >Aplicar</string>
+    <string name="Apply_any">Aplicar %1$s</string>
     <string name="Back" >Volver</string>
     <string name="Biometric_auth_activation_message" >¿Deseas utilizar autenticación biométrica en vez de tú código PIN?</string>
     <string name="Biometric_authentication" >Autenticación Biométrica</string>
     <string name="Birthdate" >Fecha de Nacimiento</string>
     <string name="Call" >Llamar</string>
+    <string name="Call_to">Llamar: %1$s</string>
     <string name="Camera_not_allowed" >Cámara no disponible</string>
     <string name="Cancel" >Cancelar</string>
     <string name="Card_amex_security_code_placeholder" >1234</string>
     <string name="Card_amex_security_code_title" >CID</string>
     <string name="Card_charge" >Cargo a la Tarjeta</string>
+    <string name="Card_expiration_date_error" >Ingrese una fecha válida</string>
     <string name="Card_expiration_date_format" >MM/AA</string>
     <string name="Card_expiration_date_title" >Fecha de venc.</string>
     <string name="Card_mask" >●●●●</string>
     <string name="Card_name_title" >Nombre en Tarjeta</string>
     <string name="Card_number_title" >Número de tarjeta</string>
+    <string name="Card_number_error" >Ingrese un número de tarjeta válido</string>
     <string name="Card_security_code_placeholder" >123</string>
     <string name="Card_security_code_title" >CVV</string>
     <string name="Cashback" >Reembolso</string>
@@ -104,6 +108,7 @@
     <string name="Change" >Cambiar</string>
     <string name="Change_password" >Cambiar Contraseña</string>
     <string name="Change_password_confirmation" >¿Estás seguro que deseas cambiar tu contraseña? Un código de confirmación será enviado a tu número de teléfono.</string>
+    <string name="Change_password_message">Contraseña cambiada correctamente</string>
     <string name="Check_out_my_app" >He estado utilizando %1$s para pagar en todos los comercios y pienso que te gustará esta aplicación. Obten ₡%2$s de descuento</string>
     <string name="Close" >Cerrar</string>
     <string name="Closed" >Cerrado</string>
@@ -125,6 +130,7 @@
     <string name="Current_password" >Contraseña Actual</string>
     <string name="Delete" >Eliminar</string>
     <string name="Delete_payment_method_message" >¿Deseas realmente eliminar este método de pago?</string>
+    <string name="Delete_payment_method_sucess" >Método de pago eliminado correctamente.</string>
     <string name="Description" >Descripción</string>
     <string name="Detail" >Detalle</string>
     <string name="Diamond" >Diamante</string>
@@ -172,10 +178,13 @@
     <string name="Fee" >Comisión</string>
     <string name="Female" >Mujer</string>
     <string name="Find_commerce" >Buscar comercio...</string>
+    <string name="Filter">Filtrar</string>
     <string name="Forgot_password" >Olvidé Contraseña</string>
     <string name="Forgot_password_confirmation" >Un código de confirmación será enviado a tu número de teléfono.</string>
+    <string name="Forgot_password_success_message">Modificación Exitosa, Contraseña modificada correctamente. Por favor intente iniciar sesión nuevamente.</string>
     <string name="Forgot_password_enter_new_password" >Ingrese una nueva contraseña</string>
     <string name="Forgot_password_enter_verification_code" >Ingrese el código de verificación enviado a su número de teléfono</string>
+    <string name="Forgot_password_help" >Ingrese el número de teléfono registrado.</string>
     <string name="Forgot_password_message" >Código de verificación enviado a %1$s</string>
     <string name="Forgot_password_recover_password" >Recuperar Contraseña</string>
     <string name="Friday" >Viernes</string>
@@ -190,6 +199,7 @@
     <string name="Guest_user" >Usuario Invitado</string>
     <string name="Help" >Ayuda</string>
     <string name="Hi" >Hola</string>
+    <string name="Hi_some_one" >!Hola %1$s!</string>
     <string name="Hi_whats_your_name_message" >Hola, ¿cómo te llamas?</string>
     <string name="Hide" >Ocultar</string>
     <string name="How_we_do_it_description" >Mediante tecnología de punta, un selfie y las fotos de tu identificación, %1$s logra verificar con exactitud si eres la persona quien dices ser sin hacerte salir de tu casa.</string>
@@ -212,16 +222,20 @@
     <string name="Name" >Nombre</string>
     <string name="New_password" >Nueva Contraseña</string>
     <string name="Next" >Siguiente</string>
-    <string name="Next_step" >Siguiente paso</string>
+    <string name="Next_step" >Siguiente paso: </string>
     <string name="No_commerces_description">Lo sentimos, todavía no hay comercios que coincidan con su búsqueda.
         &#128533;
     </string>
     <string name="No_commerces_title" >No hay comercios aún</string>
     <string name="No_description" >Sin descripción</string>
+    <string name="No_notifications_title">Todavía no hay notificaciones</string>
+    <string name="No_notifications_description">Vuelve pronto!.</string>
     <string name="No_payments_description" >Podrás ver los pagos en proceso inmediatamente al realizar un pago</string>
     <string name="No_payments_title" >No existen pagos en proceso</string>
     <string name="None" >Ninguno</string>
+    <string name="Notifications">Notificaciones</string>
     <string name="Not_verified" >No verificado</string>
+    <string name="Not_available">No disponible</string>
     <string name="Not_waze_in_device" >Tu dispositivo actualmente no cuenta con la aplicación Waze. ¿Deseas descargar la aplicación?</string>
     <string name="Open" >Abierto</string>
     <string name="Open_now" >Abierto ahora</string>
@@ -248,6 +262,7 @@
     <string name="Pin_updated" >PIN Actualizado</string>
 
     <string name="Pin_updated_description" >Código de seguridad actualizado correctamente.</string>
+    <string name="Pin_verify">Verificar PIN</string>
     <string name="Points" >Puntos</string>
     <string name="Points_balance" >Saldo de Puntos</string>
     <string name="Points_received" >Has recibido %1$s pts</string>
@@ -318,12 +333,14 @@
     <string name="Sign_up_add_password" >Ingrese una contraseña</string>
     <string name="Sign_up_add_verification_code" >Ingrese el código de verificación enviado a su número de teléfono</string>
     <string name="Sign_up_character_rule" >Un caracter especial !$#@_-.+</string>
+    <string name="Sign_up_help_message">Tu número de telefono se utilizará para confirmar tu cuenta.</string>
+    <string name="Sign_Up_help_password_message">Ingrese una contraseña válida.\n La contraseña debe contener entre 8 y 20 caracteres, 1 letra mayúscula, 1 letra minúscula, 1 caracter numérico y 1 caracter especial (!$#@_-.+)</string>
     <string name="Sign_up_length_rule" >Entre 8 y 20 caracteres</string>
     <string name="Sign_up_lower_case_capital_letters_rule" >Una letra mayúscula y una letra minúscula</string>
     <string name="Sign_up_number_rule" >Un caracter numérico (0-9)</string>
     <string name="Sign_up_phone_number_rule" >El número de teléfono debe contener 8 dígitos</string>
     <string name="Sign_up_resend_verification_code" >Reenviar código de verificación</string>
-    <string name="Sign_up_resend_verification_code_result" >Código de verificación reenviado a %{contact}</string>
+    <string name="Sign_up_resend_verification_code_result" >Código de verificación reenviado a %1$s</string>
     <string name="Sign_up_terms_and_conditions_plus_privacy_policy" >Al presionar \'Crear Cuenta\' aceptas nuestros Términos y Condiciones y Políticas de Privacidad.</string>
     <string name="Sign_up_title" >Ingrese su número de teléfono</string>
     <string name="Silver" >Plata</string>

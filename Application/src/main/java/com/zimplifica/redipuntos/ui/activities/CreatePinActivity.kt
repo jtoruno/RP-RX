@@ -23,7 +23,7 @@ class CreatePinActivity : BaseActivity<CreatePinVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_pin)
-        supportActionBar?.title = "Crear PIN"
+        supportActionBar?.title = getString(R.string.Pin_create)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
@@ -39,7 +39,7 @@ class CreatePinActivity : BaseActivity<CreatePinVM.ViewModel>() {
         })
 
         compositeDisposable.add(viewModel.outputs.showErrorAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            showDialog("Lo sentimos", it)
+            showDialog(getString(R.string.Sorry), it)
         })
 
         compositeDisposable.add(viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -65,7 +65,7 @@ class CreatePinActivity : BaseActivity<CreatePinVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

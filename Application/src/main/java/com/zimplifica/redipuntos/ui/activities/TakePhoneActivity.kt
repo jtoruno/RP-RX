@@ -29,7 +29,7 @@ class TakePhoneActivity : BaseActivity<TakePhoneViewModel.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_take_phone)
-        this.supportActionBar?.title = "Registrar"
+        this.supportActionBar?.title = getString(R.string.Sign_up)
         nextBtn = findViewById(R.id.next_take_btn)
         phoneEditText = findViewById(R.id.phone_edit_text)
         nicknameEditText = findViewById(R.id.nickname_editText)
@@ -56,7 +56,7 @@ class TakePhoneActivity : BaseActivity<TakePhoneViewModel.ViewModel>() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.help_action){
-            this.showDialog("Ayuda","Tu número de telefono se utilizará para confirmar tu cuenta.")
+            this.showDialog(getString(R.string.Help),getString(R.string.Sign_up_help_message))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -65,7 +65,7 @@ class TakePhoneActivity : BaseActivity<TakePhoneViewModel.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

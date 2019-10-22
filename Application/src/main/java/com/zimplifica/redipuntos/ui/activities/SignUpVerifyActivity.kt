@@ -37,7 +37,7 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up_verify)
-        this.supportActionBar?.title = "Registrar"
+        this.supportActionBar?.title = getString(R.string.Sign_up)
         //password = this.intent.getStringExtra("password")
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
@@ -80,7 +80,7 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.resendAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                this.showDialog("Confirmación","El código de verificación de 6 dígitos fue reenviado a: ${this.viewModel.username}")
+                this.showDialog(getString(R.string.Help),getString(R.string.Sign_up_resend_verification_code_result,this.viewModel.username))
             })
 
         compositeDisposable.add(this.viewModel.outputs.showError()
@@ -88,7 +88,7 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
             .subscribe {
                 verifyBtn.isEnabled = true
                 progressBar.visibility = View.GONE
-                showDialog("Lo sentimos",it.friendlyMessage)
+                showDialog(getString(R.string.Sorry),it.friendlyMessage)
             })
 
 
@@ -120,7 +120,7 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.help_action){
-            this.showDialog("Ayuda","El código de verificación de 6 dígitos fue enviado a: ${this.viewModel.username}")
+            this.showDialog(getString(R.string.Help),getString(R.string.Forgot_password_message,this.viewModel.username))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -129,7 +129,7 @@ class SignUpVerifyActivity : BaseActivity<SignUpVerifyViewModel.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

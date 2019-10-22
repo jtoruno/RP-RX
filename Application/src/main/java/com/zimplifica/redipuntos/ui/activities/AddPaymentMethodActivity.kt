@@ -28,10 +28,12 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_payment_method)
-        supportActionBar?.title = "Método de Pago"
+        supportActionBar?.title = getString(R.string.Payment_method)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar10.visibility = View.GONE
+
+        add_payment_description.text = getString(R.string.Add_payment_method_securiy_description,getString(R.string.app_name))
 
         add_payment_method_name.onChange { this.viewModel.inputs.cardHolderChanged(it) }
         add_payment_method_number.onChange {
@@ -78,7 +80,7 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
 
                 when(it.status){
                     CreditCardNumber.Status.invalid -> {
-                        textInputLayout14.error = "Ingrese un número de tarjeta válido"
+                        textInputLayout14.error = getString(R.string.Card_number_error)
                     }
                     CreditCardNumber.Status.valid -> {
                         textInputLayout14.error = null
@@ -95,7 +97,7 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
                 //add_payment_exp_date.setText(it.valueFormatted)
                 when(it.isValid){
                     CreditCardExpirationDate.ExpirationDateStatus.invalid -> {
-                        input_layout_exp_date2.error = "Ingrese una fecha válida"
+                        input_layout_exp_date2.error = getString(R.string.Card_expiration_date_error)
                     }
                     else -> {
                         input_layout_exp_date2.error = null
@@ -110,7 +112,7 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos", it)
+                showDialog(getString(R.string.Sorry), it)
             })
 
         compositeDisposable.add(viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
@@ -126,7 +128,7 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.paymentMethodSaved().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                Toast.makeText(this,"Método de pago guardado correctamente",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,getString(R.string.Payment_method_included_succesfully),Toast.LENGTH_SHORT).show()
                 finish()
             })
     }
@@ -169,7 +171,7 @@ class AddPaymentMethodActivity : BaseActivity<AddPaymentMethodVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

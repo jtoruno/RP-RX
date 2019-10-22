@@ -34,7 +34,7 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirm_forgot_password)
-        this.supportActionBar?.title = getString(R.string.Forgot_password)
+        this.supportActionBar?.title = getString(R.string.Forgot_password_recover_password)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         img1 = findViewById(R.id.forgot_img1)
@@ -84,7 +84,7 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
 
         compositeDisposable.add(this.viewModel.outputs.passwordChangedAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                Toast.makeText(this, "Modificación Exitosa \n Contraseña modificada correctamente. Por favor intente iniciar sesión nuevamente.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.Forgot_password_success_message), Toast.LENGTH_LONG).show()
                 finish()
             })
 
@@ -114,7 +114,7 @@ class ConfirmForgotPasswordActivity : BaseActivity<ConfirmForgotPsswordVM.ViewMo
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.help_action){
-            this.showDialog(getString(R.string.Help),"El código de verificación fue enviado al número de teléfono")
+            this.showDialog(getString(R.string.Help),getString(R.string.Forgot_password_enter_verification_code))
         }
         return super.onOptionsItemSelected(item)
     }

@@ -31,10 +31,12 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_payment)
-        supportActionBar?.title = "Método de Pago"
+        supportActionBar?.title = getString(R.string.Payment_method)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar9.visibility = View.GONE
+
+        add_payment_description_2.text = getString(R.string.Add_payment_method_securiy_description,getString(R.string.app_name))
 
         add_payment_name.onChange { this.viewModel.inputs.cardHolderChanged(it) }
 
@@ -88,7 +90,7 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
 
                 when(it.status){
                     CreditCardNumber.Status.invalid -> {
-                        textInputLayout12.error = "Ingrese un número de tarjeta válido"
+                        textInputLayout12.error = getString(R.string.Card_number_error)
                     }
                     CreditCardNumber.Status.valid -> {
                         textInputLayout12.error = null
@@ -105,7 +107,7 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
                 //add_payment_exp_date.setText(it.valueFormatted)
                 when(it.isValid){
                     CreditCardExpirationDate.ExpirationDateStatus.invalid -> {
-                        input_layout_exp_date.error = "Ingrese una fecha válida"
+                        input_layout_exp_date.error = getString(R.string.Card_expiration_date_error)
                     }
                     else -> {
                         input_layout_exp_date.error = null
@@ -120,7 +122,7 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos", it)
+                showDialog(getString(R.string.Sorry), it)
             })
 
         compositeDisposable.add(viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
@@ -180,7 +182,7 @@ class AddPaymentActivity : BaseActivity<AddPaymentVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

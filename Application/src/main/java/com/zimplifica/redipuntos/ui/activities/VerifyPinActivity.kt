@@ -24,7 +24,7 @@ class VerifyPinActivity : BaseActivity<VerifyPinVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify_pin)
-        supportActionBar?.title = "Verificar PIN"
+        supportActionBar?.title = getString(R.string.Pin_verify)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
@@ -40,7 +40,7 @@ class VerifyPinActivity : BaseActivity<VerifyPinVM.ViewModel>() {
         })
 
         compositeDisposable.add(viewModel.outputs.showErrorAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            showDialog("Lo sentimos", it)
+            showDialog(getString(R.string.Sorry), it)
         })
 
         compositeDisposable.add(viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -65,7 +65,7 @@ class VerifyPinActivity : BaseActivity<VerifyPinVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(R.string.Close,null)
         val dialog = builder.create()
         dialog.show()
     }

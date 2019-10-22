@@ -23,7 +23,7 @@ class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_info)
-        supportActionBar?.title = "Cuenta"
+        supportActionBar?.title = getString(R.string.Account)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
@@ -33,10 +33,10 @@ class AccountInfoActivity : BaseActivity<AccountInfoVM.ViewModel>() {
                 account_info_name.setText(name)
                 account_info_email.setText(it?.userEmail?:"")
                 if (it?.userEmailVerified == true){
-                    account_info_state.text = "Verificado"
+                    account_info_state.text = getString(R.string.Verified)
                     account_info_state.setTextColor(getColor(R.color.customGreen))
                 }else{
-                    account_info_state.text = "No verificado"
+                    account_info_state.text = getString(R.string.Not_verified)
                     account_info_state.setTextColor(getColor(R.color.red))
                 }
             })

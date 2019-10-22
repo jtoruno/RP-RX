@@ -19,17 +19,17 @@ import io.reactivex.disposables.CompositeDisposable
 @RequiresActivityViewModel(CategoriesVM.ViewModel::class)
 class CategoriesActivity : BaseActivity<CategoriesVM.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
-    lateinit var recyclerView: androidx.recyclerview.widget.RecyclerView
+    lateinit var recyclerView: RecyclerView
     lateinit var adapter : CategoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
-        supportActionBar?.title = "Categorías"
+        supportActionBar?.title = getString(R.string.Categories)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         recyclerView = findViewById(R.id.categories_recycler_view)
-        val manager = androidx.recyclerview.widget.GridLayoutManager(this, 2)
+        val manager = GridLayoutManager(this, 2)
         recyclerView.layoutManager = manager
         adapter = CategoryAdapter{
             viewModel.inputs.categorySelected(it)

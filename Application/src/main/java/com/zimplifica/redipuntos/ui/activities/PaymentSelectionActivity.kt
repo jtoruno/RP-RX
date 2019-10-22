@@ -49,6 +49,8 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
 
         adapter = RecyclerCardPoints()
 
+        payment_selection_apply_title.text = getString(R.string.Apply_any, getString(R.string.app_name))
+
         //adapter.setPaymentMethods(this.viewModel.getPaymentMethods())
         compositeDisposable.add(viewModel.outputs.checkAndPayModelAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
@@ -82,7 +84,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos", it)
+                showDialog(getString(R.string.Sorry), it)
             })
 
         payment_s_checkBox.setOnCheckedChangeListener { _, isChecked ->
@@ -147,7 +149,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         payment_s_tax.text = "₡ "+String.format("%,.2f", model.tax)
 
         //
-        payment_selection_redipoints.text = "Tienes "+String.format("%,.2f",model.rediPuntos)+" disponibles"
+        payment_selection_redipoints.text = getString(R.string.Rewards_available,String.format("%,.2f",model.rediPuntos))
         payment_s_total.text =  "₡ "+String.format("%,.2f", model.chargeToApply())
         payment_s_rewards.text = "₡ "+String.format("%,.2f", model.rewardsToGet())
         val rediPuntosToApply = model.rediPuntosToApply()
@@ -178,8 +180,8 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         recyclerView.layoutManager = manager
         recyclerView.adapter = adapter
         alertDialog.setView(row)
-        alertDialog.setPositiveButton("Cerrar", null)
-        alertDialog.setTitle("Seleccione una Tarjeta")
+        alertDialog.setPositiveButton(getString(R.string.Close), null)
+        alertDialog.setTitle(getString(R.string.Select_payment_method))
         val alert = alertDialog.create()
         val window = alert.window
         val wlp = window?.attributes
@@ -214,7 +216,7 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }
@@ -226,9 +228,9 @@ class PaymentSelectionActivity : BaseActivity<PaymentSelectionVM.ViewModel>() {
 
     private fun showBiometricPromp(){
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Confirmar pago")
-            .setSubtitle("Por favor confirme su acción de pago")
-            .setNegativeButtonText("Cancelar")
+            .setTitle(getString(R.string.Pay))
+            .setSubtitle(getString(R.string.Pay_now))
+            .setNegativeButtonText(getString(R.string.Cancel))
             .setConfirmationRequired(false)
             .build()
 

@@ -37,13 +37,13 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
             class MyDialogFragment : androidx.fragment.app.DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
                     return AlertDialog.Builder(activity!!)
-                        .setTitle("¡Alerta!")
-                        .setMessage("¿Deseas realmente eliminar este método de pago?")
-                        .setPositiveButton("Eliminar") { dialog, which ->
+                        .setTitle(getString(R.string.Alert))
+                        .setMessage(getString(R.string.Delete_payment_method_message))
+                        .setPositiveButton(getString(R.string.Delete)) { _, _ ->
                             this@PointsFragment.viewModel.inputs.disablePaymentMethodPressed(it)
 
                         }
-                        .setNegativeButton("Mejor no",null)
+                        .setNegativeButton(getString(R.string.Cancel),null)
                         .create()
                 }
             }
@@ -93,12 +93,12 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showError("Alerta",it)
+                showError(getString(R.string.Alert),it)
             })
 
         compositeDisposable.add(this.viewModel.outputs.disablePaymentMethodAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showError("Alerta","Método de pago eliminado correctamente.")
+                showError(getString(R.string.Alert),getString(R.string.Delete_payment_method_sucess))
             })
     }
 
@@ -108,7 +108,7 @@ class PointsFragment : BaseFragment<PointsFragmentVM.ViewModel>() {
                 return androidx.appcompat.app.AlertDialog.Builder(activity!!)
                     .setTitle(title)
                     .setMessage(message)
-                    .setPositiveButton("Cerrar",null)
+                    .setPositiveButton(getString(R.string.Close),null)
                     .create()
             }
         }

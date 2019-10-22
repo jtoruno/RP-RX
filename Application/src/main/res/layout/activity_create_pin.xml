@@ -13,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Crear PIN"
+            android:text="@string/Pin_create"
             android:textStyle="bold"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -27,14 +27,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="El PIN debe estar formado por 4 números"
+            android:text="@string/Pin_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <EditText
             android:textColor="@android:color/white"
-            android:hint="****"
+            android:hint="@string/Pin_placeholder"
             android:textColorHint="@android:color/white"
             android:textAlignment="center"
             android:background="@drawable/border_white"
@@ -68,7 +68,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:text="Siguiente"
+            android:text="@string/Next"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/create_pin_progress_bar" />

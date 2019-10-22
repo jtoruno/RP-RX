@@ -11,10 +11,10 @@
     <TextView
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:text="RediPuntos cumple con todos los protocoles de seguridad establecidos para administrar de forma segura la información de sus tarjetas de crédito"
+            android:text="@string/Add_payment_method_securiy_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/textView23" android:layout_marginTop="20dp"
+            android:id="@+id/add_payment_description_2" android:layout_marginTop="20dp"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginEnd="20dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="20dp" app:layout_constraintHorizontal_bias="0.0"/>
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView23" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/add_payment_description_2" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="20dp" app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="20dp"
             android:id="@+id/textInputLayout11">
 
@@ -34,7 +34,7 @@
                 android:textColorHint="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nombre en Tarjeta"/>
+                android:hint="@string/Card_name_title"/>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
             android:textColorHint="@android:color/white"
@@ -54,7 +54,7 @@
                 android:textColorHint="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Número de tarjeta"/>
+                android:hint="@string/Card_number_title"/>
     </com.google.android.material.textfield.TextInputLayout>
     <LinearLayout
             android:orientation="horizontal"
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:maxLength="5"
                     android:inputType="numberSigned"
-                    android:hint="Fecha de venc."/>
+                    android:hint="@string/Card_expiration_date_title"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -87,7 +87,7 @@
                 android:textColorHint="@android:color/white"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
-                android:hint="CVV"
+                android:hint="@string/Card_security_code_title"
                 android:inputType="numberSigned"
                 android:layout_height="match_parent">
 
@@ -112,7 +112,7 @@
             android:layout_marginEnd="8dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginStart="8dp"/>
     <Button
-            android:text="Guardar"
+            android:text="@string/Save"
             android:textSize="16sp"
             android:textAllCaps="false"
             android:enabled="false"

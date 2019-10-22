@@ -23,7 +23,7 @@ class AccountVerifyEmailActivity : BaseActivity<AccountVerifyEmailVM.ViewModel>(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_verify_email)
-        supportActionBar?.title = "Verificar Correo"
+        supportActionBar?.title = getString(R.string.Verify_email)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar16.visibility = View.GONE
@@ -50,7 +50,7 @@ class AccountVerifyEmailActivity : BaseActivity<AccountVerifyEmailVM.ViewModel>(
 
         compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos", it)
+                showDialog(getString(R.string.Sorry), it)
             })
 
         compositeDisposable.add(viewModel.outputs.verifyCodeAction().observeOn(AndroidSchedulers.mainThread())
@@ -61,7 +61,7 @@ class AccountVerifyEmailActivity : BaseActivity<AccountVerifyEmailVM.ViewModel>(
 
         compositeDisposable.add(viewModel.outputs.emailAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                account_verify_email.text = it
+                account_verify_email.text = getString(R.string.Verification_code_sent_to, it)
             })
 
     }
@@ -79,7 +79,7 @@ class AccountVerifyEmailActivity : BaseActivity<AccountVerifyEmailVM.ViewModel>(
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

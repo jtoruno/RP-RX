@@ -24,7 +24,7 @@ class AccountEditEmailActivity : BaseActivity<AccountEditEmailVM.ViewModel>(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_account_edit_email)
-        supportActionBar?.title = "Editar Correo"
+        supportActionBar?.title = getString(R.string.Update_email)
         progressBar14.visibility = View.GONE
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
@@ -58,7 +58,7 @@ class AccountEditEmailActivity : BaseActivity<AccountEditEmailVM.ViewModel>(){
 
         compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos", it)
+                showDialog(getString(R.string.Sorry), it)
             })
 
         compositeDisposable.add(viewModel.outputs.verifyEmailAction().observeOn(AndroidSchedulers.mainThread())
@@ -85,7 +85,7 @@ class AccountEditEmailActivity : BaseActivity<AccountEditEmailVM.ViewModel>(){
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

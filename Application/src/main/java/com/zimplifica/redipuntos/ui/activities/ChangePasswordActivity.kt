@@ -21,7 +21,7 @@ class ChangePasswordActivity : BaseActivity<ChangePasswordVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password)
-        supportActionBar?.title = "Cambiar Contraseña"
+        supportActionBar?.title = getString(R.string.Change_password)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         change_password_progress_bar.visibility = View.GONE
@@ -31,7 +31,7 @@ class ChangePasswordActivity : BaseActivity<ChangePasswordVM.ViewModel>() {
         change_password_btn.setOnClickListener { viewModel.inputs.changePasswordButtonPressed() }
 
         compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            showDialog("Lo sentimos", it)
+            showDialog(getString(R.string.Sorry), it)
         })
 
         compositeDisposable.add(viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -45,7 +45,7 @@ class ChangePasswordActivity : BaseActivity<ChangePasswordVM.ViewModel>() {
         })
 
         compositeDisposable.add(viewModel.outputs.changePasswordAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            Toast.makeText(this, "Contraseña cambiada correctamente", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.Change_password_message), Toast.LENGTH_SHORT).show()
             finish()
         })
 
@@ -88,7 +88,7 @@ class ChangePasswordActivity : BaseActivity<ChangePasswordVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

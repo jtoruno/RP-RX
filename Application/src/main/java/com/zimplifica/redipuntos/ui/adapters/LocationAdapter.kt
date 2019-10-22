@@ -27,10 +27,11 @@ class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedu
     }
 
     override fun onBindViewHolder(p0: LocationVH, p1: Int) {
+        val context = p0.itemView.context
         val store = items[p1]
         p0.place.text = store.location.name
-        val number = store.phoneNumber?:"No disponible"
-        p0.phone.text = "Llamar: $number"
+        val number = store.phoneNumber?:context.getString(R.string.Not_available)
+        p0.phone.text = context.getString(R.string.Call_to, number)
         if(store.phoneNumber.isNullOrEmpty()){
             p0.phoneLL.visibility = View.GONE
         }
@@ -45,7 +46,7 @@ class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedu
             callback(store.location)
         }
         if(store.schedule == null){
-            p0.schedule.text = "No disponible"
+            p0.schedule.text = context.getString(R.string.Not_available)
         }else{
             handleSchedule(store.schedule,p0)
         }
@@ -57,6 +58,7 @@ class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedu
     }
 
     private fun handleSchedule(schedule: Schedule?,p0 : LocationVH){
+        val context = p0.itemView.context
         if(schedule== null){
             return
         }
@@ -71,7 +73,7 @@ class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedu
             6 -> {shoppingDay = schedule.fri}
             7 -> {shoppingDay = schedule.sat}
         }
-        p0.schedule.text = "Cerrado"
+        p0.schedule.text = context.getString(R.string.Not_available)
         p0.scheduleIcon.setColorFilter(p0.itemView.context.getColor(R.color.red))
 
 
@@ -87,11 +89,11 @@ class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedu
                 val openingMinute = opennigTime.last().toInt()
                 val closingMinute = closingTime.last().toInt()
                 if(openingMinute <= currentMinute && currentMinute < closingMinute){
-                    p0.schedule.text = "Cerrará pronto"
+                    p0.schedule.text = context.getString(R.string.Closing_soon)
                     p0.scheduleIcon.setColorFilter(p0.itemView.context.getColor(R.color.pendingColor))
                 }
             }else{
-                p0.schedule.text = "Abierto ahora"
+                p0.schedule.text = context.getString(R.string.Open_now)
                 p0.scheduleIcon.setColorFilter(p0.itemView.context.getColor(R.color.pendingColor))
             }
         }
@@ -105,7 +107,7 @@ class LocationAdapter(val callback : (Location) -> Unit, val callback2 : (Schedu
     }
 
 
-    class LocationVH(itemView : View): androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView){
+    class LocationVH(itemView : View): RecyclerView.ViewHolder(itemView){
         val place : TextView = itemView.findViewById(R.id.location_row_place)
         val phone : TextView = itemView.findViewById(R.id.location_row_phone)
         val schedule : TextView = itemView.findViewById(R.id.location_row_schedule)

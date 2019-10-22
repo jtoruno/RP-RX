@@ -24,7 +24,7 @@ class NotificationsActivity : BaseActivity<NotificationsVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notifications)
-        supportActionBar?.title = "Notificaciones"
+        supportActionBar?.title = getString(R.string.Notifications)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         val manager = LinearLayoutManager(this,RecyclerView.VERTICAL,false)

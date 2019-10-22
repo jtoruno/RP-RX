@@ -9,7 +9,7 @@
         tools:context=".ui.activities.CompleteEmailActivity">
 
     <TextView
-            android:text="RediPuntos requiere el correo electrónico como un canal de comunicación alternativo al número de teléfono"
+            android:text="@string/Get_email_description"
             android:textSize="16sp"
             android:layout_width="match_parent"
             android:textColor="@android:color/white"
@@ -36,10 +36,10 @@
                 android:layout_width="match_parent"
                 android:inputType="textEmailAddress"
                 android:layout_height="wrap_content"
-                android:hint="Correo electrónico"/>
+                android:hint="@string/Email"/>
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-            android:text="Validar"
+            android:text="@string/Verify"
             android:background="@drawable/btn_state"
             android:enabled="false"
             android:textAllCaps="false"

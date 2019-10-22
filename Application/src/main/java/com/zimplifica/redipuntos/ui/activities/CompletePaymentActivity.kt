@@ -11,9 +11,10 @@ class CompletePaymentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complete_payment)
-        supportActionBar?.title = "Método de Pago"
+        supportActionBar?.title = getString(R.string.Payment_method)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
+        complete_payment_description.text = getString(R.string.Get_payment_method_description,getString(R.string.app_name))
         complete_payment_btn.setOnClickListener {
             val intent = Intent(this,AddPaymentActivity::class.java)
             startActivity(intent)

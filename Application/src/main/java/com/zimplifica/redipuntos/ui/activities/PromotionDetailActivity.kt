@@ -35,7 +35,7 @@ import java.util.*
 @RequiresActivityViewModel(PromotionDetailVM.ViewModel::class)
 class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
     private val compositeDisposable = CompositeDisposable()
-    lateinit var recyclerView : androidx.recyclerview.widget.RecyclerView
+    lateinit var recyclerView : RecyclerView
     lateinit var adapter : LocationAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,14 +61,14 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
         )
         recyclerView.layoutManager = manager
         recyclerView.setHasFixedSize(true)
-        val divider = androidx.recyclerview.widget.DividerItemDecoration(this, manager.orientation)
+        val divider = DividerItemDecoration(this, manager.orientation)
         recyclerView.addItemDecoration(divider)
 
         compositeDisposable.add(viewModel.outputs.commerceAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 supportActionBar?.title = it.name
                 Picasso.get().load(it.posterImage).placeholder(R.drawable.no_image).error(R.drawable.no_image).into(promotion_detail_img)
-                promotion_detail_title.text = "RediCash"
+                promotion_detail_title.text = getString(R.string.RediCash)
                 promotion_detail_description.text = it.description
                 val rediCash = it.offer?.discount ?: 0
                 promotion_detail_cash_back.text = "$rediCash%"
@@ -137,21 +137,21 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
 
     private fun showDialog(schedule : Schedule){
         val dialog = AlertDialog.Builder(this)
-        dialog.setTitle("Horario")
+        dialog.setTitle(getString(R.string.Schedule))
         val linearLayout = LinearLayout(this)
         linearLayout.orientation = LinearLayout.VERTICAL
         val params = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         params.setMargins(0,30,0,0)
         linearLayout.layoutParams = params
-        showSchedule(linearLayout,schedule.mon, "Lunes")
-        showSchedule(linearLayout,schedule.tue, "Martes")
-        showSchedule(linearLayout,schedule.wed,"Miércoles")
-        showSchedule(linearLayout,schedule.thu,"Jueves")
-        showSchedule(linearLayout,schedule.fri,"Viernes")
-        showSchedule(linearLayout,schedule.sat,"Sábado")
-        showSchedule(linearLayout,schedule.sun,"Domingo")
+        showSchedule(linearLayout,schedule.mon, getString(R.string.Monday))
+        showSchedule(linearLayout,schedule.tue, getString(R.string.Tuesday))
+        showSchedule(linearLayout,schedule.wed,getString(R.string.Wednesday))
+        showSchedule(linearLayout,schedule.thu,getString(R.string.Thursday))
+        showSchedule(linearLayout,schedule.fri,getString(R.string.Friday))
+        showSchedule(linearLayout,schedule.sat,getString(R.string.Saturday))
+        showSchedule(linearLayout,schedule.sun,getString(R.string.Sunday))
         dialog.setView(linearLayout)
-        dialog.setPositiveButton("Cerrar",null)
+        dialog.setPositiveButton(getString(R.string.Close),null)
         val view = dialog.create()
         val window = view.window
         val wlp = window?.attributes
@@ -174,7 +174,7 @@ class PromotionDetailActivity : BaseActivity<PromotionDetailVM.ViewModel>() {
 
             hour2.text = obj.closingHour
         }else{
-            hour1.text = "Cerrado"
+            hour1.text = getString(R.string.Closed)
             hour2.visibility = View.INVISIBLE
             middleDescription.visibility = View.INVISIBLE
         }

@@ -151,12 +151,12 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             class MyDialogFragment : DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
                     return androidx.appcompat.app.AlertDialog.Builder(activity!!)
-                        .setTitle("Cerrar Sesión")
-                        .setMessage("¿Desea salir de la aplicación?")
-                        .setPositiveButton("Aceptar"){
+                        .setTitle(getString(R.string.Sign_out))
+                        .setMessage(getString(R.string.Sign_out_message))
+                        .setPositiveButton(getString(R.string.Accept)){
                             _,_ -> viewModel.inputs.signOutButtonPressed()
                         }
-                        .setNegativeButton("Cancelar", null)
+                        .setNegativeButton(getString(R.string.Cancel), null)
                         .create()
                 }
             }
@@ -212,12 +212,12 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             class MyDialogFragment : DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
                     return androidx.appcompat.app.AlertDialog.Builder(activity!!)
-                        .setTitle("Alerta")
-                        .setMessage("¿Deseas utilizar Autenticación Biométrica en vez de tú código PIN?")
-                        .setPositiveButton("Aceptar"){
+                        .setTitle(getString(R.string.Alert))
+                        .setMessage(getString(R.string.Biometric_auth_activation_message))
+                        .setPositiveButton(getString(R.string.Accept)){
                                 _,_ -> viewModel.inputs.biometricAuthChangeAccepted(it)
                         }
-                        .setNegativeButton("Cancelar", null)
+                        .setNegativeButton(getString(R.string.Cancel), null)
                         .create()
                 }
             }
@@ -228,12 +228,12 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             class MyDialogFragment : DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
                     return androidx.appcompat.app.AlertDialog.Builder(activity!!)
-                        .setTitle("PIN Encontrado")
-                        .setMessage("Actualmente existe un PIN para tu cuenta. ¿Deseas actualizarlo? Un código de confirmación será enviado a tu número de teléfono.")
-                        .setPositiveButton("Aceptar"){
+                        .setTitle(getString(R.string.Pin_found))
+                        .setMessage(getString(R.string.Pin_found_description))
+                        .setPositiveButton(getString(R.string.Accept)){
                                 _,_ -> viewModel.inputs.showUpdatePinScreen()
                         }
-                        .setNegativeButton("Cancelar", null)
+                        .setNegativeButton(getString(R.string.Cancel), null)
                         .create()
                 }
             }
@@ -244,12 +244,12 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             class MyDialogFragment : DialogFragment() {
                 override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
                     return androidx.appcompat.app.AlertDialog.Builder(activity!!)
-                        .setTitle("Alerta")
-                        .setMessage("¿Estás seguro que deseas cambiar tu contraseña? Un código de confirmación será enviado a tu número de teléfono.")
-                        .setPositiveButton("Aceptar"){
+                        .setTitle(getString(R.string.Alert))
+                        .setMessage(getString(R.string.Change_password_confirmation))
+                        .setPositiveButton(getString(R.string.Accept)){
                                 _,_ -> viewModel.inputs.goToChangePasswordScreen()
                         }
-                        .setNegativeButton("Cancelar", null)
+                        .setNegativeButton(getString(R.string.Cancel), null)
                         .create()
                 }
             }
@@ -275,16 +275,16 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
                     val status = it.value
                     when(status){
                         VerificationStatus.Verifying -> {
-                            showAlert("Verificando","Tu verificación se encuentra en proceso, por favor espera mientras te notificamos el resultado")
+                            showAlert(getString(R.string.Verifying),getString(R.string.Verification_in_process_message))
                         }
                         VerificationStatus.VerifiedInvalid -> {
-                            showAlert("Lo sentimos","No hemos podido verificar tu identidad, póngase en contacto con soporte@zimplifica.com para solucionar este problema")
+                            showAlert(getString(R.string.Sorry),getString(R.string.Verification_failed_message))
                         }else -> {}
                     }
                 }
                 is Result.failure -> {
-                    Log.e("AccountFragment","Result Failure")
-                    showAlert("Es una pena","Tenemos problemas de comunicación, asegúrate de tener conexión a internet y luego intenta de nuevo.")
+                    //Log.e("AccountFragment","Result Failure")
+                    showAlert(getString(R.string.Sorry),getString(R.string.Error_network_connection))
                 }
             }
         })
@@ -309,15 +309,15 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
     private fun refreshUI(user: UserInformationResult){
         val name = user.nickname
         if (name==null){
-            profile_user_welcome.text = "¡Bienvenido Usuario Invitado!"
-            setRoundImage(getUserInitials("Usuario Invitado"))
+            profile_user_welcome.text = getString(R.string.Hi_some_one,getString(R.string.Guest_user))
+            setRoundImage(getUserInitials(getString(R.string.Guest_user)))
         }else{
 
             setRoundImage(getUserInitials(name))
-            profile_user_welcome.text = "¡Hola $name!"
+            profile_user_welcome.text = getString(R.string.Hi_some_one,name)
         }
 
-        profile_user_status.text = "Usuario verificado"
+        profile_user_status.text = getString(R.string.User_verified)
         profile_user_status_icon.setImageResource(R.drawable.ic_verified_user_black_24dp)
     }
 
@@ -327,20 +327,20 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
         if(nextStep!=null){
             when(nextStep){
                 ProfileStep.PhoneNumber -> {
-                    val nextStepString = "Añadir teléfono"
+                    val nextStepString = getString(R.string.Add_phone_number)
                     profile_next_step.text = nextStepString
 
                 }
                 ProfileStep.Email -> {
-                    val nextStepString = "Añadir Email"
+                    val nextStepString = getString(R.string.Add_email)
                     profile_next_step.text = nextStepString
                 }
                 ProfileStep.VerifyEmail -> {
-                    val nextStepString = "Verificar Email"
+                    val nextStepString = getString(R.string.Verify_email)
                     profile_next_step.text = nextStepString
                 }
                 ProfileStep.PaymentMethod -> {
-                    val nextStepString = "Añadir método de pago"
+                    val nextStepString = getString(R.string.Add_payment_method)
                     profile_next_step.text = nextStepString
                 }
                 ProfileStep.Unknown -> {
@@ -353,7 +353,7 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
     }
 
     private fun showProgressBar(progress : Int){
-        profile_actual_step_count.text = "Progreso en tu perfil ($progress de 2)"
+        profile_actual_step_count.text = getString(R.string.Progress_in_profile,progress,2)
         if(progress == 0){
             profile_progress_1.setBackgroundColor(resources.getColor(R.color.navDisableColor, null))
             profile_progress_2.setBackgroundColor(resources.getColor(R.color.navDisableColor, null))
@@ -412,7 +412,7 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
                 return androidx.appcompat.app.AlertDialog.Builder(activity!!)
                     .setTitle(title)
                     .setMessage(message)
-                    .setPositiveButton("Cerrar",null)
+                    .setPositiveButton(getString(R.string.Close),null)
                     .create()
             }
         }
@@ -471,14 +471,14 @@ class ProfileFragment : BaseFragment<AccountVM.ViewModel>() {
             val flag = data?.getBooleanExtra("successful",false)
             Log.e("AccountVM","Code $flag")
             if(flag == true){
-               showAlert("PIN Actualizado","Código de seguridad actualizado correctamente.")
+               showAlert(getString(R.string.Pin_updated),getString(R.string.Pin_updated_description))
             }
         }
         if(requestCode == requestUpdatePin && resultCode == Activity.RESULT_OK){
             val flag = data?.getBooleanExtra("successful",false)
             Log.e("AccountVM","Code $flag")
             if(flag == true){
-                showAlert("PIN Actualizado","Código de seguridad actualizado correctamente.")
+                showAlert(getString(R.string.Pin_updated),getString(R.string.Pin_updated_description))
             }
         }
         if(requestCode == requestVerifyPin && resultCode == Activity.RESULT_OK){

@@ -23,10 +23,13 @@ class CompleteEmailActivity : BaseActivity<CompleteEmailVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_complete_email)
-        supportActionBar?.title = "Correo electrónico"
+        supportActionBar?.title = getString(R.string.Email)
         progressBar7.visibility = View.GONE
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
+
+        textView18.text = getString(R.string.Get_email_description,getString(R.string.app_name))
+
         complete_email_input.onChange { this.viewModel.inputs.emailChanged(it) }
         complete_emain_btn.setOnClickListener {
             this.viewModel.inputs.verifyEmailPressed()
@@ -36,7 +39,7 @@ class CompleteEmailActivity : BaseActivity<CompleteEmailVM.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos", it)
+                showDialog(getString(R.string.Sorry), it)
             })
 
         compositeDisposable.add(this.viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
@@ -63,7 +66,7 @@ class CompleteEmailActivity : BaseActivity<CompleteEmailVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

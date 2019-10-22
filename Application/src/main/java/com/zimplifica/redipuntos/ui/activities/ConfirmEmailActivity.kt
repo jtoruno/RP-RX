@@ -26,7 +26,7 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_confirm_email)
-        supportActionBar?.title = "Verificación"
+        supportActionBar?.title = getString(R.string.Email)
         progressBar8.visibility = View.GONE
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
@@ -40,12 +40,12 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
         }
         compositeDisposable.add(this.viewModel.outputs.email().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                confirm_email_txt.text = "correo: $it"
+                //confirm_email_txt.text = "correo: $it"
             })
 
         compositeDisposable.add(this.viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos", it)
+                showDialog(getString(R.string.Sorry), it)
             })
 
         compositeDisposable.add(this.viewModel.outputs.loading().observeOn(AndroidSchedulers.mainThread())
@@ -65,23 +65,23 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
         compositeDisposable.add(this.viewModel.outputs.showResendAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 val builder = AlertDialog.Builder(this)
-                builder.setTitle("Alerta")
-                builder.setMessage("¿Deseas que se reenvíe el código de verificación?")
-                builder.setPositiveButton("Reenviar"){
+                builder.setTitle(getString(R.string.Alert))
+                builder.setMessage(getString(R.string.Resend_verification_code_message))
+                builder.setPositiveButton(getString(R.string.Resend)){
                     _,_ ->
                     this.viewModel.inputs.confirmResendButtonPressed()
                 }
-                builder.setNegativeButton("Cancelar", null)
+                builder.setNegativeButton(getString(R.string.Cancel), null)
                 val dialog = builder.create()
                 dialog.show()
             })
 
         compositeDisposable.add(this.viewModel.outputs.codeResent().observeOn(AndroidSchedulers.mainThread())
-            .subscribe { Toast.makeText(this,"Código reenviado", Toast.LENGTH_SHORT).show() })
+            .subscribe { Toast.makeText(this,getString(R.string.Sign_up_resend_verification_code_result,getString(R.string.Email)), Toast.LENGTH_SHORT).show() })
 
         compositeDisposable.add(this.viewModel.outputs.confirmedEmail().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                Toast.makeText(this,"Correo Confirmado", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this,"Correo Confirmado", Toast.LENGTH_SHORT).show()
                 finish()
                 ManagerNav.getInstance(this).initNav()
             })
@@ -91,7 +91,7 @@ class ConfirmEmailActivity : BaseActivity<ConfirmEmailVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

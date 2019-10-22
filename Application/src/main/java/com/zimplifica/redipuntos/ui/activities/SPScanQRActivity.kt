@@ -74,7 +74,7 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
 
                 Handler().postDelayed({
                     spscan_qr_ll.background = resources.getDrawable(R.color.homeColorBtn)
-                    spscan_qr_txt.text = "Escanear código del comercio"
+                    spscan_qr_txt.text = getString(R.string.Scan_commerce_code)
                 },2500)
 
             })
@@ -113,7 +113,7 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
             Log.e("QR", p0.text)
             if(qrResult != p0.text){
                 qrResult = p0.text
-                spscan_qr_txt.text = "Validando"
+                spscan_qr_txt.text = getString(R.string.Validating)
                 val vibratorService = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
                 vibratorService.vibrate(200)
                 this.viewModel.inputs.codeFound(qrResult)
@@ -151,7 +151,7 @@ class SPScanQRActivity : BaseActivity<SPScanQRVM.ViewModel>(), ZXingScannerView.
                 ScannerVIew?.startCamera()
             }
             else{
-                Toast.makeText(this,"No se dispone de permisos", Toast.LENGTH_LONG).show()
+                Toast.makeText(this,getString(R.string.Error_camera_not_allowed), Toast.LENGTH_LONG).show()
                 finish()
             }
         }

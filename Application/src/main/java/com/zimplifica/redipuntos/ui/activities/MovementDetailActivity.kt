@@ -38,7 +38,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movement_detail)
-        supportActionBar?.title = "Comprobante de Pago"
+        supportActionBar?.title = getString(R.string.Payment_receipt)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         progressBar15.visibility = View.GONE
@@ -53,7 +53,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
                 val list = mutableListOf <Pair<String,String>>()
                 val issuer = (it.creditCard?.issuer?:"").toUpperCase()
                 if(it.rediPuntos > 0.0){
-                    list.add(Pair("RediPuntos",it.rediPuntos.toString()))
+                    list.add(Pair(getString(R.string.app_name),it.rediPuntos.toString()))
                 }
                 /*
                 if(it.creditCardRewards> 0.0){
@@ -79,28 +79,28 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
         mov_detail_rewards.text = "+ ₡ "+String.format("%,.2f", transaction.rewards)
         when(transaction.status){
             TransactionStatus.fail -> {
-                mov_detail_status.text = "Transacción erronea"
+                mov_detail_status.text = getString(R.string.Transaction_rejected_title)
                 mov_detail_ll.setBackgroundColor(getColor(R.color.red))
-                mov_detail_msj.text = "Pago erroneo, intente de nuevo"
+                mov_detail_msj.text = getString(R.string.Transaction_rejected_description)
                 mov_detail_rewards.visibility = View.GONE
             }
             TransactionStatus.pending -> {
                 progressBar15.visibility = View.VISIBLE
-                mov_detail_status.text = "Transacción pendiente"
+                mov_detail_status.text = getString(R.string.Transaction_pending_title)
                 mov_detail_ll.setBackgroundColor(getColor(R.color.pendingColor))
-                mov_detail_msj.text = "Pago pendiente"
+                mov_detail_msj.text = getString(R.string.Transaction_pending_description)
             }
             TransactionStatus.success -> {
-                mov_detail_status.text = "Transacción exitosa"
+                mov_detail_status.text = getString(R.string.Transaction_successful_title)
                 mov_detail_ll.setBackgroundColor(getColor(R.color.customGreen))
-                mov_detail_msj.text = "Pago aprobado y completado con éxito"
+                mov_detail_msj.text = getString(R.string.Transaction_successful_description)
             }
         }
     }
 
     private fun openDialog(list : MutableList<Pair<String,String>>){
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Forma de Pago")
+        builder.setTitle(getString(R.string.Way_to_pay))
         val linearLayout = LinearLayout(this)
         linearLayout.orientation = LinearLayout.VERTICAL
         val params = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -117,7 +117,7 @@ class MovementDetailActivity : BaseActivity<MovementDetailVM.ViewModel>() {
             linearLayout.addView(rowView)
         }
         builder.setView(linearLayout)
-        builder.setPositiveButton("Continuar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
 

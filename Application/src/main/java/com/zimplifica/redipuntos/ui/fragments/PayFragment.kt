@@ -89,6 +89,7 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
 
         compositeDisposable.add(this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                /*
                 class MyDialogFragment : androidx.fragment.app.DialogFragment() {
                     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
                         return AlertDialog.Builder(activity!!)
@@ -102,6 +103,7 @@ class PayFragment : BaseFragment<PayFragmentVM.ViewModel>() {
                     }
                 }
                 MyDialogFragment().show(fragmentManager!!,"personalInfo")
+                 */
 
             })
 

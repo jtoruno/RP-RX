@@ -44,7 +44,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_password)
-        this.supportActionBar?.title = "Registrar"
+        this.supportActionBar?.title = getString(R.string.Sign_up)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
         passwordEditText = findViewById(R.id.passTxtTempPass)
@@ -139,7 +139,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         compositeDisposable.add(this.viewModel.outputs.showError()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos",it.friendlyMessage)
+                showDialog(getString(R.string.Sorry),it.friendlyMessage)
             })
 
         compositeDisposable.add(this.viewModel.outputs.verifyPhoneNumberAction()
@@ -180,7 +180,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.help_action){
-            this.showDialog("Ayuda","Ingrese una contraseña válida. \nLa contraseña debe contener entre 8 y 20 caracteres, 1 letra mayúscula, 1 letra minúscula, 1 caracter numérico y 1 caracter especial (!\$#@_-.+)")
+            this.showDialog(getString(R.string.Help),getString(R.string.Sign_Up_help_password_message))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -189,7 +189,7 @@ class PasswordActivity : BaseActivity<PasswordViewModel.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

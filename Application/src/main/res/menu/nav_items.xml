@@ -3,18 +3,18 @@
     <item
         android:id="@+id/nav_catalog"
         android:icon="@drawable/ic_store_black_24dp"
-        android:title="Comercios"/>
+        android:title="@string/Commerces"/>
     <item android:icon="@drawable/ic_home_black_24dp"
         android:id="@+id/nav_pay"
-        android:title="Pagar"/>
+        android:title="@string/Pay"/>
     <item android:icon="@drawable/ic_credit_card_black_24dp"
           android:id="@+id/nav_points"
-          android:title="Puntos"/>
+          android:title="@string/app_name"/>
     <item android:icon="@drawable/ic_swap_horiz_black_24dp"
-        android:title="Historial"
+        android:title="@string/Movements"
         android:id="@+id/nav_movements"/>
     <item android:id="@+id/nav_profile"
-          android:title="Cuenta"
+          android:title="@string/Account"
           android:icon="@drawable/ic_person_black_24dp"
     />
 </menu>

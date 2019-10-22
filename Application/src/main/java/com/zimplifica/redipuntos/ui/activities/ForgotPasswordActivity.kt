@@ -79,7 +79,7 @@ class ForgotPasswordActivity : BaseActivity<ForgotPasswordViewModel.ViewModel>()
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if(item?.itemId == R.id.help_action){
-            this.showDialog(getString(R.string.Help),"Ingresar número de teléfono o correo electrónico registrado.")
+            this.showDialog(getString(R.string.Help),getString(R.string.Forgot_password_help))
         }
         return super.onOptionsItemSelected(item)
     }

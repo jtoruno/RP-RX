@@ -23,7 +23,7 @@ class UpdatePinActivity : BaseActivity<UpdatePinVM.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_pin)
-        supportActionBar?.title = "Actualizar PIN"
+        supportActionBar?.title = getString(R.string.Pin_update)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setDisplayShowHomeEnabled(true)
 
@@ -37,7 +37,7 @@ class UpdatePinActivity : BaseActivity<UpdatePinVM.ViewModel>() {
         //Outputs
         compositeDisposable.add(viewModel.outputs.userInformationAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
             val phoneNumber = it.userPhoneNumber
-            update_pin_phone.text = "Un código de 6 dígitos fue enviado al número $phoneNumber"
+            update_pin_phone.text = getString(R.string.Verification_code_sent_to_number,phoneNumber)
         })
 
         compositeDisposable.add(viewModel.outputs.nextButtonEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe{
@@ -45,7 +45,7 @@ class UpdatePinActivity : BaseActivity<UpdatePinVM.ViewModel>() {
         })
 
         compositeDisposable.add(viewModel.outputs.showErrorAction().observeOn(AndroidSchedulers.mainThread()).subscribe {
-            showDialog("Lo sentimos" ,it)
+            showDialog(getString(R.string.Sorry) ,it)
         })
 
         compositeDisposable.add(viewModel.outputs.loadingEnabled().observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -75,7 +75,7 @@ class UpdatePinActivity : BaseActivity<UpdatePinVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

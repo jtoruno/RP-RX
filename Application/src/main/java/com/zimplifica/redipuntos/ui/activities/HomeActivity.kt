@@ -52,7 +52,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        toolbar.title = "RediPuntos"
+        toolbar.title = getString(R.string.app_name)
         setSupportActionBar(toolbar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_notifications_black_24dp)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -95,7 +95,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
                 val smileRate = row.findViewById<SmileRating>(R.id.smile_rating)
                 alertDialog.setView(row)
                 alertDialog.setTitle(it.commerceName)
-                alertDialog.setNegativeButton("Saltar"){
+                alertDialog.setNegativeButton(getString(R.string.Skip)){
                     _,_ ->
                     viewModel.inputs.rateCommerceInput(model)
                 }
@@ -145,6 +145,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
         compositeDisposable.add(this.viewModel.outputs.showCompletePersonalInfoAlert().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 Log.e("HOme", it.name)
+                /*
                 when(it){
                     VerificationStatus.Pending -> {
                         val builder = AlertDialog.Builder(this)
@@ -160,7 +161,7 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
                     else -> {
 
                     }
-                }
+                }*/
             })
 
         compositeDisposable.add(this.viewModel.outputs.goToCompletePersonalInfoScreen().observeOn(AndroidSchedulers.mainThread())
@@ -193,35 +194,35 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
             R.id.nav_pay -> {
                 fm.beginTransaction().hide(active).show(Payfragment).commit()
                 active = Payfragment
-                toolbar.title = "Pagar"
+                toolbar.title = getString(R.string.Pay)
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.nav_movements->{
                 fm.beginTransaction().hide(active).show(Movementsfragment).commit()
                 active = Movementsfragment
-                toolbar.title = "Historial"
+                toolbar.title = getString(R.string.Movements)
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.nav_catalog->{
                 fm.beginTransaction().hide(active).show(Catalogfragment).commit()
                 active = Catalogfragment
-                toolbar.title = "Comercios"
+                toolbar.title = getString(R.string.Commerces)
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.nav_points->{
                 fm.beginTransaction().hide(active).show(PointsFragment).commit()
                 active = PointsFragment
-                toolbar.title = "Puntos"
+                toolbar.title = getString(R.string.app_name)
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.nav_profile->{
                 fm.beginTransaction().hide(active).show(ProfileFragmentClass).commit()
                 active = ProfileFragmentClass
-                toolbar.title = "Cuenta"
+                toolbar.title = getString(R.string.Account)
                 invalidateOptionsMenu()
                 return@OnNavigationItemSelectedListener true
             }
@@ -235,13 +236,13 @@ class HomeActivity : BaseActivity<HomeViewModel.ViewModel>() {
         } else {
             //super.onBackPressed()
             val builder = AlertDialog.Builder(this)
-            builder.setTitle("Cerrar Sesión")
-            builder.setMessage("¿Desea salir de la aplicación?")
-            builder.setPositiveButton("Aceptar"){
+            builder.setTitle(getString(R.string.Sign_out))
+            builder.setMessage(getString(R.string.Sign_out_message))
+            builder.setPositiveButton(getString(R.string.Accept)){
                     _,_ ->
                 this.viewModel.inputs.signOutButtonPressed()
             }
-            builder.setNegativeButton("Cancelar", null)
+            builder.setNegativeButton(getString(R.string.Cancel), null)
             val dialog = builder.create()
             dialog.show()
         }

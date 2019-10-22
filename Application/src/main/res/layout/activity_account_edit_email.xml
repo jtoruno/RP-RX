@@ -10,7 +10,7 @@
 
     <TextView
             android:textColor="@android:color/white"
-            android:text="Te enviaremos un código de verificación a este correo"
+            android:text="@string/Send_email_verification_code"
             android:layout_width="match_parent"
             android:textAlignment="center"
             android:textSize="15sp"
@@ -35,10 +35,10 @@
                 android:textColorHint="@android:color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Correo electrónico"/>
+                android:hint="@string/Email"/>
     </com.google.android.material.textfield.TextInputLayout>
     <Button
-            android:text="Verificar"
+            android:text="@string/Verify"
             android:background="@drawable/btn_state"
             android:enabled="false"
             android:layout_width="match_parent"

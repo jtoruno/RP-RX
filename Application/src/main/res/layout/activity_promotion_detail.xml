@@ -21,7 +21,7 @@
                 app:srcCompat="@drawable/no_image"
                 android:id="@+id/promotion_detail_img"/>
         <TextView
-                android:text="Title"
+                android:text="title"
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="10dp"
                 android:textStyle="bold"
@@ -50,7 +50,7 @@
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
                 android:layout_marginTop="20dp"
-                android:text="Descripción"
+                android:text="@string/Description"
                 android:layout_marginStart="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/textView40"/>
@@ -65,7 +65,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
                 android:layout_marginTop="10dp"
-                android:text="Description"
+                android:text="@string/Description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/promotion_detail_description"/>
         <!---
@@ -108,7 +108,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="4dp"
-                android:text="Localización"
+                android:text="@string/Location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/textView50"/>
         <View
@@ -135,7 +135,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="4dp"
-                android:text="Contactos"
+                android:text="@string/Contacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/textView37"/>
         <View
@@ -182,7 +182,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="4dp"
-                android:text="Restricciones"
+                android:text="@string/Restrictions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/textView44"/>
         <View
@@ -204,7 +204,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="20dp"
                 android:layout_marginStart="4dp"
-                android:text="Formas de Uso"
+                android:text="@string/Ways_to_use"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:id="@+id/textView48"/>
         <View

@@ -13,7 +13,7 @@
             android:background="@color/colorAccent"
             android:textAllCaps="false"
             android:textSize="16sp"
-            android:text="Pagar ahora"
+            android:text="@string/Pay_now"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/payment_selection_btn"
@@ -74,7 +74,7 @@
                         android:layout_marginEnd="8dp" android:layout_marginTop="10dp"
                         app:layout_constraintTop_toTopOf="parent"/>
                 <TextView
-                        android:text="Pago en sitio"
+                        android:text="@string/Site_payment"
                         android:textColor="@android:color/white"
                         android:textSize="20sp"
                         android:layout_width="wrap_content"
@@ -84,7 +84,7 @@
                         android:layout_marginStart="24dp" app:layout_constraintBottom_toTopOf="@+id/payment_selection_order"/>
                 <TextView
                         android:textStyle="italic"
-                        android:text="Subtotal"
+                        android:text="@string/Subtotal"
                         android:textColor="@android:color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -104,7 +104,7 @@
                     android:layout_height="match_parent">
 
                 <TextView
-                        android:text="Comisión"
+                        android:text="@string/Fee"
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
@@ -113,7 +113,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/textView36"
                         app:layout_constraintStart_toStartOf="parent" android:layout_marginStart="64dp"/>
                 <TextView
-                        android:text="Subtotal"
+                        android:text="@string/Subtotal"
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
@@ -140,7 +140,7 @@
                         android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/payment_s_subtotal"
                         app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"/>
                 <TextView
-                        android:text="Impuestos"
+                        android:text="@string/Taxes"
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
@@ -184,7 +184,7 @@
                         android:textSize="18sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/textView43" android:layout_marginTop="8dp"
+                        android:id="@+id/payment_selection_apply_title" android:layout_marginTop="8dp"
                         app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/payment_s_checkBox"
                         android:layout_marginStart="24dp"/>
                 <TextView
@@ -205,7 +205,7 @@
                         android:layout_height="wrap_content"
                         android:textStyle="italic"
                         android:id="@+id/payment_selection_redipoints"
-                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/textView43"
+                        android:layout_marginTop="8dp" app:layout_constraintTop_toBottomOf="@+id/payment_selection_apply_title"
                         app:layout_constraintStart_toEndOf="@+id/payment_s_checkBox" android:layout_marginStart="24dp"
                         android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -218,7 +218,7 @@
                     android:layout_height="match_parent">
 
                 <TextView
-                        android:text="Total"
+                        android:text="@string/Total"
                         android:textColor="@android:color/white"
                         android:textSize="20sp"
                         android:layout_width="wrap_content"
@@ -237,7 +237,7 @@
                         app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"/>
                 <TextView
-                        android:text="Cargo a la tarjeta"
+                        android:text="@string/Card_charge"
                         android:textColor="@android:color/white"
                         android:textSize="12sp"
                         android:textStyle="italic"
@@ -263,7 +263,7 @@
                         app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
                         android:layout_marginStart="8dp"/>
                 <TextView
-                        android:text="Ninguno"
+                        android:text="@string/None"
                         android:textColor="@android:color/white"
                         android:textSize="16sp"
                         android:layout_width="wrap_content"
@@ -272,7 +272,7 @@
                         app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/imageView7"
                         android:layout_marginStart="24dp"/>
                 <TextView
-                        android:text="Método de pago"
+                        android:text="@string/Payment_method"
                         android:textColor="@android:color/white"
                         android:textSize="12sp"
                         android:layout_width="wrap_content"
@@ -282,7 +282,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/ps_card_id_text" android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"/>
                 <TextView
-                        android:text="Cambiar"
+                        android:text="@string/Change"
                         android:textSize="16sp"
                         android:textColor="@color/colorAccent"
                         android:layout_width="wrap_content"
@@ -301,7 +301,7 @@
                     android:layout_height="match_parent">
 
                 <TextView
-                        android:text="Premios"
+                        android:text="@string/Rewards"
                         android:textColor="@android:color/white"
                         android:textSize="20sp"
                         android:layout_width="wrap_content"
@@ -319,7 +319,7 @@
                         app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
                         app:layout_constraintBottom_toBottomOf="parent"/>
                 <TextView
-                        android:text="Puntos por obtener"
+                        android:text="@string/Rewards_to_get"
                         android:textColor="@android:color/white"
                         android:textSize="12sp"
                         android:textStyle="italic"

@@ -143,7 +143,7 @@ class TransactionAdapter(val callback : (Transaction) -> Unit) : RecyclerView.Ad
                     .endConfig()
                     .buildRound(initials,context.getColor(R.color.colorPrimaryLight))
                 itemHolder.image.setImageDrawable(drawable)
-                itemHolder.type.text = "Pago en Sitio"
+                itemHolder.type.text = context.getString(R.string.Site_payment)
                 itemHolder.hour.text = transaction.time
                 itemHolder.amount.text = "₡ "+String.format("%,.2f", transaction.total)
 
@@ -151,16 +151,16 @@ class TransactionAdapter(val callback : (Transaction) -> Unit) : RecyclerView.Ad
 
                 when(transaction.status){
                     TransactionStatus.success -> {
-                        itemHolder.state.text = "Pago exitoso"
+                        itemHolder.state.text = context.getString(R.string.Transaction_successful_title)
                         itemHolder.state.setTextColor(context.resources.getColor(R.color.customGreen,null))
                     }
                     TransactionStatus.pending -> {
-                        itemHolder.state.text = "Pago pendiente"
+                        itemHolder.state.text = context.getString(R.string.Transaction_pending_title)
                         itemHolder.state.setTextColor(context.resources.getColor(R.color.pendingColor,null))
                         itemHolder.rewards.visibility = View.GONE
                     }
                     else -> {
-                        itemHolder.state.text = "Pago erroneo"
+                        itemHolder.state.text = context.getString(R.string.Transaction_rejected_title)
                         itemHolder.state.setTextColor(context.resources.getColor(R.color.red,null))
                         itemHolder.rewards.visibility = View.GONE
                     }
