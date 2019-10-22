@@ -3,6 +3,8 @@ package com.zimplifica.redipuntos.viewModels
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.ChangePasswordModel
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -50,6 +52,7 @@ interface ChangePasswordVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val onCreate = PublishSubject.create<Unit>()
@@ -114,7 +117,7 @@ interface ChangePasswordVM {
 
             Observable.merge(verifyPhoneEvent,event)
                 .filter { it.isFail() }
-                .map { return@map "Ocurrió un error al cambiar la contraseña. Por favor intente de nuevo." }
+                .map { return@map resources.getString(R.string.Error_update_password) }
                 .subscribe(this.showError)
 
 

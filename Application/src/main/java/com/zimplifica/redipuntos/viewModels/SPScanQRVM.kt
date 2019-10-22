@@ -5,6 +5,8 @@ import android.util.Log
 import com.zimplifica.domain.entities.PaymentPayload
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.Vendor
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.CheckAndPayModel
@@ -30,7 +32,7 @@ interface SPScanQRVM {
     class ViewModel(@NonNull val environment: Environment) : ActivityViewModel<SPScanQRVM>(environment),Inputs,Outputs{
 
 
-
+        private val resources = RPApplication.applicationContext().resources
         val inputs : Inputs = this
         val outputs : Outputs = this
 
@@ -59,7 +61,7 @@ interface SPScanQRVM {
 
             getVendorInfoEvent
                 .filter { it.isFail() }
-                .map { return@map "Código inválido, intente de nuevo." }
+                .map { return@map resources.getString(R.string.Error_qr_code_invalid) }
                 .subscribe(this.showError)
 
             val vendorInfo = getVendorInfoEvent
@@ -75,7 +77,7 @@ interface SPScanQRVM {
 
             paymentEvent
                 .filter { it.isFail() }
-                .map { return@map "Ha ocurrido un error al realizar el pago." }
+                .map { return@map resources.getString(R.string.Error_qr_code_invalid) }
                 .subscribe(this.showError)
 
             val paymentPayloadResult = paymentEvent

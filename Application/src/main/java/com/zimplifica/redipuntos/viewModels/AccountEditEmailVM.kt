@@ -3,6 +3,8 @@ package com.zimplifica.redipuntos.viewModels
 import android.annotation.SuppressLint
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -45,6 +47,7 @@ interface AccountEditEmailVM {
         val inputs : Inputs = this
         val outputs : Outputs = this
         private var emailValue: String = ""
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val emailValueChanged = PublishSubject.create<String>()
@@ -159,7 +162,7 @@ interface AccountEditEmailVM {
                 updateEmailEvent
                     .filter { it.isFail() }
                     .subscribe {
-                        val error = Exception("Ocurrió un error al actualizar el email. Por favor intenta de nuevo.")
+                        val error = Exception(resources.getString(R.string.Error_updating_email))
                         disposable.onNext(Result.failure(error))
                         disposable.onComplete()
                     }
@@ -179,7 +182,7 @@ interface AccountEditEmailVM {
                 verifyEvent
                     .filter { it.isFail() }
                     .subscribe {
-                        val error = Exception("Ocurrió un error al verificar el usuario. Por favor intenta de nuevo.")
+                        val error = Exception(resources.getString(R.string.Error_verifying_user))
                         disposable.onNext(Result.failure(error))
                         disposable.onComplete()
                     }

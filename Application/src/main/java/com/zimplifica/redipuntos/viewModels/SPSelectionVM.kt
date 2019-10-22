@@ -4,10 +4,13 @@ import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.PaymentPayload
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.Vendor
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.SitePaySellerSelectionObject
+import com.zimplifica.redipuntos.ui.data.contactEmail
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.Observables
@@ -36,6 +39,8 @@ interface SPSelectionVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
+
 
         private var amount = 0F
         //Inputs
@@ -95,7 +100,7 @@ interface SPSelectionVM {
 
             checkoutPayloadEvent
                 .filter { it.isFail() }
-                .map { return@map "Ocurrió un error inesperado, por favor intenta de nuevo." }
+                .map { return@map resources.getString(R.string.Error_unkown_error, contactEmail) }
                 .subscribe(this.showError)
 
             val paymentPayloadResult = checkoutPayloadEvent

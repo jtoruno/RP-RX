@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import com.zimplifica.domain.entities.*
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.ui.data.maxCardsAllowed

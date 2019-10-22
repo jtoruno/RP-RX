@@ -4,6 +4,8 @@ import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.PaymentMethod
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.UserInformationResult
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
@@ -32,7 +34,7 @@ interface PointsFragmentVM {
     class ViewModel(@NonNull val environment: Environment) : FragmentViewModel<PointsFragmentVM>(environment), Inputs, Outputs{
 
 
-
+        private val resources = RPApplication.applicationContext().resources
         val inputs : Inputs = this
         val outputs : Outputs = this
 
@@ -93,7 +95,7 @@ interface PointsFragmentVM {
 
             disablePaymentMethodEvent
                 .filter { it.isFail() }
-                .map { return@map "Ocurrió un error al eliminar el medio de pago. Por favor intente más tarde." }
+                .map { return@map resources.getString(R.string.Error_delete_payment_method) }
                 .subscribe(this.showError)
         }
 

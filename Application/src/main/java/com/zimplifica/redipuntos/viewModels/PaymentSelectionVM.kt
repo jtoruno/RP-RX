@@ -2,6 +2,8 @@ package com.zimplifica.redipuntos.viewModels
 
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.*
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.models.CheckAndPayModel
@@ -51,6 +53,8 @@ interface PaymentSelectionVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+
+        private val resources = RPApplication.applicationContext().resources
 
         private val securityMode = checkSecurityMode()
         private var _checkAndPayModel : CheckAndPayModel? = null
@@ -113,7 +117,7 @@ interface PaymentSelectionVM {
 
             nextButtonPressed
                 .filter { checkAndPayModel.selectedPaymentMethod == null }
-                .map { return@map "Por favor seleccione un método de pago." }
+                .map { return@map resources.getString(R.string.Error_add_payment_method_first) }
                 .subscribe(this.showError)
 
             nextButtonPressed
@@ -133,7 +137,7 @@ interface PaymentSelectionVM {
 
             requestPayment
                 .filter { it.isFail() }
-                .map { return@map "Ocurrió un error al procesar el pago. Por favor intente de nuevo." }
+                .map { return@map resources.getString(R.string.Error_processing_payment) }
                 .subscribe(this.showError)
 
             requestPayment

@@ -5,6 +5,8 @@ import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.Transaction
 import com.zimplifica.domain.entities.TransactionsResult
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
 import io.reactivex.Observable
@@ -29,6 +31,8 @@ interface MovementsFragmentVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
+
 
         //Oagination Variables
 
@@ -67,7 +71,7 @@ interface MovementsFragmentVM {
 
             Observable.merge(newPayment,fetchTransactionsEvent)
                 .filter { it.isFail() }
-                .map { "Ocurrió un error al obtener los movimientos. Por favor intenta de nuevo." }
+                .map { resources.getString(R.string.Error_fetch_payments) }
                 .subscribe(this.showError)
 
             Observable.merge(newPayment,fetchTransactionsEvent)
@@ -145,7 +149,7 @@ interface MovementsFragmentVM {
                 val transactionEvent = fetchTransactionsServer(useCache,token,PAGE_SIZE)
                 transactionEvent
                     .filter { it.isFail() }
-                    .map { "Ocurrió un error al obtener los movimientos. Por favor intenta de nuevo." }
+                    .map { resources.getString(R.string.Error_fetch_payments) }
                     .subscribe(this.showError)
                 transactionEvent
                     .filter { !it.isFail() }

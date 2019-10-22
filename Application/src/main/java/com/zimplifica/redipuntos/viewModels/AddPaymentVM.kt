@@ -4,6 +4,8 @@ import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.PaymentMethod
 import com.zimplifica.domain.entities.PaymentMethodInput
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -61,6 +63,7 @@ interface AddPaymentVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val cardHolderChanged = PublishSubject.create<String>()
@@ -150,7 +153,7 @@ interface AddPaymentVM {
 
             addPaymentMethodEvent
                 .filter { it.isFail() }
-                .map { return@map "Ocurrió un error al guardar el método de pago" }
+                .map { return@map resources.getString(R.string.Error_add_payment_method) }
                 .subscribe(this.showError)
 
         }

@@ -2,6 +2,8 @@ package com.zimplifica.redipuntos.viewModels
 
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -30,6 +32,7 @@ interface ConfirmEmailVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val verificationCodeChanged = PublishSubject.create<String>()
@@ -71,7 +74,7 @@ interface ConfirmEmailVM {
 
             val confirmationError = confirmEvent
                 .filter { it.isFail() }
-                .map { return@map "Ocurrió un problema al confirmar el correo" }
+                .map { return@map resources.getString(R.string.Error_confirm_email) }
 
 
             val resendEvent = confirmResendButtonPressed
@@ -85,7 +88,7 @@ interface ConfirmEmailVM {
 
             val resendError = resendEvent
                 .filter { it.isFail() }
-                .map { "Ocurrió un problema al confirmar el correo" }
+                .map { resources.getString(R.string.Error_confirm_email) }
 
             Observable.merge(resendError,confirmationError)
                 .subscribe(this.showError)

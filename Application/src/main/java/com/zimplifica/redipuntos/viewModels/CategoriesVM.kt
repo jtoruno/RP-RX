@@ -3,6 +3,8 @@ package com.zimplifica.redipuntos.viewModels
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.Category
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.Observable
@@ -34,6 +36,7 @@ interface CategoriesVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val fetchCategories = PublishSubject.create<Unit>()
@@ -52,7 +55,7 @@ interface CategoriesVM {
 
             categoriesEvent
                 .filter { it.isFail() }
-                .map { "Error al obetener comercios." }
+                .map { resources.getString(R.string.Error_fetch_commerces) }
                 .subscribe(this.showError)
             categoriesEvent
                 .filter { !it.isFail() }

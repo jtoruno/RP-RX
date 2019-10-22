@@ -4,10 +4,13 @@ import com.zimplifica.domain.entities.PaymentMethod
 import com.zimplifica.domain.entities.UserInformationResult
 import com.zimplifica.domain.entities.UserStatus
 import com.zimplifica.domain.entities.VerificationStatus
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.mocks.userInformationMock
 import com.zimplifica.redipuntos.models.CurrentUser
+import com.zimplifica.redipuntos.ui.data.contactEmail
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 
@@ -88,7 +91,10 @@ class PointsFragmentVMTest : RPTestCase() {
         vm.inputs.disablePaymentMethodPressed(paymentMethod)
         disablePaymentMethodAction.assertValueCount(0)
         showError.assertValueCount(1)
-        showError.assertValue("Ocurrió un error al eliminar el medio de pago. Por favor intente más tarde.")
+        val message = RPApplication.applicationContext().getString(
+            R.string.Error_delete_payment_method
+        )
+        showError.assertValue(message)
 
     }
 

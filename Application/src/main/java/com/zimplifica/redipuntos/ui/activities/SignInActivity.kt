@@ -61,7 +61,7 @@ class SignInActivity : BaseActivity<SignInViewModel.ViewModel>() {
             }
         })
         compositeDisposable.add(this.viewModel.outputs.showError().subscribe {
-            Log.e("Error Message Activity"+it.friendlyMessage, it.friendlyMessage)
+            Log.e("Error Message Activity",it.friendlyMessage)
             val intent = Intent(this, SignInFailureActivity::class.java)
             startActivity(intent)
         })

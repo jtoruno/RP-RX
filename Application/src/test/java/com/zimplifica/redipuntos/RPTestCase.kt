@@ -16,16 +16,14 @@ import io.reactivex.annotations.NonNull
 import org.junit.runner.RunWith
 import org.junit.Before
 import junit.framework.TestCase
-import org.junit.Ignore
-import org.junit.Rule
 import org.robolectric.annotation.Config
 import org.robolectric.RuntimeEnvironment
 
 
 @RunWith(RPGraddleTestRunner::class)
-@Config(manifest = Config.NONE, sdk = [RPGraddleTestRunner.DEFAULT_SDK]/*,application = TestRPApp::class*/,application = TestRPApp::class)
+@Config(manifest = Config.NONE, sdk = [RPGraddleTestRunner.DEFAULT_SDK]/*,application = RPApplication::class*/,application = RPApplication::class)
 abstract class RPTestCase : TestCase(){
-    //private var application : TestRPApp? = null
+    //private var application : RPApplication? = null
     private var application : Application? = null
     private var environment: Environment? = null
     @Before
@@ -59,7 +57,7 @@ abstract class RPTestCase : TestCase(){
             return this.application
         }
         this.application = RuntimeEnvironment.application
-        //this.application = RuntimeEnvironment.application as TestRPApp
+        //this.application = RuntimeEnvironment.application as RPApplication
         return this.application
     }
     private fun sharedPref(): SharedPreferences{

@@ -1,6 +1,8 @@
 package com.zimplifica.redipuntos.viewModels
 
 import com.zimplifica.domain.entities.SignInError
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.ErrorWrapper
@@ -54,7 +56,8 @@ class SignInViewModelTest : RPTestCase(){
         vm.inputs.password("pass123Wdsdsd_")
         vm.inputs.signInButtonPressed()
         val error = SignInError.invalidCredentials
-        val wrapper = ErrorWrapper(error,"Las credenciales son inválidas")
+        val message = RPApplication.applicationContext().resources.getString(R.string.Error_invalid_credentials)
+        val wrapper = ErrorWrapper(error,message)
         this.showError.assertValues(wrapper)
     }
 
@@ -74,7 +77,8 @@ class SignInViewModelTest : RPTestCase(){
         vm.inputs.password("123Zimplista_")
         vm.inputs.signInButtonPressed()
         val error = SignInError.userNotConfirmed
-        val wrapper = ErrorWrapper(error,"El usuario no está confirmado")
+        val message = RPApplication.applicationContext().resources.getString(R.string.Error_user_not_confirmed)
+        val wrapper = ErrorWrapper(error,message)
         this.showError.assertValues(wrapper)
         this.showConfirmationAlert.assertValueCount(1)
     }

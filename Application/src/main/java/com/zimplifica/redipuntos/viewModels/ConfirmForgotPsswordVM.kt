@@ -5,6 +5,8 @@ import com.zimplifica.domain.entities.ForgotPasswordError
 import com.zimplifica.domain.entities.ForgotPasswordModel
 import com.zimplifica.domain.entities.ForgotPasswordResult
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -43,6 +45,7 @@ interface ConfirmForgotPsswordVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val passwordChanged = PublishSubject.create<String>()
@@ -98,7 +101,7 @@ interface ConfirmForgotPsswordVM {
 
             confirmEvent
                 .filter { it.isFail() }
-                .map { return@map "Ocurrió un error al tratarde confirmar la contraseña. Por favor asegurate de que el código de verificacion sea el correcto e intenta de nuevo." }
+                .map { return@map  resources.getString(R.string.Error_forgot_password) }
                 .subscribe(this.showError)
 
             confirmEvent

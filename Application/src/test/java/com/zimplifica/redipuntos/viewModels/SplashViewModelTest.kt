@@ -13,7 +13,7 @@ import org.junit.Test
 class SplashViewModelTest : RPTestCase(){
     lateinit var vm : SplashViewModel.ViewModel
     val finishLoadingUserInfo = TestObserver<UserInformationResult>()
-    val didFinishWithError = TestObserver<String>()
+    val didFinishWithError = TestObserver<Unit>()
     val backToWelcome = TestObserver<Unit>()
     val retryLoading = TestObserver<Boolean>()
 

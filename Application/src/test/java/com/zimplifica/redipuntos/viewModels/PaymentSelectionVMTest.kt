@@ -2,11 +2,14 @@ package com.zimplifica.redipuntos.viewModels
 
 import android.content.Intent
 import com.zimplifica.domain.entities.*
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.mocks.creditCardMock
 import com.zimplifica.redipuntos.models.CheckAndPayModel
 import com.zimplifica.redipuntos.models.SitePaySellerSelectionObject
+import com.zimplifica.redipuntos.ui.data.contactEmail
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 
@@ -94,7 +97,11 @@ class PaymentSelectionVMTest : RPTestCase() {
     fun testShowErrorNoCreditCard(){
         setUpFailEnvironment(environment()!!)
         vm.inputs.nextButtonPressed()
-        showError.assertValue("Por favor seleccione un método de pago.")
+        val message = RPApplication.applicationContext().getString(
+            R.string.Error_add_payment_method_first,
+            contactEmail
+        )
+        showError.assertValue(message)
     }
 
 

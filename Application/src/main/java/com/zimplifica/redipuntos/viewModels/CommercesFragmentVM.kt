@@ -6,6 +6,8 @@ import com.zimplifica.domain.entities.Category
 import com.zimplifica.domain.entities.Commerce
 import com.zimplifica.domain.entities.CommercesResult
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.FragmentViewModel
 import com.zimplifica.redipuntos.models.FavoriteMerchant
@@ -53,6 +55,7 @@ interface CommercesFragmentVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val fetchCommerces = PublishSubject.create<Unit>()
@@ -126,7 +129,7 @@ interface CommercesFragmentVM {
 
             Observable.merge(commerceEvent,searchEvent,categoryFilterEvent)
                 .filter { it.isFail() }
-                .map { return@map "Error al obetener comercios." }
+                .map { return@map resources.getString(R.string.Error_fetch_commerces) }
                 .subscribe(this.showError)
 
             val favoriteEvent = favoriteMerchantPressed

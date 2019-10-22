@@ -2,6 +2,8 @@ package com.zimplifica.redipuntos.viewModels
 
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -40,6 +42,7 @@ interface AccountVerifyEmailVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val codeValueChanged = PublishSubject.create<String>()
@@ -71,7 +74,7 @@ interface AccountVerifyEmailVM {
 
             verifyCodeEvent
                 .filter { it.isFail() }
-                .map { "Ocurrió un error al verificar el código. Por favor verificar que el código sea el correcto e intentar de nuevo." }
+                .map { resources.getString(R.string.Error_verifying_code) }
                 .subscribe(this.showError)
             verifyCodeEvent
                 .filter { !it.isFail() }

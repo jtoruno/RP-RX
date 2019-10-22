@@ -3,6 +3,8 @@ package com.zimplifica.redipuntos.viewModels
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.Result
 import com.zimplifica.domain.entities.SecurityCode
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.ValidationService
@@ -35,6 +37,8 @@ interface CreatePinVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
+
 
         //Inputs
         private val pinChanged = BehaviorSubject.create<String>()
@@ -57,7 +61,7 @@ interface CreatePinVM {
 
             createPinEvent
                 .filter { it.isFail() }
-                .map { "Ocurrió un error al crear el PIN. Por favor intenta de nuevo." }
+                .map { resources.getString(R.string.Error_create_pin) }
                 .subscribe(this.showError)
 
             createPinEvent

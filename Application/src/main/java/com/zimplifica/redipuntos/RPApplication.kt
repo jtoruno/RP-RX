@@ -1,10 +1,9 @@
 package com.zimplifica.redipuntos
 
 import android.app.Application
+import android.content.Context
 import com.zimplifica.redipuntos.external.ApplicationComponent
 import com.zimplifica.redipuntos.external.DaggerApplicationComponent
-
-
 
 
 open class RPApplication: Application() {
@@ -27,6 +26,18 @@ open class RPApplication: Application() {
 
     open fun isInUnitTests(): Boolean {
         return false
+    }
+
+    init {
+        instance = this
+    }
+
+    companion object {
+        private var instance: RPApplication? = null
+
+        fun applicationContext() : Context {
+            return instance!!.applicationContext
+        }
     }
 
 }

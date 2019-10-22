@@ -2,10 +2,13 @@ package com.zimplifica.redipuntos.viewModels
 
 import android.content.Intent
 import com.zimplifica.domain.entities.SignUpError
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.ErrorWrapper
 import com.zimplifica.redipuntos.models.SignUpModel
+import com.zimplifica.redipuntos.ui.data.contactEmail
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 
@@ -93,7 +96,9 @@ class SignUpVerifyViewModelTest : RPTestCase(){
         this.vm.inputs.verificationCodeTextChanged("6666554")
         this.vm.inputs.verificationButtonPressed()
         val error = SignUpError.usernameExistsException
-        val wrapper = ErrorWrapper(error,"El usuario ingresado está actualmente registrado en el sistema.")
+        val appName = RPApplication.applicationContext().resources.getString(R.string.app_name)
+        val message = RPApplication.applicationContext().getString(R.string.Error_user_currently_enrolled,appName)
+        val wrapper = ErrorWrapper(error,message)
         showError.assertValues(wrapper)
     }
 
@@ -113,7 +118,9 @@ class SignUpVerifyViewModelTest : RPTestCase(){
 
         this.vm.inputs.resendVerificationCodePressed()
         val error = SignUpError.internalError("Invalid phone number")
-        val wrapper = ErrorWrapper(error,"Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com")
+        val message = RPApplication.applicationContext().getString(R.string.Error_unkown_error,
+            contactEmail)
+        val wrapper = ErrorWrapper(error,message)
         this.showError.assertValues(wrapper)
 
     }}

@@ -2,6 +2,8 @@ package com.zimplifica.redipuntos.viewModels
 
 import android.content.Intent
 import com.zimplifica.domain.entities.Vendor
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.mocks.creditCardMock
@@ -37,5 +39,8 @@ class SPScanQRTest : RPTestCase() {
     fun testShowError(){
         setUpEnvironment(environment()!!)
         vm.inputs.codeFound("123")
-        showError.assertValues("Código inválido, intente de nuevo.")
+        val message = RPApplication.applicationContext().getString(
+            R.string.Error_qr_code_invalid
+        )
+        showError.assertValues(message)
     }}

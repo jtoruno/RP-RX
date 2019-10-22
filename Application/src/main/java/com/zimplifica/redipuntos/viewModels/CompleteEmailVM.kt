@@ -2,6 +2,8 @@ package com.zimplifica.redipuntos.viewModels
 
 import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
@@ -37,6 +39,7 @@ interface CompleteEmailVM {
 
         val inputs : Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val emailChanged = PublishSubject.create<String>()
@@ -64,7 +67,7 @@ interface CompleteEmailVM {
 
             event
                 .filter { it.isFail() }
-                .map { return@map "Ocurrió un error al verificar el usuario" }
+                .map { return@map resources.getString(R.string.Error_verifying_user) }
                 .subscribe(this.showError)
 
         }

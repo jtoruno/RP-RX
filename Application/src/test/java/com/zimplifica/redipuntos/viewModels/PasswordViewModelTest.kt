@@ -3,11 +3,14 @@ package com.zimplifica.redipuntos.viewModels
 import android.content.Intent
 import com.zimplifica.domain.entities.SignUpError
 import com.zimplifica.domain.entities.SignUpResult
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.RPTestCase
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.ErrorWrapper
 import com.zimplifica.redipuntos.models.SignUpModel
 import com.zimplifica.redipuntos.models.SignUpUsernameModel
+import com.zimplifica.redipuntos.ui.data.contactEmail
 import io.reactivex.observers.TestObserver
 import org.junit.Test
 import java.util.*
@@ -137,7 +140,11 @@ class PasswordViewModelTest : RPTestCase() {
         this.vm.inputs.password("123Jose_2")
         this.vm.inputs.signUpButtonPressed()
         val error = SignUpError.internalError("Invalid phone number")
-        val wrapper = ErrorWrapper(error,"Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com")
+        val message = RPApplication.applicationContext().getString(
+            R.string.Error_unkown_error,
+            contactEmail
+        )
+        val wrapper = ErrorWrapper(error,message)
         showError.assertValues(wrapper)
     }
 

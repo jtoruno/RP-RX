@@ -74,7 +74,7 @@ class UpdatePinVMTest : RPTestCase() {
 
         vm.inputs.nextButtonPressed()
 
-        loadingEnabled.assertValues( true, false, true, false)
+        loadingEnabled.assertValues(true, false)
     }
 
 }

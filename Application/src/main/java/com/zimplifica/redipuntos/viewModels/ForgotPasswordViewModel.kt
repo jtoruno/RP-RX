@@ -4,10 +4,13 @@ import androidx.annotation.NonNull
 import com.zimplifica.domain.entities.ForgotPasswordError
 import com.zimplifica.domain.entities.ForgotPasswordResult
 import com.zimplifica.domain.entities.Result
+import com.zimplifica.redipuntos.R
+import com.zimplifica.redipuntos.RPApplication
 import com.zimplifica.redipuntos.extensions.takeWhen
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import com.zimplifica.redipuntos.libs.utils.*
+import com.zimplifica.redipuntos.ui.data.contactEmail
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -28,6 +31,7 @@ interface ForgotPasswordViewModel {
 
         val inputs: Inputs = this
         val outputs : Outputs = this
+        private val resources = RPApplication.applicationContext().resources
 
         //Inputs
         private val usernameChanged = BehaviorSubject.create<String>()
@@ -64,7 +68,7 @@ interface ForgotPasswordViewModel {
                 .map { ErrorHandler.handleError(it , AuthenticationErrorType.FORGOT_PASSWORD_ERROR) }
 
                      */
-                .map { "Ocurrió un error desconocido, por favor contacte a soporte@zimplifica.com" }
+                .map { resources.getString(R.string.Error_unkown_error, contactEmail) }
                 .subscribe(this.showError)
 
             forgotPasswordAction
