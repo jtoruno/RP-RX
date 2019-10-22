@@ -11,12 +11,18 @@ import com.zimplifica.domain.entities.UserStateResult
 import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.Observable
+import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Consumer
+import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.rxkotlin.Observables
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 interface SplashViewModel {
     interface Inputs {
@@ -27,7 +33,7 @@ interface SplashViewModel {
     }
     interface Outputs{
         fun finishLoadingUserInfo() : Observable<UserInformationResult>
-        fun didFinishWithError() : Observable<String>
+        fun didFinishWithError() : Observable<Unit>
         fun backToWelcome() : Observable<Unit>
         fun retryLoading() : Observable<Boolean>
     }
@@ -44,38 +50,64 @@ interface SplashViewModel {
         private val backButtonPressed = PublishSubject.create<Unit>()
 
         //Outputs
-        private val finishLoadingUserInfo:  Observable<UserInformationResult>
-        private val didFinishWithError : Observable<String>
+        private val finishLoadingUserInfo = BehaviorSubject.create<UserInformationResult>()
+        private val didFinishWithError = BehaviorSubject.create<Unit>()
         private val backToWelcome = BehaviorSubject.create<Unit>()
         private val retryLoading = BehaviorSubject.create<Boolean>()
 
         init {
+
+
+            RxJavaPlugins.setErrorHandler {
+                Log.e("ErrorHandler", it.toString())
+            }
+
             backButtonPressed
                 .flatMap { environment.authenticationUseCase().signOut() }
                 .map { Unit }
                 .subscribe(this.backToWelcome)
 
             val mainEvent = Observable.merge(onCreate,retryButtonPressed)
-                .flatMap { return@flatMap getUserInfoAndSubscribe() }
-                .timeout(30,TimeUnit.SECONDS,AndroidSchedulers.mainThread())
+                .flatMap { return@flatMap Observables.zip(finishAnimation, this.getUserInfoAndSubscribe()) }
+                .timeout(30,TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .share()
 
+            /*
             mainEvent
-                .doOnError {
-                    environment.authenticationUseCase().signOut()
-                    this.backToWelcome.onNext(Unit)
-                }
+                .subscribe(object : Observer<Pair<Unit,Result<UserInformationResult>>>{
+                    override fun onComplete() {}
+
+                    override fun onSubscribe(d: Disposable) {}
+
+                    override fun onNext(t: Pair<Unit, Result<UserInformationResult>>) {}
+
+                    override fun onError(e: Throwable) {
+                        Log.e("OnErrorSplash", e.toString())
+                    }
+
+                })*/
+
+            mainEvent
+                .subscribeBy( onError = {
+                    if (it is TimeoutException){
+                        environment.authenticationUseCase().signOut()
+                        this@ViewModel.backToWelcome.onNext(Unit)
+                    }
+                })
 
 
-            finishLoadingUserInfo = mainEvent
+            mainEvent
+                .map { it.second }
                 .filter { !it.isFail() }
-                .zipWith(finishAnimation)
-                .map { it.first.successValue() }
+                .map { it.successValue() }
+                .subscribe(this.finishLoadingUserInfo)
 
-            didFinishWithError = mainEvent
+            mainEvent
+                .map { it.second }
                 .filter { it.isFail() }
-                .zipWith(finishAnimation)
-                .map { "Error" }
+                .map { Unit }
+                .subscribe(this.didFinishWithError)
 
         }
 
@@ -97,7 +129,7 @@ interface SplashViewModel {
 
         override fun finishLoadingUserInfo(): Observable<UserInformationResult> = this.finishLoadingUserInfo
 
-        override fun didFinishWithError(): Observable<String> = this.didFinishWithError
+        override fun didFinishWithError(): Observable<Unit> = this.didFinishWithError
 
         override fun backToWelcome(): Observable<Unit> = this.backToWelcome
 
