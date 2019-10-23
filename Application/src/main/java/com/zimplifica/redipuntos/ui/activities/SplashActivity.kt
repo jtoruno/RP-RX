@@ -112,15 +112,4 @@ class SplashActivity : BaseActivity<SplashViewModel.ViewModel>() {
             .setIcon(R.drawable.ic_mtrl_chip_close_circle)
             .show()
     }
-
-    private fun showSnackBar(){
-        val parentView = findViewById<View>(android.R.id.content)
-        val snackbar = Snackbar.make(parentView,"Tenemos problemas de comunicación, asegurate de tener conexión a internet y luego intenta de nuevo.",Snackbar.LENGTH_LONG)
-        snackbar.view.setBackgroundColor(getColor(R.color.red))
-        val params = snackbar.view.layoutParams as FrameLayout.LayoutParams
-        params.gravity = Gravity.TOP
-        snackbar.view.layoutParams = params
-        snackbar.show()
-
-    }
 }

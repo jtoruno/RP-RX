@@ -96,7 +96,7 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
 
         compositeDisposable.add(viewModel.outputs.showError().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                showDialog("Lo sentimos", it)
+                showDialog(getString(R.string.Sorry), it)
             })
     }
 
@@ -123,7 +123,7 @@ class SPSelectionActivity : BaseActivity<SPSelectionVM.ViewModel>() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(title)
         builder.setMessage(message)
-        builder.setPositiveButton("Cerrar",null)
+        builder.setPositiveButton(getString(R.string.Close),null)
         val dialog = builder.create()
         dialog.show()
     }

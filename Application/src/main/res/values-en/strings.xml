@@ -90,8 +90,9 @@
     <string name="Dismiss" >Dismiss</string>
     <string name="Email" >Email</string>
     <string name="Email_example" >user@example.com</string>
+    <string name="Email_verification_successful">Email confirmed successfully.</string>
     <string name="Enable_premium" >Enable Premium</string>
-    <string name="Enable_premium_description" >Only one lifetime pay of %{amount}</string>
+    <string name="Enable_premium_description" >Only one lifetime pay of %1$s</string>
     <string name="Error_add_address" >An error occurred while trying to add the address. Please try again.</string>
     <string name="Error_add_favorite" >An error occurred while adding the favorite. Please try again.</string>
     <string name="Error_add_gender" >An error occurred while trying to add the gender. Please try again.</string>
@@ -215,7 +216,7 @@
     <string name="Points" >Points</string>
     <string name="Points_balance" >Points Balance</string>
     <string name="Points_received" >You\'ve received %1$s pts</string>
-    <string name="Points_to_next_level" >%{points} points to next level</string>
+    <string name="Points_to_next_level" >%1$s points to next level</string>
     <string name="Premium" >Premium</string>
     <string name="Premium_terms_and_conditions" >By continuing you are indicating that you have read and agree to the Terms and Conditions of %1$s</string>
     <string name="Previous" >Previous</string>

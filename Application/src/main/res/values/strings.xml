@@ -136,6 +136,7 @@
     <string name="Dismiss" >Omitir</string>
     <string name="Email" >Correo Electrónico</string>
     <string name="Email_example" >usuario@ejemplo.com</string>
+    <string name="Email_verification_successful">Correo electrónico confirmado correctamente.</string>
     <string name="Enable_premium" >Activar Premium</string>
     <string name="Enable_premium_description" >Un único pago de %1$s</string>
     <string name="Error_add_address" >Ocurrió un error al guardar la dirección. Por favor intente de nuevo.</string>

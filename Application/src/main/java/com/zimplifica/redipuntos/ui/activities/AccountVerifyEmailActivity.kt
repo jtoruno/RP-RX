@@ -55,7 +55,7 @@ class AccountVerifyEmailActivity : BaseActivity<AccountVerifyEmailVM.ViewModel>(
 
         compositeDisposable.add(viewModel.outputs.verifyCodeAction().observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                Toast.makeText(this,"Correo electrónico confirmado correctamente.",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,getString(R.string.Email_verification_successful),Toast.LENGTH_SHORT).show()
                 finish()
             })
 
