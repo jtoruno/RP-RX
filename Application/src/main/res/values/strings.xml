@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RediPuntos</string>
+    <string name="app_name" translatable="false">RediPuntos</string>
     <string name="signUpTermsText">Al presionar \'Crear Cuenta\' aceptas los Términos y Condiciones y las Políticas de
         Privacidad.
     </string>
@@ -34,8 +34,6 @@
 
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 
-
-    <string name="About_redipuntos">Sobre RediPuntos</string>
 
 
     <!-- Verify Account Walk -->

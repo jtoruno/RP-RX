@@ -65,6 +65,7 @@ class ServerSubscription(val userId : String) : RediSubscription {
                     val date = getRelativeTimeSpanString(result.createdAt().toLong())
                     val event = ServerEvent(result.id(),result.origin(),result.type(),result.title(),result.message(),date.toString(), result.data(),
                         result.actionable(),result.triggered(),result.hidden())
+                    Log.e("ServerSubscription",result.toString())
                     events.onNext(Result.success(event))
                 }
                 else{

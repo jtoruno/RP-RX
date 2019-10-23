@@ -12,7 +12,9 @@ import com.zimplifica.redipuntos.libs.ActivityViewModel
 import com.zimplifica.redipuntos.libs.Environment
 import io.reactivex.Observable
 import io.reactivex.Observer
+import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.plugins.RxJavaPlugins
@@ -21,6 +23,8 @@ import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.rxkotlin.zipWith
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.ReplaySubject
+import java.lang.Exception
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
@@ -45,13 +49,13 @@ interface SplashViewModel {
 
         //Inputs
         private val onCreate = PublishSubject.create<Unit>()
-        private val finishAnimation = PublishSubject.create<Unit>()
+        private val finishAnimation = ReplaySubject.create<Unit>(  1)
         private val retryButtonPressed = PublishSubject.create<Unit>()
         private val backButtonPressed = PublishSubject.create<Unit>()
 
         //Outputs
         private val finishLoadingUserInfo = BehaviorSubject.create<UserInformationResult>()
-        private val didFinishWithError = BehaviorSubject.create<Unit>()
+        private val didFinishWithError = PublishSubject.create<Unit>()
         private val backToWelcome = BehaviorSubject.create<Unit>()
         private val retryLoading = BehaviorSubject.create<Boolean>()
 
@@ -70,7 +74,6 @@ interface SplashViewModel {
             val mainEvent = Observable.merge(onCreate,retryButtonPressed)
                 .flatMap { return@flatMap Observables.zip(finishAnimation, this.getUserInfoAndSubscribe()) }
                 .timeout(30,TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .observeOn(AndroidSchedulers.mainThread())
                 .share()
 
             /*
@@ -106,8 +109,10 @@ interface SplashViewModel {
             mainEvent
                 .map { it.second }
                 .filter { it.isFail() }
-                .map { Unit }
-                .subscribe(this.didFinishWithError)
+                .subscribe {
+                    Log.e("Splash", "Error")
+                    didFinishWithError.onNext(Unit)
+                }
 
         }
 
@@ -136,40 +141,9 @@ interface SplashViewModel {
         override fun retryLoading(): Observable<Boolean> = this.retryLoading
 
         private fun getUserInfoAndSubscribe() : Observable<Result<UserInformationResult>>{
-            Log.e("🔸", "getUserInfoAndSubscribe")
-            return Observable.create<Result<UserInformationResult>> create@{ o ->
-                val getUserEvent = environment.userUseCase().getUserInformation(false)
-                    .share()
-                getUserEvent
-                    .filter { !it.isFail() }
-                    .map { it.successValue() }
-                    .subscribe{
-                        if (it == null) return@subscribe
-                        //environment.userUseCase().initServerSubscription(it.id)
-                        val result = Result.success(it)
-                        o.onNext(result)
-                        o.onComplete()
-                    }
-                getUserEvent
-                    .filter { it.isFail() }
-                    .map {
-                        when(it){
-                            is Result.success -> return@map null
-                            is Result.failure -> return@map it.cause
-                        }
-                    }
-                    .subscribe { error ->
-                        o.onNext(Result.failure(error))
-                        o.onComplete()
-                    }
-
-            }
-                .doOnComplete { this.retryLoading.onNext(false) }
-                .doOnSubscribe { this.retryLoading.onNext(true) }
-            /*
             return environment.userUseCase().getUserInformation(false)
+                .doOnSubscribe { this.retryLoading.onNext(true) }
                 .doOnComplete { this.retryLoading.onNext(false) }
-                .doOnSubscribe { this.retryLoading.onNext(true) }*/
         }
     }
 }

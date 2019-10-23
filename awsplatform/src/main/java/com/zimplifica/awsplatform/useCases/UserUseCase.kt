@@ -545,7 +545,6 @@ class UserUseCase : UserUseCase {
                         val status : TransactionStatus = when(result.status()){
                             "successful" -> TransactionStatus.success
                             "pending" -> TransactionStatus.pending
-                            "ValitionFailure" -> TransactionStatus.fail
                             else -> TransactionStatus.fail
                         }
                         val transaction = Transaction(result.id(),result.datetime(),result.transactionType(),transactionDetail,

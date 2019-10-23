@@ -12,10 +12,7 @@ import com.amazonaws.rediPuntosAPI.type.GetTransactionsByUserInput
 import com.apollographql.apollo.GraphQLCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
-import com.zimplifica.domain.entities.Citizen
-import com.zimplifica.domain.entities.PaymentMethod
-import com.zimplifica.domain.entities.Transaction
-import com.zimplifica.domain.entities.VerificationStatus
+import com.zimplifica.domain.entities.*
 
 class CacheOperations{
     private var appSyncClient = AppSyncClient.getClient(AppSyncClient.AppSyncClientMode.PRIVATE)
@@ -119,9 +116,15 @@ class CacheOperations{
                                     oldValue.rewards(),withExistingTransaction.status.name,oldValue.wayToPay(),oldValue.paymentDescription())
                             }
                         }*/
+                        val status = when(withExistingTransaction.status){
+                            TransactionStatus.success -> "successful"
+                            TransactionStatus.pending -> "pending"
+                            else -> "fail"
+
+                        }
                         items.map { oldValue -> if(oldValue.id() == withExistingTransaction.id){
                             return@map GetTransactionsByUserQuery.Item(oldValue.__typename(),oldValue.id(),oldValue.datetime(),oldValue.transactionType(),oldValue.item(),oldValue.fee(),oldValue.tax(),oldValue.subtotal(),oldValue.total(),
-                                oldValue.rewards(),withExistingTransaction.status.name,oldValue.wayToPay(),oldValue.paymentDescription())
+                                oldValue.rewards(),status,oldValue.wayToPay(),oldValue.paymentDescription())
                         }else{
                             return@map oldValue
                         } }
@@ -146,11 +149,21 @@ class CacheOperations{
                     if (result!=null){
                         val items = result.items().toMutableList()
                         val item = GetTransactionsByUserQuery.Item1("",newTransaction.transactionType,newTransaction.transactionDetail.amount,newTransaction.transactionDetail.vendorId,newTransaction.transactionDetail.vendorName)
-                        val card = GetTransactionsByUserQuery.CreditCard("",newTransaction.wayToPay.creditCard!!.cardId,newTransaction.wayToPay.creditCard!!.cardNumber,newTransaction.wayToPay.creditCard!!.issuer)
+                        val cardNewTransaction = newTransaction.wayToPay.creditCard
+                        var card: GetTransactionsByUserQuery.CreditCard ? = null
+                        if(cardNewTransaction!=null){
+                            card = GetTransactionsByUserQuery.CreditCard("",cardNewTransaction.cardId,cardNewTransaction.cardNumber,cardNewTransaction.issuer)
+                        }
+
                         val wtp = GetTransactionsByUserQuery.WayToPay("",newTransaction.wayToPay.rediPuntos,card,newTransaction.wayToPay.creditCardCharge)
+                        val status = when(newTransaction.status){
+                            TransactionStatus.success -> "successful"
+                            TransactionStatus.pending -> "pending"
+                            else -> "fail"
+                        }
 
                         val transaction = GetTransactionsByUserQuery.Item("",newTransaction.id,newTransaction.datetime,newTransaction.transactionType,item,newTransaction.fee,
-                            newTransaction.tax,newTransaction.subtotal,newTransaction.total,newTransaction.rewards,newTransaction.status.name,wtp,newTransaction.description)
+                            newTransaction.tax,newTransaction.subtotal,newTransaction.total,newTransaction.rewards,status,wtp,newTransaction.description)
                         items.removeAll { trx -> trx.id() == newTransaction.id }
                         items.add(0,transaction)
                         Log.i("🔵", "Cache updated at [CacheOperations] [updateTransactions]")

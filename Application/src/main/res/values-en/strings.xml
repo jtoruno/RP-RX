@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Walk messages -->
+
+
+    <string name="signUpTermsText">By clicking \'Create Account\' you are indicating that you have read and agree to our Terms and Conditions and Privacy Policy.
+    </string>
+
+
+    <string name="walk1">Points explotion!</string>
+    <string name="walk2">Easy and Safe</string>
+    <string name="walk3">Explore new possibilities with RediPuntos</string>
+    <string name="walk4">Why not?</string>
+
+    <string name="description1">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="description2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet.</string>
+    <string name="description3">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    </string>
+    <string name="description4">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+
+    <!-- App Base Strings -->
     <string name="About_app_name" >About %1$s</string>
     <string name="About_zimplifica" >About Zimplifica</string>
     <string name="Accept" >Accept</string>
@@ -333,7 +352,7 @@
     <string name="Walkthrough_screen_2_description" >Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet.</string>
     <string name="Walkthrough_screen_2_title" >Easy and Safe</string>
     <string name="Walkthrough_screen_3_description" >Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
-    <string name="Walkthrough_screen_3_title" >Explore new posibilities with %1$s</string>
+    <string name="Walkthrough_screen_3_title" >Explore new possibilities with %1$s</string>
     <string name="Walkthrough_screen_4_description" >Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
     <string name="Walkthrough_screen_4_title" >Why not?</string>
     <string name="Wants_to_redirect" >Do you want to be redirected</string>
