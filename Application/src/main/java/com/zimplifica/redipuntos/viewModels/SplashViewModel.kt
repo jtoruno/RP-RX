@@ -95,7 +95,7 @@ interface SplashViewModel {
                 .subscribeBy( onError = {
                     if (it is TimeoutException){
                         environment.authenticationUseCase().signOut()
-                        this@ViewModel.backToWelcome.onNext(Unit)
+                        this@ViewModel.backButtonPressed.onNext(Unit)
                     }
                 })
 
@@ -109,10 +109,8 @@ interface SplashViewModel {
             mainEvent
                 .map { it.second }
                 .filter { it.isFail() }
-                .subscribe {
-                    Log.e("Splash", "Error")
-                    didFinishWithError.onNext(Unit)
-                }
+                .map { Unit }
+                .subscribe(this.didFinishWithError)
 
         }
 
